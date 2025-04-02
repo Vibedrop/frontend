@@ -29,25 +29,25 @@ build:
         --push \
         --target=base \
         .
-rules:
-  - if: $CI_MERGE_REQUEST_ID
-    changes:
-      - Dockerfile
-      - package.json
-      - package-lock.json
-      - tsconfig.json
-      - src/**/*.ts
-      - src/**/*.tsx
-      - public/**/*.svg
-  - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    changes:
-      - Dockerfile
-      - package.json
-      - package-lock.json
-      - tsconfig.json
-      - src/**/*.ts
-      - src/**/*.tsx
-      - public/**/*.svg
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - Dockerfile
+        - package.json
+        - package-lock.json
+        - tsconfig.json
+        - src/**/*.ts
+        - src/**/*.tsx
+        - public/**/*.svg
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      changes:
+        - Dockerfile
+        - package.json
+        - package-lock.json
+        - tsconfig.json
+        - src/**/*.ts
+        - src/**/*.tsx
+        - public/**/*.svg
 
 #############################################
 # 2) Build "utils"-image
