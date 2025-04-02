@@ -4,7 +4,7 @@ stages:
   - teardown
 
 #############################################
-# 1) Build usual backend-image
+# 1) Build your usual frontend-image
 #############################################
 build:
   image: docker:20
@@ -13,6 +13,7 @@ build:
     - docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
   script:
     - |
+      # Sätt DOCKER_TAG till "latest" om main, annars branch-namnet
       if [[ $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH ]]; then
         DOCKER_TAG="latest"
       else
@@ -21,11 +22,8 @@ build:
 
       echo "Building $CI_REGISTRY_IMAGE:$DOCKER_TAG"
 
-      # Set the environment variable to skip ESLint during build
-      export SKIP_ESLINT=true
-
+      # Bygger och pushar bilden (inget --target, eftersom Next.js-frontend redan är i Dockerfile)
       docker buildx build \
-        --build-arg SKIP_ESLINT=true \
         --cache-from="$CI_REGISTRY_IMAGE:latest" \
         -t "$CI_REGISTRY_IMAGE:$DOCKER_TAG" \
         --push \
@@ -50,7 +48,6 @@ build:
         - src/**/*.tsx
         - public/**/*.svg
 
-
 #############################################
 # 2) Build "utils"-image
 #############################################
@@ -72,7 +69,6 @@ build-utils:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       changes:
         - Dockerfile-utils
-
 
 #############################################
 # 3) Deploy-job for Merge Requests (review)
@@ -164,7 +160,7 @@ deploy_main:
 
   environment:
     name: "production"
-    url: "https://vibedrop-backend.cc25.chasacademy.dev"
+    url: "https://vibedrop-frontend.cc25.chasacademy.dev"   # <--- Ändra URL till din frontends domin
 
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
@@ -182,7 +178,7 @@ deploy_main:
       export NORMALIZED_STACK_NAME=$(echo "$STACK_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]_-')
 
       # För main => hårdkoda domain + Docker-tag
-      export CI_ENVIRONMENT_SLUG="vibedrop-backend"
+      export CI_ENVIRONMENT_SLUG="vibedrop-frontend"
       export DOCKER_TAG="latest"
 
       echo "STACK: $STACK_NAME"
@@ -222,7 +218,7 @@ deploy_main:
           -F file=@deployable-compose.yml \
           | jq
       else
-        echo "Updating stack $STACK_ID ($NORMALIZED_STACK_NAME)"
+        echo "Updating stack $STACK_ID ($STACK_NAME)"
         COMPOSE_CONTENTS=$(cat deployable-compose.yml)
         JSON_PAYLOAD=$(jq -n --arg compose "$COMPOSE_CONTENTS" \
           '{"prune": true, "pullImage": true, "stackFileContent": $compose}')
@@ -291,4 +287,3 @@ stop_review:
           exit 1
         fi
       fi
-
