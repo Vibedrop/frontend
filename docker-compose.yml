@@ -1,6 +1,6 @@
 services:
-  frontend:
-    image: registry.chasacademy.dev/chas-challenge-2025/vibedrop/frontend:latest
+  backend:
+    image: registry.chasacademy.dev/chas-challenge-2025/vibedrop/frontend:${DOCKER_TAG}
     restart: always
     networks:
       - traefik-public
@@ -11,15 +11,14 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.vibedrop-frontend-http.rule=Host(`vibedrop-frontend.cc25.chasacademy.dev`)
-        - traefik.http.routers.vibedrop-frontend-http.entrypoints=http
-        - traefik.http.routers.vibedrop-frontend-http.middlewares=https-redirect
-        - traefik.http.routers.vibedrop-frontend-https.rule=Host(`vibedrop-frontend.cc25.chasacademy.dev`)
-        - traefik.http.routers.vibedrop-frontend-https.entrypoints=https
-        - traefik.http.routers.vibedrop-frontend-https.tls=true
-        - traefik.http.routers.vibedrop-frontend-https.tls.certresolver=le
-        - traefik.http.services.vibedrop-frontend.loadbalancer.server.port=3000
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-http.rule=Host(`${CI_ENVIRONMENT_SLUG}.cc25.chasacademy.dev`)
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-http.entrypoints=http
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-http.middlewares=https-redirect
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-https.rule=Host(`${CI_ENVIRONMENT_SLUG}.cc25.chasacademy.dev`)
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-https.entrypoints=https
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-https.tls=true
+        - traefik.http.routers.${NORMALIZED_STACK_NAME}-https.tls.certresolver=le
+        - traefik.http.services.${NORMALIZED_STACK_NAME}.loadbalancer.server.port=3000
 networks:
   traefik-public:
     external: true
-
