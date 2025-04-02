@@ -1,0 +1,25 @@
+services:
+  frontend:
+    image: registry.chasacademy.dev/chas-challenge-2025/vibedrop/frontend:latest
+    restart: always
+    networks:
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.routers.vibedrop-frontend-http.rule=Host(`vibedrop-frontend.cc25.chasacademy.dev`)
+        - traefik.http.routers.vibedrop-frontend-http.entrypoints=http
+        - traefik.http.routers.vibedrop-frontend-http.middlewares=https-redirect
+        - traefik.http.routers.vibedrop-frontend-https.rule=Host(`vibedrop-frontend.cc25.chasacademy.dev`)
+        - traefik.http.routers.vibedrop-frontend-https.entrypoints=https
+        - traefik.http.routers.vibedrop-frontend-https.tls=true
+        - traefik.http.routers.vibedrop-frontend-https.tls.certresolver=le
+        - traefik.http.services.vibedrop-frontend.loadbalancer.server.port=3000
+networks:
+  traefik-public:
+    external: true
+
