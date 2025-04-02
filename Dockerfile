@@ -11,6 +11,8 @@ COPY . .
 
 RUN npm run build
 
+CMD ["npm", "start"]
+
 # Stage 2: Run the application
 FROM node:18-alpine
 WORKDIR /app
