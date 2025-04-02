@@ -21,11 +21,11 @@ build:
 
       echo "Building $CI_REGISTRY_IMAGE:$DOCKER_TAG"
 
-      # Sätt miljövariabeln för att inaktivera ESLint under build
-      export CI=true
+      # Set the environment variable to skip ESLint during build
+      export SKIP_ESLINT=true
 
       docker buildx build \
-        --build-arg CI=true \
+        --build-arg SKIP_ESLINT=true \
         --cache-from="$CI_REGISTRY_IMAGE:latest" \
         -t "$CI_REGISTRY_IMAGE:$DOCKER_TAG" \
         --push \
@@ -49,6 +49,7 @@ build:
         - src/**/*.ts
         - src/**/*.tsx
         - public/**/*.svg
+
 
 #############################################
 # 2) Build "utils"-image
