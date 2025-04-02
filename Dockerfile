@@ -17,7 +17,7 @@ RUN if [ "$CI" = "true" ]; then \
     else \
       npm run build; \
     fi
-#CMD ["npm", "start"]
+CMD ["npm", "start"]
 
 # Stage 2: Run the application
 FROM node:18-alpine
