@@ -84,6 +84,7 @@ exempel: git blame src/app/SignIn/page.tsx
 #### Använd Rebase kontinuerligt om du arbetar på en branch länge för att inte hamna för långt efter de andra som kör sina egna branches emot main.
 
 Mer info om Rebase finns här:
+
 [Atlassin Guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)
 
 [Youtube-genomgång](https://www.youtube.com/watch?v=f1wnYdLEpgI)
