@@ -62,27 +62,29 @@ Vid merge tas den temporära review‑miljön automatiskt ner, och production‑
 
 ## 7. Git-kommandon
 
+Din bästa vän!
 ```
 git status
 ```
-Din bästa vän!
+Visa alla branches, MR's och commits i CLI
 ```
 git log --oneline --graph --decorate --all
 ```
-Visar alla branches, MR's och commits i CLI.
+Visa ändringsdetaljer
 ```
 git log -p
 ```
-Visar ändringsdetaljer
+Visa vem som ändrat varje rad i en fil
 ```
 git blame <sökväg+filnamn>
 exempel: git blame src/app/SignIn/page.tsx 
 ```
-Visar vem som ändrat varje rad i en fil
+
 
 #### Använd Rebase kontinuerligt om du arbetar på en branch länge för att inte hamna för långt efter de andra som kör sina egna branches emot main.
 
 Mer info om Rebase finns här:
 [Atlassin Guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)
+
 [Youtube-genomgång](https://www.youtube.com/watch?v=f1wnYdLEpgI)
 
