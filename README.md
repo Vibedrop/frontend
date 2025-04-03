@@ -10,7 +10,7 @@ Endast MR kan ändra main, så håll koden ren.
 
 Om du märker att .gitignore saknar något, meddela eller lägg till en ändring via en egen branch.
 
-1.a Klona FRONTEND repot - ssh
+#### 1.a Klona FRONTEND repot - ssh
 ```
 git clone git@git.chasacademy.dev:chas-challenge-2025/vibedrop/frontend.git
 ```
@@ -19,7 +19,7 @@ git clone git@git.chasacademy.dev:chas-challenge-2025/vibedrop/frontend.git
 git clone https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend.git
 ```
 
-2. Skapa en ny branch
+#### 2. Skapa en ny branch
 Skapa en branch från main med ett beskrivande namn på din feature - OBS: Max 30 tecken långt.
 Exempel:
 ```
