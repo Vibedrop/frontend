@@ -14,7 +14,7 @@ Om du märker att .gitignore saknar något, meddela eller lägg till en ändring
 ```
 git clone git@git.chasacademy.dev:chas-challenge-2025/vibedrop/frontend.git
 ```
-1.b Klona FRONTEND repot - https
+#### 1.b Klona FRONTEND repot - https
 ```
 git clone https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend.git
 ```
