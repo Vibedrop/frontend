@@ -1,5 +1,5 @@
 services:
-  backend:
+  frontend:
     image: registry.chasacademy.dev/chas-challenge-2025/vibedrop/frontend:${DOCKER_TAG}
     restart: always
     networks:
