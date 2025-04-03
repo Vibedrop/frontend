@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# [Latest Deployment](https://vibedrop-frontend.cc25.chasacademy.dev/)
 
-First, run the development server:
+# Arbetsflöde för Vibedrop
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+All kod ändras via Merge Requests (MR).
+Direktpush eller force-push till main är förbjudet.
+
+Endast MR kan ändra main, så håll koden ren.
+
+Om du märker att .gitignore saknar något, meddela eller lägg till en ändring via en egen branch.
+
+1.a Klona FRONTEND repot - ssh
+```
+git clone git@git.chasacademy.dev:chas-challenge-2025/vibedrop/frontend.git
+```
+1.b Klona FRONTEND repot - https
+```
+git clone https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Skapa en ny branch
+Skapa en branch från main med ett beskrivande namn på din feature - OBS: Max 30 tecken långt.
+Exempel:
+```
+git checkout -b ny-feature
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### 3. Utveckla och testa lokalt
+Gör dina ändringar i din feature‑branch.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Kör lokala tester (t.ex. npm run dev) för att säkerställa att allt fungerar. ??
 
-## Learn More
+#### 4. Pusha din branch och skapa en Merge Request
+```
+git push -u origin ny-feature
+```
 
-To learn more about Next.js, take a look at the following resources:
+Skapa en Merge Request i GitLab WebGUI från din branch mot main.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Välj om du vill att någon annan ska granska din kod innan den godkänns.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Markera MR:n som "Draft" tills din funktion är klar.
 
-## Deploy on Vercel
+Välj alternativen SQUASH COMMITS och DELETE SOURCE BRANCH för att hålla historiken ren.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 5. CI/CD Pipeline och Review Environment
+När MR:n skapas startas pipelinen automatiskt. Den gör följande:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Bygger din kod och skapar en Docker‑image.
+
+Deployar en temporär review‑environment, t.ex. https://review-ny-feature.cc25.chasacademy.dev, där du kan se dina ändringar live.
+
+I MR:n finns länk till testmiljön under Operate->Environments
+
+#### 6. Granskning och Merge
+
+Om allt fungerar, ändra MR:n från "Draft" till klar och mergea den till main.
+
+Vid merge tas den temporära review‑miljön automatiskt ner, och production‑miljön deployas med den nya koden från din branch.
+
+
