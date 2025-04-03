@@ -7,8 +7,7 @@ All kod ändras via Merge Requests (MR).
 Direktpush eller force-push till main är förbjudet.
 
 Endast MR kan ändra main, så håll koden ren.
-
-Om du märker att .gitignore saknar något, meddela eller lägg till en ändring via en egen branch.
+Om du märker att .gitignore saknar något, meddela David eller lägg till en ändring via en egen branch.
 
 #### 1.a Klona FRONTEND repot - ssh
 ```
@@ -28,27 +27,29 @@ git checkout -b ny-feature
 
 #### 3. Utveckla och testa lokalt
 Gör dina ändringar i din feature‑branch.
-
 Kör lokala tester (t.ex. npm run dev) för att säkerställa att allt fungerar. ??
 
-#### 4. Pusha din branch och skapa en Merge Request
+#### 4.a Pusha din branch och skapa en Merge Request
 ```
 git push -u origin ny-feature
 ```
 
 Skapa en Merge Request i GitLab WebGUI från din branch mot main.
-
 Välj om du vill att någon annan ska granska din kod innan den godkänns.
-
 Markera MR:n som "Draft" tills din funktion är klar.
-
 Välj alternativen SQUASH COMMITS och DELETE SOURCE BRANCH för att hålla historiken ren.
+
+#### 4.b Gå tillbaks till main och kör en ny Pull
+```
+git checkout main
+git pull
+```
+Detta gör att du har din senaste MR även lokalt.
+
 
 #### 5. CI/CD Pipeline och Review Environment
 När MR:n skapas startas pipelinen automatiskt. Den gör följande:
-
 Bygger din kod och skapar en Docker‑image.
-
 Deployar en temporär review‑environment, t.ex. https://review-ny-feature.cc25.chasacademy.dev, där du kan se dina ändringar live.
 
 I MR:n finns länk till testmiljön under Operate->Environments
@@ -56,7 +57,32 @@ I MR:n finns länk till testmiljön under Operate->Environments
 #### 6. Granskning och Merge
 
 Om allt fungerar, ändra MR:n från "Draft" till klar och mergea den till main.
-
 Vid merge tas den temporära review‑miljön automatiskt ner, och production‑miljön deployas med den nya koden från din branch.
 
+
+## 7. Git-kommandon
+
+```
+git status
+```
+Din bästa vän!
+```
+git log --oneline --graph --decorate --all
+```
+Visar alla branches, MR's och commits i CLI.
+```
+git log -p
+```
+Visar ändringsdetaljer
+```
+git blame <sökväg+filnamn>
+exempel: git blame src/app/SignIn/page.tsx 
+```
+Visar vem som ändrat varje rad i en fil
+
+#### Använd Rebase kontinuerligt om du arbetar på en branch länge för att inte hamna för långt efter de andra som kör sina egna branches emot main.
+
+Mer info om Rebase finns här:
+[Atlassin Guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)
+[Youtube-genomgång](https://www.youtube.com/watch?v=f1wnYdLEpgI)
 
