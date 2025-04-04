@@ -9,7 +9,7 @@ function SignInPage() {
         </header>
         <main className="flex flex-col">
             <h1>Login</h1>
-            <label htmlFor="">EMAAAIL2<input type="text" /></label>
+            <label htmlFor="">Email<input type="text" /></label>
             <label htmlFor="">Password<input type="text" /></label>
         </main>
         <footer>
