@@ -38,6 +38,7 @@ build:
         - src/**/*.ts
         - src/**/*.tsx
         - public/**/*.svg
+        - docker-compose.yml
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       changes:
         - Dockerfile
@@ -47,6 +48,7 @@ build:
         - src/**/*.ts
         - src/**/*.tsx
         - public/**/*.svg
+        - docker-compose.yml
 
 #############################################
 # 2) Build "utils"-image
