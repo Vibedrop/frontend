@@ -1,9 +1,9 @@
 "use client"
-import Image from "next/image";
 import Link from 'next/link'
 import { useDropzone } from "react-dropzone";
-import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
+import { Button } from "@radix-ui/themes";
+import { UserIcon } from "lucide-react";
 
 
 export default function Home() {
@@ -74,10 +74,17 @@ export default function Home() {
   return (
     <>
     <header>
-      <Link href="SignIn">Login</Link>
+      <Button asChild>
+        <Link
+          className="bg-brand pl-2"
+          href="/SignIn">
+          <UserIcon />
+          Login
+        </Link>
+      </Button>
     </header>
-    <main>
 
+    <main>
     <section className="container">
       <div {...getRootProps({ className: "dropzone" })}>
         <input {...getInputProps()} />
