@@ -25,11 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-black">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Theme appearance="dark" data-theme="custom">
+        <Theme appearance="dark" accentColor="red" data-theme="custom" className="flex bg-background flex-col h-screen p-2 pt-0">
           {children}
         </Theme>
       </body>
