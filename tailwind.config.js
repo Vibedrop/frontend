@@ -13,8 +13,14 @@ module.exports = {
         accent: "hsl(var(--accent))",
         muted: "hsl(var(--muted))",
         ring: "hsl(var(--ring))",
+
         brand: {
           DEFAULT: "hsl(var(--brand))",
+        },
+
+        whiteButton: {
+          DEFAULT: 'hsl(var(--foreground))',
+          text: 'hsl(var(--background))'
         },
       },
       borderRadius: {
