@@ -1,11 +1,10 @@
-"use client"
-import Link from 'next/link'
+"use client";
+import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { useEffect, useState } from "react";
 import { Box, Flex } from "@radix-ui/themes";
-import Sidebar from '@/components/Sidebar'
-import Header from '@/components/Header';
-
+import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 
 export default function Home() {
   const [files, setFiles] = useState<
@@ -88,22 +87,30 @@ export default function Home() {
             <aside>
               <h4>Files</h4>
               <ul>
-                {files.map((file) => (
-                  <li key={file.id}>
-                    <a
-                      href={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      >
-                      {file.name}
-                    </a>
-                    <audio controls>
-                      <source src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`} type="audio/wav"></source>
-                      <source src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`} type="audio/svg"></source>
-                      Your browser does not support the audio element.
-                    </audio>
-                  </li>
-                ))}
+                {files
+                  ? files.map((file) => (
+                      <li key={file.id}>
+                        <a
+                          href={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {file.name}
+                        </a>
+                        <audio controls>
+                          <source
+                            src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
+                            type="audio/wav"
+                          ></source>
+                          <source
+                            src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
+                            type="audio/svg"
+                          ></source>
+                          Your browser does not support the audio element.
+                        </audio>
+                      </li>
+                    ))
+                  : "No files"}
               </ul>
             </aside>
           </section>
