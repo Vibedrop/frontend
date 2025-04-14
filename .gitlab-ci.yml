@@ -39,6 +39,7 @@ build:
         - src/**/*.tsx
         - public/**/*.svg
         - docker-compose.yml
+        - .gitlab-ci.yml
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       changes:
         - Dockerfile
@@ -49,6 +50,7 @@ build:
         - src/**/*.tsx
         - public/**/*.svg
         - docker-compose.yml
+        - .gitlab-ci.yml
 
 #############################################
 # 2) Build "utils"-image
@@ -100,6 +102,12 @@ deploy_review:
 
       # Normalisera (ta bort mellanslag, specialtecken etc.)
       export NORMALIZED_STACK_NAME=$(echo "$STACK_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]_-')
+      
+      # Förhindra att stack-name är längre än 63chars
+      if [ ${#NORMALIZED_STACK_NAME} -gt 63 ]; then
+        echo "Error: Stack name '$NORMALIZED_STACK_NAME' exceeds 63 characters."
+        exit 1
+      fi
 
       # Sätt environment slug & Docker-tag
       export CI_ENVIRONMENT_SLUG="review-$(echo "$CI_COMMIT_REF_NAME" | tr '[:upper:]' '[:lower:]')"
@@ -162,7 +170,7 @@ deploy_main:
 
   environment:
     name: "production"
-    url: "https://vibedrop-frontend.cc25.chasacademy.dev"   # <--- Ändra URL till din frontends domin
+    url: "https://vibedrop-frontend.cc25.chasacademy.dev"
 
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
