@@ -44,22 +44,27 @@ function SignUpPage() {
   return (
     <>
       <header></header>
-      <main className="flex flex-col items-center">
-        <h1>SignUp</h1>
-        <form action="" className="flex flex-col  border-2 border-black p-5">
-          <label htmlFor="">
-            Email:
-            <input className="border-2 border-gray-400" type="text" onChange={emailHandler} />
-          </label>
-          <label htmlFor="">
-            Password:
-            <input className="border-2 border-gray-400" type="text" onChange={passwordHandler} />
-          </label>
-          <input className="border-2 border-black m-auto" type="submit" onClick={SignUp} />
-        </form>
+      <main className="flex flex-col items-center justify-center overflow-hidden">
+        <div className="flex flex-col items-center mt-[5rem] bg-zinc-900 p-5 justify-center w-[17rem] rounded-lg gap-5">
+          <h1>Join Vibedrop</h1>
+          <form action="" className="flex flex-col gap-5">
+            <label htmlFor="" >
+              Email:
+              <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={emailHandler} />
+            </label>
+            <label htmlFor="">
+              Password:
+              <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={passwordHandler} />
+            </label>
+            <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" onClick={SignUp} />
+            <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/SignIn">SIGN IN</Link></span></p>
+          </form>
+        </div>
       </main>
       <footer>
-        <Link href="/">Go back</Link>
+      <div className="flex flex-col items-center justify-center mt-9">
+        <span className="font-bold bg-white text-center text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300"><Link href="/">Go back</Link></span>
+      </div>
       </footer>
     </>
   );
