@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function SignUpPage() {
+  const router = useRouter();
+
   const SignUp = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -19,6 +22,7 @@ function SignUpPage() {
       if (response.ok) {
         const data = await response.json();
         console.log("response", data);
+        router.push("/SignIn");
       } else {
         throw new Error("error");
       }
@@ -27,13 +31,13 @@ function SignUpPage() {
     }
   };
 
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const emailHandler = (e: any) => {
+  const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-  const passwordHandler = (e: any) => {
+  const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
