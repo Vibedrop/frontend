@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Box, Flex } from "@radix-ui/themes";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
+import AudioPlayer from "@/components/footer/AudioPlayer";
 
 export default function Home() {
   const [files, setFiles] = useState<
@@ -118,7 +119,7 @@ export default function Home() {
       </Flex>
 
       <footer>
-        <Link href="/FAQ">FAQ</Link>
+        <AudioPlayer />
       </footer>
     </>
   );
