@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Theme appearance="dark" accentColor="red" data-theme="custom" className="flex bg-background flex-col h-screen p-2 pt-0">
+        <Theme appearance="dark" accentColor="red" data-theme="custom" className="flex bg-background flex-col h-screen px-2">
           {children}
         </Theme>
       </body>
