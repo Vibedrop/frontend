@@ -17,6 +17,7 @@ function SignUpPage() {
         body: JSON.stringify({
           email: email,
           password: password,
+          username: username,
         }),
       });
       if (response.ok) {
@@ -33,12 +34,16 @@ function SignUpPage() {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
   const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+  };
+  const usernameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
   };
 
   return (
@@ -50,11 +55,15 @@ function SignUpPage() {
           <form action="" className="flex flex-col gap-5">
             <label htmlFor="" >
               Email:
-              <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={emailHandler} />
+              <input className="border-2 border-zinc-700 rounded-lg w-full" type="email" onChange={emailHandler} />
             </label>
             <label htmlFor="">
               Password:
-              <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={passwordHandler} />
+              <input className="border-2 border-zinc-700 rounded-lg w-full" type="password" onChange={passwordHandler} />
+            </label>
+            <label htmlFor="">
+              Username:
+              <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={usernameHandler} />
             </label>
             <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" onClick={SignUp} />
             <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/SignIn">SIGN IN</Link></span></p>
