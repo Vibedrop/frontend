@@ -2,12 +2,16 @@
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { useEffect, useState } from "react";
-import { Box, Flex } from "@radix-ui/themes";
+import { Box, Callout, Flex } from "@radix-ui/themes";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import AudioPlayer from "@/components/footer/AudioPlayer";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { Info } from "lucide-react";
 
 export default function Home() {
+  const { isAuthenticated, user } = useAuthStore((state) => state)
+
   const [files, setFiles] = useState<
     {
       name: string;
@@ -119,7 +123,16 @@ export default function Home() {
       </Flex>
 
       <footer>
-        <AudioPlayer />
+        {isAuthenticated ? <AudioPlayer /> : (
+          <Callout.Root className="justify-center my-2">
+            <Callout.Icon>
+              <Info />
+            </Callout.Icon>
+            <Callout.Text>
+              You are not authorized to view the audio player.
+            </Callout.Text>
+          </Callout.Root>
+        )}
       </footer>
     </>
   );

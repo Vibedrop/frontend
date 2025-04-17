@@ -2,15 +2,22 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 function SignInPage() {
   const router = useRouter();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   const SignIn = async (event: React.FormEvent) => {
     event.preventDefault();
+
     try {
       const response = await fetch("http://localhost:3000/auth/sign-in", {
-        method: "Post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -18,20 +25,32 @@ function SignInPage() {
           email: email,
           password: password,
         }),
+        credentials: "include",
       });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("response", data);
-        router.push("/");
-      } else {
+
+      if (!response.ok) {
         throw new Error("Unauthorized");
       }
-    } catch (error) {
+
+      // Hämta användarprofilen direkt efter inloggning
+      const profileRes = await fetch("http://localhost:3000/users/me", {
+        credentials: "include",
+      });
+
+      if (!profileRes.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+
+      const user = await profileRes.json();
+      console.log("user from profile:", user);
+      setAuth(true, user);
+      router.push("/");
+
+    } catch (error: any) {
       console.error(error);
+      setError(error.message || "Something went wrong.");
     }
   };
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
 
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -46,6 +65,9 @@ function SignInPage() {
       <main className="flex flex-col items-center justify-center overflow-hidden">
         <div className="flex flex-col items-center mt-[5rem] bg-zinc-900 p-5 justify-center max-h-[90%] w-[17rem] rounded-lg gap-5">
           <h1>Sign in to Vibedrop</h1>
+
+          {error && <p className="text-red-500">{error}</p>}
+
           <form action="" className="flex flex-col gap-5">
             <label htmlFor="">
               Email:
