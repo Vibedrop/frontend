@@ -2,9 +2,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { IconButton } from "@radix-ui/themes";
+import { Eye, EyeOff, Music } from "lucide-react";
 
 function SignUpPage() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const SignUp = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -57,23 +60,35 @@ function SignUpPage() {
               Email:
               <input className="border-2 border-zinc-700 rounded-lg w-full" type="email" onChange={emailHandler} />
             </label>
-            <label htmlFor="">
+            <label htmlFor="" className="relative">
               Password:
-              <input className="border-2 border-zinc-700 rounded-lg w-full" type="password" onChange={passwordHandler} />
+              <input className="border-2 border-zinc-700 rounded-lg w-full pr-6" type={showPassword ? "text" : "password"} onChange={passwordHandler} />
+                <IconButton
+                  type="button"
+                  variant="ghost"
+                  className="absolute bg-transparent text-foreground size-4 right-1.5 bottom-1.5 cursor-pointer"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </IconButton>
             </label>
             <label htmlFor="">
               Username:
               <input className="border-2 border-zinc-700 rounded-lg w-full" type="text" onChange={usernameHandler} />
             </label>
-            <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" onClick={SignUp} />
+            <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign Up"  onClick={SignUp} />
             <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/SignIn">SIGN IN</Link></span></p>
           </form>
         </div>
       </main>
+
       <footer>
-      <div className="flex flex-col items-center justify-center mt-9">
-        <span className="font-bold bg-white text-center text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300"><Link href="/">Go back</Link></span>
-      </div>
+        <div className="flex flex-col items-center justify-center mt-9">
+          <Link className="flex gap-3 justify-center font-bold bg-white text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300" href="/">
+            <Music className="ml-[-0.5rem]"/>
+            App preview
+          </Link>
+        </div>
       </footer>
     </>
   );
