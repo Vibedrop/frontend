@@ -20,7 +20,7 @@ function FAQPage() {
             </div>
         </main>
         <footer>
-            <Link href="/">Go back</Link>
+            <Link href="/">Preview app</Link>
         </footer>
         </>
     )
