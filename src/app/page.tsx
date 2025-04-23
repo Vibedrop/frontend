@@ -1,129 +1,116 @@
-"use client";
-import Link from "next/link";
-import { useDropzone } from "react-dropzone";
-import { useEffect, useState } from "react";
-import { Box, Callout, Flex } from "@radix-ui/themes";
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
-import AudioPlayer from "@/components/footer/AudioPlayer";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { Info } from "lucide-react";
+"use client"
+import { useEffect, useState } from "react"
+import { Box, Callout, Flex } from "@radix-ui/themes"
+import Sidebar from "@/components/Sidebar"
+import Header from "@/components/Header"
+import AudioDropzone from "@/components/AudioDropzone"
+import AudioPlayer from "@/components/footer/AudioPlayer"
+import { useAuthStore } from "@/stores/useAuthStore"
+import { Info } from "lucide-react"
 
 export default function Home() {
   const { isAuthenticated, user } = useAuthStore((state) => state)
 
   const [files, setFiles] = useState<
     {
-      name: string;
-      bucket_id: string;
-      owner: string;
-      id: string;
-      updated_at: string;
-      created_at: string;
-      last_accessed_at: string;
+      key: string
+      lastModified: string
+      size: number
+      etag: string
+      storageClass: string
+      preSignedUrl: string
     }[]
-  >([]);
+  >([])
 
-  const uploadFile = async (files: any) => {
+  const uploadFile = async (file: FormData) => {
     try {
-      const response = await fetch("http://localhost:3000/", {
+      console.log("file get", file.get("file"))
+      const response = await fetch("http://localhost:3000/test/s3", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          files: files,
-        }),
-      });
+        body: file,
+      })
       if (response.ok) {
-        const data = await response.json();
-        console.log("response", data);
+        const data = await response.json()
+        console.log("POST response uploadFile()", data)
+
+        await logFiles()
       } else {
-        throw new Error("klient");
+        throw new Error("uploadFile() failed")
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDropAccepted: (files) => {
-      uploadFile(files[0]);
-    },
-  });
+  }
 
   async function logFiles() {
     try {
-      const response = await fetch("http://localhost:3000/", {
+      const response = await fetch("http://localhost:3000/test/s3", {
         method: "Get",
         headers: {
           "Content-Type": "application/json",
         },
-      });
+      })
       if (response.ok) {
-        const data = await response.json();
-        console.log("response get", data);
-        setFiles(data.data);
+        const data = await response.json()
+        console.log("GET response logFiles()", data)
+        setFiles(data)
       } else {
-        throw new Error("klient");
+        throw new Error("logFiles() failed")
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    logFiles();
-  }, []);
+    logFiles()
+  }, [])
+
+  useEffect(() => {
+    console.log("useEffect files", files)
+  }, [files])
 
   return (
     <>
       <Header />
 
-      <Flex direction="row" gap="2" className="h-full">
+      <Flex
+        direction="row"
+        gap="2"
+        className="h-full"
+      >
         <Sidebar />
 
         <Box className="bg-zinc-900 w-full p-4 rounded-lg overflow-hidden">
           <section className="container">
-            <div {...getRootProps({ className: "dropzone" })}>
-              <input {...getInputProps()} />
-              <p>Drag 'n' drop some files here, or click to select files</p>
-            </div>
-            <aside>
-              <h4>Files</h4>
-              <ul>
-                {files
-                  ? files.map((file) => (
-                      <li key={file.id}>
-                        <a
-                          href={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {file.name}
-                        </a>
-                        <audio controls>
-                          <source
-                            src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
-                            type="audio/wav"
-                          ></source>
-                          <source
-                            src={`https://nbodsrunndqzztsvilcc.supabase.co/storage/v1/object/public/vibe//${file.name}`}
-                            type="audio/svg"
-                          ></source>
-                          Your browser does not support the audio element.
-                        </audio>
-                      </li>
-                    ))
-                  : "No files"}
-              </ul>
-            </aside>
+            <AudioDropzone onFileUpload={uploadFile} />
+            <ul>
+              {files.length > 0 ? (
+                files.map((file) =>
+                  file.key !== ".emptyFolderPlaceholder" ? (
+                    <li key={file.key}>
+                      <audio controls>
+                        <source
+                          src={`https://fjjqmgphqdsuufzdtfjf.supabase.co/storage/v1/object/public/bucket-test/${file.key}`}
+                          type="audio/wav"
+                        />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </li>
+                  ) : null
+                )
+              ) : (
+                <p>No audio files uploaded yet</p>
+              )}
+            </ul>
           </section>
         </Box>
       </Flex>
 
       <footer>
-        {isAuthenticated ? <AudioPlayer /> : (
+        {isAuthenticated ? (
+          <AudioPlayer />
+        ) : (
           <Callout.Root className="justify-center my-2">
             <Callout.Icon>
               <Info />
@@ -135,5 +122,5 @@ export default function Home() {
         )}
       </footer>
     </>
-  );
+  )
 }
