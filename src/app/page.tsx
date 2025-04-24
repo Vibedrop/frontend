@@ -1,12 +1,13 @@
 "use client"
+import { BACKEND_URL } from "@/utilities/config"
 import { useEffect, useState } from "react"
+import { useAuthStore } from "@/stores/useAuthStore"
 import { Box, Callout, Flex } from "@radix-ui/themes"
+import { Info } from "lucide-react"
 import Sidebar from "@/components/Sidebar"
 import Header from "@/components/Header"
 import AudioDropzone from "@/components/AudioDropzone"
 import AudioPlayer from "@/components/footer/AudioPlayer"
-import { useAuthStore } from "@/stores/useAuthStore"
-import { Info } from "lucide-react"
 
 export default function Home() {
   const { isAuthenticated, user } = useAuthStore((state) => state)
@@ -25,7 +26,7 @@ export default function Home() {
   const uploadFile = async (file: FormData) => {
     try {
       console.log("file get", file.get("file"))
-      const response = await fetch("http://localhost:3000/test/s3", {
+      const response = await fetch(`${BACKEND_URL}/test/s3`, {
         method: "POST",
         body: file,
       })
@@ -44,7 +45,7 @@ export default function Home() {
 
   async function logFiles() {
     try {
-      const response = await fetch("http://localhost:3000/test/s3", {
+      const response = await fetch(`${BACKEND_URL}/test/s3`, {
         method: "Get",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +92,7 @@ export default function Home() {
                     <li key={file.key}>
                       <audio controls>
                         <source
-                          src={`https://fstkjmvuruomrftisffs.supabase.co/storage/v1/object/public/vibedrop/${file.key}`}
+                          src={file.preSignedUrl}
                           type="audio/wav"
                         />
                         Your browser does not support the audio element.

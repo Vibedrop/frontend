@@ -1,4 +1,4 @@
-import { metadata } from "@/config/metadata";
+import { metadata } from "@/utilities/metadata";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BACKEND_URL } from "@/utilities/config"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -22,7 +23,7 @@ function SignInPage() {
     setErrors({});
 
     try {
-      const response = await fetch("http://localhost:3000/auth/sign-in",{
+      const response = await fetch(`${BACKEND_URL}/auth/sign-in`,{
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password}),
@@ -37,7 +38,7 @@ function SignInPage() {
       }
 
       // Fetch User Profile after successful sign-in
-      const profileRes = await fetch("http://localhost:3000/users/me", {
+      const profileRes = await fetch(`${BACKEND_URL}/users/me`, {
         credentials: "include",
       });
 
