@@ -91,7 +91,7 @@ export default function Home() {
                     <li key={file.key}>
                       <audio controls>
                         <source
-                          src={`https://fjjqmgphqdsuufzdtfjf.supabase.co/storage/v1/object/public/bucket-test/${file.key}`}
+                          src={`https://fstkjmvuruomrftisffs.supabase.co/storage/v1/object/public/vibedrop/${file.key}`}
                           type="audio/wav"
                         />
                         Your browser does not support the audio element.

@@ -1,10 +1,9 @@
-// stores/useAuthStore.ts
 import { create } from "zustand";
 
 interface User {
   id: string;
   email: string;
-  // Lägg till mer om du vill (name, username, osv)
+  // Add more from profile (name, username, etc)
 }
 
 interface AuthState {
