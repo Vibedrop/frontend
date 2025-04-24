@@ -1,9 +1,10 @@
 "use client";
-import Link from "next/link";
+import { BACKEND_URL } from "@/utilities/config"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Callout, IconButton, TextField, Theme } from "@radix-ui/themes";
 import { Eye, EyeOff, Info, Music } from "lucide-react";
+import Link from "next/link";
 
 function SignUpPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ function SignUpPage() {
     setErrors({});
 
     try {
-      const response = await fetch("http://localhost:3000/auth/sign-up", {
+      const response = await fetch(`${BACKEND_URL}/auth/sign-up`, {
         method: "POST",
         headers: { "Content-Type": "application/json"},
         body: JSON.stringify({ email, password, username }),

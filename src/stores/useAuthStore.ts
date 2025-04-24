@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { BACKEND_URL } from "@/utilities/config"
 
 interface User {
   id: string;
@@ -26,7 +27,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   checkAuth: async () => {
     try {
-      const res = await fetch("http://localhost:3000/users/me", {
+      const res = await fetch(`${BACKEND_URL}/users/me`, {
         credentials: "include",
       });
 

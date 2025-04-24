@@ -1,8 +1,9 @@
 "use client"
+import { BACKEND_URL } from "@/utilities/config"
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/useAuthStore'
-import { Box, Button, Text } from '@radix-ui/themes'
+import { Box, Text } from '@radix-ui/themes'
 import { LucideAudioWaveform } from 'lucide-react'
 import { LoginButton } from './buttons/LoginButton'
 import Link from 'next/link'
@@ -18,7 +19,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3000/auth/sign-out", {
+      await fetch(`${BACKEND_URL}/auth/sign-out`, {
         method: "POST",
         credentials: "include",
       });
