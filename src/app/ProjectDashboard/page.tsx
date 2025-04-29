@@ -74,14 +74,16 @@ function ProjectDashboardPage() {
             <div className="border-2 border-white rounded-lg p-2 mx-2 flex flex-col bg-gray-900 w-3/12">
               <p className="text-center">comments</p>
               <ul className="w-full h-3/6">
-                {comments
-                  ? comments.map((comments, index) => (
-                      <li key={index} className="flex gap-2">
-                        <p>{comments.name}:</p>
-                        <p> {comments.comment}</p>
-                      </li>
-                    ))
-                  : "No comments"}
+                {comments ? (
+                  comments.map((comments, index) => (
+                    <li key={index} className="flex gap-2">
+                      <p>{comments.name}:</p>
+                      <p> {comments.comment}</p>
+                    </li>
+                  ))
+                ) : (
+                  <p>No comments</p>
+                )}
               </ul>
               <input className="" type="text" />
             </div>
