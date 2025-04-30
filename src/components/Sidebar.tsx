@@ -6,6 +6,7 @@ import { Box, Flex, IconButton } from "@radix-ui/themes";
 import SidebarProject from "./sidebar/SidebarProject";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { BACKEND_URL } from "@/utilities/config";
+import DialogSquare from "@/components/dialogSquare";
 
 export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebarStore();
@@ -70,6 +71,9 @@ export default function Sidebar() {
             <p>Not logged in</p>
           )}
           {/* <SidebarProject title="Project 1" desc="description" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8" /> */}
+          <div className="flex">
+            <DialogSquare/>
+          </div>
         </nav>
       </Box>
     </Flex>
