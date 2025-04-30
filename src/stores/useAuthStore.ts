@@ -1,9 +1,11 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { BACKEND_URL } from "@/utilities/config"
 
 interface User {
   id: string;
   email: string;
+  username: string;
   // Add more from profile (name, username, etc)
 }
 
@@ -14,30 +16,37 @@ interface AuthState {
   checkAuth: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: false,
-  user: null,
+export const useAuthStore = create(
+  persist<AuthState>(
+    (set) => ({
+      isAuthenticated: false,
+      user: null,
 
-  setAuth: (auth, user) => {
-    set({
-      isAuthenticated: auth,
-      user: user,
-    });
-  },
+      setAuth: (auth, user) => {
+        set({
+          isAuthenticated: auth,
+          user: user,
+        });
+      },
 
-  checkAuth: async () => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/users/me`, {
-        credentials: "include",
-      });
+      checkAuth: async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/users/me`, {
+            credentials: "include",
+          });
 
-      if (!res.ok) throw new Error("Not authenticated");
+          if (!res.ok) throw new Error("Not authenticated");
 
-      const user = await res.json();
-      set({ isAuthenticated: true, user });
+          const user = await res.json();
+          set({ isAuthenticated: true, user });
 
-    } catch (error) {
-      set({ isAuthenticated: false, user: null });
+        } catch (error) {
+          set({ isAuthenticated: false, user: null });
+        }
+      },
+    }),
+    {
+      name: "auth"
     }
-  },
-}));
+  )
+);
