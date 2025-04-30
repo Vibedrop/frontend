@@ -1,6 +1,7 @@
 import { metadata } from "@/utilities/metadata";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
+import AuthWrapper from "@/components/AuthWrapper";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
 
@@ -27,7 +28,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Theme appearance="dark" accentColor="red" data-theme="custom" className="flex bg-background flex-col h-screen px-2">
-          {children}
+          <AuthWrapper>
+            {children}
+          </AuthWrapper>
         </Theme>
       </body>
     </html>
