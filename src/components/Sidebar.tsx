@@ -11,21 +11,18 @@ export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebarStore();
   const { isAuthenticated, user } = useAuthStore((state) => state);
   const [project, setProject] = useState([]);
-
   async function getProjects() {
     try {
-      const response = await fetch(`${BACKEND_URL}/project/`, {
-        method: "Post",
+      const response = await fetch(`${BACKEND_URL}/users/me`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: user?.id,
-        }),
+        credentials: "include",
       });
       if (response.ok) {
         const data = await response.json();
-        setProject(data);
+        setProject(data.ownedProjects);
         console.log("hi", data);
       } else {
         throw new Error("error");
@@ -72,6 +69,7 @@ export default function Sidebar() {
           ) : (
             <p>Not logged in</p>
           )}
+          {/* <SidebarProject title="Project 1" desc="description" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8" /> */}
         </nav>
       </Box>
     </Flex>
