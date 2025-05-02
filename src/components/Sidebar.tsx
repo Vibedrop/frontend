@@ -60,6 +60,7 @@ export default function Sidebar() {
                       title={project.name}
                       desc={project.description}
                       src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8"
+                      projectId={project.id}
                     />
                   </div>
                 );
@@ -72,7 +73,7 @@ export default function Sidebar() {
           )}
           {/* <SidebarProject title="Project 1" desc="description" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8" /> */}
           <div className="flex">
-            <DialogSquare/>
+            <DialogSquare />
           </div>
         </nav>
       </Box>
