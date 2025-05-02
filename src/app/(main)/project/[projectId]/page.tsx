@@ -1,9 +1,8 @@
 "use client";
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { BACKEND_URL } from "@/utilities/config";
+import { MessageSquareText } from "lucide-react";
 
 interface Project {
   id: string;
@@ -124,8 +123,8 @@ export default function Page() {
 
   return (
     <>
-      <section className="flex h-1/3">
-        <img className="h-full object-cover rounded-full" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8" alt="" />
+      <section className="flex">
+        <img className="object-cover" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop" alt="" />
         <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
           <h1 className="text-4xl">{project?.name}</h1>
           <p>{project?.description}</p>
@@ -143,10 +142,12 @@ export default function Page() {
           </ul>
         </div>
       </section>
+
       <section className="m-4 h-16 w-1/4 border-dashed border-2">
         <button>works</button>
       </section>
-      <section className="flex h-full">
+
+      <section className="flex grow">
         <ul className="flex gap-2 flex-col w-9/12">
           {audioFiles?.map((audio: AudioFile) => (
             <li key={audio.name} className="flex gap-2">
@@ -164,14 +165,14 @@ export default function Page() {
                 <p>info3</p>
               </div>
               <div>
-                <img className="bg-white h-4 w-4" onClick={() => handleComments(audio.id)} src="message-square-text.svg" alt="" />
+                <MessageSquareText onClick={() => handleComments(audio.id)} />
               </div>
             </li>
           ))}
         </ul>
         <div className="border-2 border-white rounded-lg p-2 mx-2 flex flex-col bg-gray-900 w-3/12">
           <p className="text-center">comments</p>
-          <ul className="w-full h-3/6">
+          <ul className="w-full">
             {comments ? (
               comments.map((comment, index) => (
                 <li key={index} className="flex gap-2">
@@ -183,7 +184,7 @@ export default function Page() {
               <p>No comments</p>
             )}
           </ul>
-          <input className="" type="text" />
+          <input type="text" />
         </div>
       </section>
     </>

@@ -1,9 +1,8 @@
-import { useAuthStore } from '@/stores/useAuthStore'
 import { BACKEND_URL } from '@/utilities/config';
-import { Button, ContextMenu, DropdownMenu, IconButton, Tooltip } from '@radix-ui/themes'
-import { CircleUser, LogOutIcon, User, UserCog } from 'lucide-react'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { DropdownMenu, IconButton } from '@radix-ui/themes'
+import { CircleUser, LogOutIcon, UserCog } from 'lucide-react'
 import { useRouter } from 'next/navigation';
-import React, { use, useEffect } from 'react'
 
 export default function ProfileMenu() {
   const router = useRouter();
@@ -16,7 +15,7 @@ export default function ProfileMenu() {
         credentials: "include",
       });
       setAuth(false, null);
-      router.push("/SignIn");
+      router.push("/sign-in");
     } catch (err) {
       console.error("Logout failed:", err);
     }
@@ -31,7 +30,7 @@ export default function ProfileMenu() {
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content>
-        <DropdownMenu.Item onClick={() => router.push('/Profile')}>
+        <DropdownMenu.Item onClick={() => router.push('/profile')}>
           <UserCog size={16} />
           Profile
         </DropdownMenu.Item>

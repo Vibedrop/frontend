@@ -2,7 +2,7 @@
 import { BACKEND_URL } from "@/utilities/config";
 import { useEffect, useState } from "react";
 import { Box } from "@radix-ui/themes";
-import AudioDropzone from "@/components/AudioDropzone";
+import AudioDropzone from "@/components/UI/AudioDropzone";
 
 export default function Home() {
 

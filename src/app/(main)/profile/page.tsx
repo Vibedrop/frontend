@@ -1,7 +1,7 @@
 "use client"
-import { LoginButton } from '@/components/buttons/LoginButton';
+import { LoginButton } from '@/components/UI/LoginButton';
 import { useAuthStore } from '@/stores/useAuthStore'
-import { Button, TextField, Theme } from '@radix-ui/themes';
+import { TextField, Theme } from '@radix-ui/themes';
 import React, { useState } from 'react'
 
 export default function ProfilePage() {

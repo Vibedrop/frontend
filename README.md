@@ -77,7 +77,7 @@ git log -p
 Visa vem som ändrat varje rad i en fil
 ```
 git blame <sökväg+filnamn>
-exempel: git blame src/app/SignIn/page.tsx 
+exempel: git blame src/app/sign-in/page.tsx 
 ```
 
 
