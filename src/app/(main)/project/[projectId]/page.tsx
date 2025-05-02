@@ -52,12 +52,26 @@ interface Collaborator {
   projectId: string;
 }
 
+interface Comment {
+  id: string;
+  content: string;
+  timestamp?: number;
+  createdAt: Date;
+  fileId: string;
+  authorId: string;
+  audioFile: AudioFile;
+  author: User;
+}
+
 export default function Page() {
   const { projectId } = useParams<{ projectId: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [collabs, setCollabs] = useState<Collaborator[] | null>(null);
   const [audioFiles, setAudioFiles] = useState<AudioFile[] | null>(null);
-  console.log("projectId", projectId);
+  const [comments, setComments] = useState<Comment[] | null>(null);
+  const handleComments = (audioID: string) => {
+    getComments(audioID);
+  };
   async function getProjects() {
     try {
       const response = await fetch(`${BACKEND_URL}/projects/${projectId}`, {
@@ -86,12 +100,27 @@ export default function Page() {
     getProjects();
   }, []);
 
-  const users = [{ name: "name1" }, { name: "name2" }, { name: "name3" }];
-  const comments = [
-    { name: "name1", comment: "Hi" },
-    { name: "name2", comment: "Hello" },
-    { name: "name3", comment: "Hey" },
-  ];
+  async function getComments(fileID: string) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/comments/${fileID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ fileid: fileID }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setComments(data);
+        console.log("getComments", data);
+      } else {
+        throw new Error("error");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
@@ -119,7 +148,7 @@ export default function Page() {
       </section>
       <section className="flex h-full">
         <ul className="flex gap-2 flex-col w-9/12">
-          {audioFiles?.map((audio) => (
+          {audioFiles?.map((audio: AudioFile) => (
             <li key={audio.name} className="flex gap-2">
               <div className="bg-white h-full rounded-2xl w-1/12"></div>
               <div className="w-5/12">
@@ -134,7 +163,9 @@ export default function Page() {
               <div className="w-2/12">
                 <p>info3</p>
               </div>
-              <div></div>
+              <div>
+                <img className="bg-white h-4 w-4" onClick={() => handleComments(audio.id)} src="message-square-text.svg" alt="" />
+              </div>
             </li>
           ))}
         </ul>
@@ -142,10 +173,10 @@ export default function Page() {
           <p className="text-center">comments</p>
           <ul className="w-full h-3/6">
             {comments ? (
-              comments.map((comments, index) => (
+              comments.map((comment, index) => (
                 <li key={index} className="flex gap-2">
-                  <p>{comments.name}:</p>
-                  <p> {comments.comment}</p>
+                  {<p>{comment.author.username}:</p>}
+                  {<p> {comment.content}</p>}
                 </li>
               ))
             ) : (
