@@ -1,6 +1,6 @@
 "use client";
 
-function SignInLayout({ children }: { children: React.ReactNode }) {
+function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
       <div>{children}</div>
@@ -8,4 +8,4 @@ function SignInLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default SignInLayout;
+export default AuthLayout;

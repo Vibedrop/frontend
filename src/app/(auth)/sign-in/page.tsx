@@ -17,7 +17,7 @@ function SignInPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const SignIn = async (event: React.FormEvent) => {
+  const signIn = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
     setErrors({});
@@ -115,21 +115,21 @@ function SignInPage() {
                   </TextField.Slot>
                 </TextField.Root>
               </label>
-              <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign In" onClick={SignIn} />
-              <p className="text-xs text-center">Don't have and account? <span className="hover:underline"><Link href="/SignUp">SIGN UP</Link></span></p>
+              <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign In" onClick={signIn} />
+              <p className="text-xs text-center">Don't have and account? <span className="hover:underline"><Link href="/sign-up">SIGN UP</Link></span></p>
             </form>
           </Theme>
         </div>
       </main>
 
-      <footer>
+      {/* <footer>
         <div className="flex flex-col items-center justify-center mt-9">
           <Link className="flex gap-3 justify-center font-bold bg-white text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300" href="/">
             <Music className="ml-[-0.5rem]"/>
             App preview
           </Link>
         </div>
-      </footer>
+      </footer> */}
     </>
   );
 }

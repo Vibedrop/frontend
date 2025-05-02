@@ -13,7 +13,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
   setAuth: (auth: boolean, user: User | null) => void;
-  checkAuth: () => Promise<void>;
+  checkAuth: () => Promise<"ok" | "unauthorized">;
 }
 
 export const useAuthStore = create(
@@ -35,15 +35,20 @@ export const useAuthStore = create(
             credentials: "include",
           });
 
-          if (!res.ok) throw new Error("Not authenticated");
+          if (!res.ok) {
+            set({ isAuthenticated: false, user: null });
+            return "unauthorized";
+          }
 
           const user = await res.json();
           set({ isAuthenticated: true, user });
+          return "ok";
 
         } catch (error) {
           set({ isAuthenticated: false, user: null });
+          return "unauthorized";
         }
-      },
+      }
     }),
     {
       name: "auth"

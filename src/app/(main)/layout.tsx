@@ -1,8 +1,7 @@
-import AudioPlayer from "@/components/footer/AudioPlayer";
+import AudioPlayer from "@/components/Footer/AudioPlayer";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import { Box, Callout, Flex } from "@radix-ui/themes";
-import { Info } from "lucide-react";
+import { Box, Flex } from "@radix-ui/themes";
 
 export default function AppLayout({
   children,
@@ -14,10 +13,12 @@ export default function AppLayout({
     <>
       <Header />
 
-      <Flex direction="row" gap="2" className="h-full">
-        <Sidebar />
+      <Flex direction="row" gap="2" className="grow overflow-hidden">
+        <Box className="bg-zinc-900 rounded-lg overflow-auto">
+          <Sidebar />
+        </Box>
 
-        <Box className="bg-zinc-900 w-full p-4 rounded-lg overflow-hidden">
+        <Box className="bg-zinc-900 flex flex-col grow p-4 rounded-lg overflow-auto">
           {children}
         </Box>
       </Flex>

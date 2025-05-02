@@ -10,7 +10,8 @@ export default function AudioPlayer() {
 
   return (
     <>
-      {!isAuthenticated ? (
+      {// TODO: replace with CTA to add an audio file
+      !isAuthenticated ? (
           <Callout.Root className="justify-center my-2">
             <Callout.Icon>
               <Info />

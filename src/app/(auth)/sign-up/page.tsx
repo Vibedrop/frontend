@@ -6,7 +6,7 @@ import { Callout, IconButton, TextField, Theme } from "@radix-ui/themes";
 import { Eye, EyeOff, Info, Music } from "lucide-react";
 import Link from "next/link";
 
-function SignUpPage() {
+function signUpPage() {
   const router = useRouter();
 
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
@@ -16,7 +16,7 @@ function SignUpPage() {
   const [password, setPassword] = useState<string>("");
   const [username, setUsername] = useState<string>("");
 
-  const SignUp = async (event: React.FormEvent) => {
+  const signUp = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
     setErrors({});
@@ -37,7 +37,7 @@ function SignUpPage() {
 
       const data = await response.json();
       console.log("response", data);
-      router.push("/SignIn");
+      router.push("/sign-in");
 
     } catch (err: any) {
       // console.error(error);
@@ -116,23 +116,23 @@ function SignUpPage() {
                   onChange={usernameHandler}
                 />
               </label>
-              <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign Up"  onClick={SignUp} />
-              <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/SignIn">SIGN IN</Link></span></p>
+              <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign Up"  onClick={signUp} />
+              <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/sign-in">SIGN IN</Link></span></p>
             </form>
           </Theme>
         </div>
       </main>
 
-      <footer>
+      {/* <footer>
         <div className="flex flex-col items-center justify-center mt-9">
           <Link className="flex gap-3 justify-center font-bold bg-white text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300" href="/">
             <Music className="ml-[-0.5rem]"/>
             App preview
           </Link>
         </div>
-      </footer>
+      </footer> */}
     </>
   );
 }
 
-export default SignUpPage;
+export default signUpPage;

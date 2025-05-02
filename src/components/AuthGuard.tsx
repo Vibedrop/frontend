@@ -3,34 +3,28 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 
+const PUBLIC_ROUTES = ['/sign-in', '/sign-up'];
+
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, checkAuth } = useAuthStore();
+  const { checkAuth } = useAuthStore();
   const routePath = usePathname();
   const router = useRouter();
 
-  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
     const checkAndRedirect = async () => {
-      await checkAuth();
+      const authStatus = await checkAuth();
 
-      // TODO: Remove rotePath "/" when production DB is running again
-      if (!isAuthenticated && routePath !== '/SignIn' && routePath !== '/SignUp' && routePath !== '/') {
-        router.push('/SignIn');
+      if (authStatus === "unauthorized" && !PUBLIC_ROUTES.includes(routePath)) {
+        router.push('/sign-in');
       } else {
         setLoading(false);
       }
     };
 
     checkAndRedirect();
-  }, [mounted, isAuthenticated, checkAuth, routePath, router]);
+  }, [checkAuth, routePath, router]);
 
   if (loading) {
     // TODO: Add a loading spinner
