@@ -27,10 +27,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Theme appearance="dark" accentColor="red" data-theme="custom" className="flex bg-background flex-col h-screen px-2">
-          <AuthGuard>
-            {children}
-          </AuthGuard>
+        <Theme
+          appearance="dark"
+          accentColor="red"
+          data-theme="custom"
+          className="flex bg-[#232323] flex-col h-screen px-2"
+        >
+          <AuthGuard>{children}</AuthGuard>
         </Theme>
       </body>
     </html>
