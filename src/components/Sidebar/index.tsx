@@ -9,7 +9,8 @@ import DialogSquare from "@/components/UI/dialogSquare_wip";
 
 export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebarStore();
-  const [project, setProject] = useState([]);
+  const [Ownedproject, setOwnedproject] = useState([]);
+  const [Collabproject, setCollabproject] = useState([]);
   async function getProjects() {
     try {
       const response = await fetch(`${BACKEND_URL}/users/me`, {
@@ -21,8 +22,11 @@ export default function Sidebar() {
       });
       if (response.ok) {
         const data = await response.json();
-        setProject(data.ownedProjects);
-        console.log("hi", data);
+        setOwnedproject(data.ownedProjects);
+        setCollabproject(data.collaborations)
+        console.log("data", data)
+        console.log("data.ownedProjects", data.ownedProjects);
+        console.log("data.collaborations", data.collaborations);
       } else {
         throw new Error("error");
       }
@@ -49,8 +53,9 @@ export default function Sidebar() {
               {isOpen ? <PanelRightOpen /> : <PanelRightClose />}
             </IconButton>
           </div>
-          {project.length > 0 ? (
-            project.map((project: any) => {
+          <h1>Owned</h1>
+          {Ownedproject.length > 0 ? (
+            Ownedproject.map((project: any) => {
               return (
                 <div key={project.id}>
                   <ProjectItem
@@ -64,6 +69,23 @@ export default function Sidebar() {
             })
           ) : (
             <p>No projects created yet</p>
+          )}
+          <h1>Collab</h1>
+          {Collabproject.length > 0 ? (
+            Collabproject.map((collab: any) => {
+              return (
+                <div key={collab.project.id}>
+                  <ProjectItem
+                    title={collab.project.name}
+                    desc={collab.project.description}
+                    src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8"
+                    projectId={collab.id}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <p>No Collabs with projects created yet</p>
           )}
           <div className="flex">
             <DialogSquare />
