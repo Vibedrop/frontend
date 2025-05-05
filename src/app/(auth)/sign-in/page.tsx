@@ -198,7 +198,7 @@ function SignInPage() {
       </Flex>
       <Flex className="justify-center gap-x-2" pt="4">
         <span>Don't have an account?</span>
-        <Link href="/auth/sign-up" className="underline">
+        <Link href="/sign-up" className="underline">
           Sign Up
         </Link>
       </Flex>
