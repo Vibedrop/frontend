@@ -3,64 +3,10 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { BACKEND_URL } from "@/utilities/config";
 import { MessageSquareText } from "lucide-react";
-
-interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  isPublic: boolean;
-  createdAt: Date;
-  maxFileSize: number; // in MB
-  maxFiles: number;
-  owner: User;
-  ownerId: string;
-  audioFiles: AudioFile[];
-  collaborators: Collaborator[];
-}
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-  password: string;
-  emailVerified: boolean;
-  createdAt: Date;
-  ownedProjects: Project[];
-  collaborations: Collaborator[];
-  comments: Comment[];
-}
-
-interface AudioFile {
-  id: string;
-  name: string;
-  s3Key: string;
-  duration?: number; // in seconds
-  isChecked: boolean;
-  createdAt: Date;
-  project: Project;
-  projectId: string;
-  comments: Comment[];
-}
-
-interface Collaborator {
-  id: string;
-  createdAt: Date;
-  user: User;
-  userId: string;
-  project: Project;
-  projectId: string;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  timestamp?: number;
-  createdAt: Date;
-  fileId: string;
-  authorId: string;
-  audioFile: AudioFile;
-  author: User;
-}
+import { Project } from "@/types";
+import { AudioFile } from "@/types";
+import { Collaborator } from "@/types";
+import { Comment } from "@/types";
 
 export default function Page() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -68,9 +14,18 @@ export default function Page() {
   const [collabs, setCollabs] = useState<Collaborator[] | null>(null);
   const [audioFiles, setAudioFiles] = useState<AudioFile[] | null>(null);
   const [comments, setComments] = useState<Comment[] | null>(null);
+  const [commentInput, setcommentInput] = useState("");
+  const [audioId, setaudioId] = useState("");
   const handleComments = (audioID: string) => {
     getComments(audioID);
+    setaudioId(audioID)
   };
+  const handleCommentInput = (e: any) => {
+    setcommentInput(e.target.value)
+  }
+  const handleCommentSave = () => {
+    postComments(audioId)
+  }
   async function getProjects() {
     try {
       const response = await fetch(`${BACKEND_URL}/projects/${projectId}`, {
@@ -113,6 +68,27 @@ export default function Page() {
         const data = await response.json();
         setComments(data);
         console.log("getComments", data);
+      } else {
+        throw new Error("error");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function postComments(fileID: string) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/comments/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ content: commentInput,  fileId: fileID, timestamp: 1}),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("postComments", data);
       } else {
         throw new Error("error");
       }
@@ -184,7 +160,8 @@ export default function Page() {
               <p>No comments</p>
             )}
           </ul>
-          <input type="text" />
+          <input type="text" onChange={handleCommentInput} />
+          <button className="border-2" onClick={handleCommentSave}>Send</button>
         </div>
       </section>
     </>

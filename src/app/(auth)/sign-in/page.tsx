@@ -102,6 +102,9 @@ function SignInPage() {
     const password = formData.get("password") as string;
 
     try {
+      console.log("email", email)
+      console.log("password", password)
+      console.log("formData", formData)
       const response = await fetch(`${BACKEND_URL}/auth/sign-in`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -154,10 +157,11 @@ function SignInPage() {
 
       <form onSubmit={handleSubmit}>
         <Flex gap="4" direction="column">
-          <TextField.Root placeholder="Email" type="email" autoFocus size="3" />
+          <TextField.Root placeholder="Email" type="email" autoFocus name="email" size="3" />
 
           <TextField.Root
             placeholder="Password"
+            name="password"
             type={showPassword ? "text" : "password"}
             size="3"
           >
