@@ -131,7 +131,11 @@ function SignInPage() {
       const user = await profileRes.json();
       console.log("user from profile:", user);
       setAuth(true, user);
-      router.push("/");
+
+      const redirectPath = localStorage.getItem('redirectPath') || '/'; 
+      localStorage.removeItem('redirectPath');
+      router.push(redirectPath);
+
     } catch (err: any) {
       // console.error(error);
       setError(err.message || "Something went wrong.");

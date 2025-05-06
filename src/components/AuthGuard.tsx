@@ -16,10 +16,22 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
     const checkAndRedirect = async () => {
       const authStatus = await checkAuth();
 
-      if (authStatus === "unauthorized" && !PUBLIC_ROUTES.includes(routePath)) {
+      if (authStatus === "unauthorized") {
+        if (PUBLIC_ROUTES.includes(routePath)) {
+          setLoading(false);
+          return;
+        }
+
+        localStorage.setItem('redirectPath', routePath);
         router.push('/sign-in');
       } else {
         setLoading(false);
+
+        const redirectPath = localStorage.getItem('redirectPath');
+        if (redirectPath) {
+          localStorage.removeItem('redirectPath');
+          router.push(redirectPath);
+        }
       }
     };
 
