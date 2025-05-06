@@ -1,56 +1,40 @@
 import React from 'react'
 import { useDropzone } from 'react-dropzone'
+import { handleUpload } from "@/utilities/fileUpload"
 
 interface AudioDropzoneProps {
-  onFileUpload: (file: FormData) => Promise<void>;
+  projectId: string
 }
 
-function AudioDropzone({ onFileUpload }: AudioDropzoneProps) {
+function AudioDropzone({ projectId }: AudioDropzoneProps) {
   const onDropAccepted = async (acceptedFiles: File[]) => {
-    try {
-      const file = new FormData()
-      file.append("file", acceptedFiles[0])
-      console.log("acceptedFiles", acceptedFiles[0])
+    const file = acceptedFiles[0]
 
-      await onFileUpload(file)
+    try {
+      await handleUpload(file, projectId)
     } catch (error) {
       console.error("Upload failed:", error)
     }
   }
 
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
-    useDropzone({
-      onDropAccepted,
-      accept: {
-        "audio/*": [".wav"],
-      },
-    })
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDropAccepted,
+    accept: {
+      "audio/*": [".wav"],
+    },
+  })
 
   return (
-    <div>
-      <div
-        {...getRootProps()}
-        className="h-20 bg-zinc-800 p-4 rounded-lg border-2 border-dashed border-zinc-500 text-center"
-      >
-        <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Drop the files here ...</p>
-        ) : (
-          <p>Drag 'n' drop some files here, or click to select files</p>
-        )}
-        </div>
-        <div>
-          <h4>Uploaded file</h4>
-          <ul>
-            {acceptedFiles.map((file) => (
-              <li key={file.name}>
-                <p>
-                  {file.name} - {file.size} bytes
-                </p>
-              </li>
-            ))}
-          </ul>
-      </div>
+    <div
+      {...getRootProps()}
+      className="h-20 bg-zinc-800 p-4 rounded-lg border-2 border-dashed border-zinc-500 text-center"
+    >
+      <input {...getInputProps()} />
+      {isDragActive ? (
+        <p>Drop the files here ...</p>
+      ) : (
+        <p>Drag 'n' drop some files here, or click to select files</p>
+      )}
     </div>
   )
 }

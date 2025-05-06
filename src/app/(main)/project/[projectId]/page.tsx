@@ -7,19 +7,20 @@ import { Project } from "@/types";
 import { AudioFile } from "@/types";
 import { Collaborator } from "@/types";
 import { Comment } from "@/types";
+import AudioDropzone from "@/components/UI/AudioDropzone"
 
 export default function Page() {
-  const { projectId } = useParams<{ projectId: string }>();
-  const [project, setProject] = useState<Project | null>(null);
-  const [collabs, setCollabs] = useState<Collaborator[] | null>(null);
-  const [audioFiles, setAudioFiles] = useState<AudioFile[] | null>(null);
-  const [comments, setComments] = useState<Comment[] | null>(null);
-  const [commentInput, setcommentInput] = useState("");
-  const [audioId, setaudioId] = useState("");
+  const { projectId } = useParams<{ projectId: string }>()
+  const [project, setProject] = useState<Project | null>(null)
+  const [collabs, setCollabs] = useState<Collaborator[] | null>(null)
+  const [audioFiles, setAudioFiles] = useState<AudioFile[] | null>(null)
+  const [comments, setComments] = useState<Comment[] | null>(null)
+  const [commentInput, setcommentInput] = useState("")
+  const [audioId, setaudioId] = useState("")
   const handleComments = (audioID: string) => {
-    getComments(audioID);
+    getComments(audioID)
     setaudioId(audioID)
-  };
+  }
   const handleCommentInput = (e: any) => {
     setcommentInput(e.target.value)
   }
@@ -35,24 +36,24 @@ export default function Page() {
         },
         credentials: "include",
         body: JSON.stringify({ projectId: projectId }),
-      });
+      })
       if (response.ok) {
-        const data = await response.json();
-        setProject(data);
-        setCollabs(data.collaborators);
-        setAudioFiles(data.audioFiles);
-        console.log("project", data);
+        const data = await response.json()
+        setProject(data)
+        setCollabs(data.collaborators)
+        setAudioFiles(data.audioFiles)
+        console.log("project", data)
       } else {
-        throw new Error("error");
+        throw new Error("error")
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   useEffect(() => {
-    getProjects();
-  }, []);
+    getProjects()
+  }, [])
 
   async function getComments(fileID: string) {
     try {
@@ -63,16 +64,16 @@ export default function Page() {
         },
         credentials: "include",
         body: JSON.stringify({ fileid: fileID }),
-      });
+      })
       if (response.ok) {
-        const data = await response.json();
-        setComments(data);
-        console.log("getComments", data);
+        const data = await response.json()
+        setComments(data)
+        console.log("getComments", data)
       } else {
-        throw new Error("error");
+        throw new Error("error")
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
@@ -84,23 +85,31 @@ export default function Page() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ content: commentInput,  fileId: fileID, timestamp: 1}),
-      });
+        body: JSON.stringify({
+          content: commentInput,
+          fileId: fileID,
+          timestamp: 1,
+        }),
+      })
       if (response.ok) {
-        const data = await response.json();
-        console.log("postComments", data);
+        const data = await response.json()
+        console.log("postComments", data)
       } else {
-        throw new Error("error");
+        throw new Error("error")
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
   }
 
   return (
     <>
       <section className="flex">
-        <img className="object-cover" src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop" alt="" />
+        <img
+          className="object-cover"
+          src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
+          alt=""
+        />
         <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
           <h1 className="text-4xl">{project?.name}</h1>
           <p>{project?.description}</p>
@@ -110,7 +119,10 @@ export default function Page() {
             </li>
             <p>Collaborators: </p>
             {collabs?.map((user) => (
-              <li key={user.user.username} className="flex gap-2">
+              <li
+                key={user.user.username}
+                className="flex gap-2"
+              >
                 <div className="h-4 w-4"></div>
                 <p>{user.user.username}</p>
               </li>
@@ -124,9 +136,13 @@ export default function Page() {
       </section>
 
       <section className="flex grow">
+        <AudioDropzone projectId={projectId} />
         <ul className="flex gap-2 flex-col w-9/12">
           {audioFiles?.map((audio: AudioFile) => (
-            <li key={audio.name} className="flex gap-2">
+            <li
+              key={audio.id}
+              className="flex gap-2"
+            >
               <div className="bg-white h-full rounded-2xl w-1/12"></div>
               <div className="w-5/12">
                 <h2>{audio.name}</h2>
@@ -151,7 +167,10 @@ export default function Page() {
           <ul className="w-full">
             {comments ? (
               comments.map((comment, index) => (
-                <li key={index} className="flex gap-2">
+                <li
+                  key={index}
+                  className="flex gap-2"
+                >
                   {<p>{comment.author.username}:</p>}
                   {<p> {comment.content}</p>}
                 </li>
@@ -160,10 +179,18 @@ export default function Page() {
               <p>No comments</p>
             )}
           </ul>
-          <input type="text" onChange={handleCommentInput} />
-          <button className="border-2" onClick={handleCommentSave}>Send</button>
+          <input
+            type="text"
+            onChange={handleCommentInput}
+          />
+          <button
+            className="border-2"
+            onClick={handleCommentSave}
+          >
+            Send
+          </button>
         </div>
       </section>
     </>
-  );
+  )
 }

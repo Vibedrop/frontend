@@ -67,14 +67,16 @@ export default function Home() {
 
   return (
     <section className="container">
-      <AudioDropzone onFileUpload={uploadFile} />
       <ul>
         {files.length > 0 ? (
           files.map((file) =>
             file.key !== ".emptyFolderPlaceholder" ? (
               <li key={file.key}>
                 <audio controls>
-                  <source src={file.preSignedUrl} type="audio/wav" />
+                  <source
+                    src={file.preSignedUrl}
+                    type="audio/wav"
+                  />
                   Your browser does not support the audio element.
                 </audio>
               </li>
@@ -85,5 +87,5 @@ export default function Home() {
         )}
       </ul>
     </section>
-  );
+  )
 }
