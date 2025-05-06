@@ -91,25 +91,25 @@ deploy_review:
 
   script:
     - |
-      set -e
-      # Logga in i Portainer
-      export PORTAINER_TOKEN=$(curl -X POST "https://portainer.cc25.chasacademy.dev/api/auth" \
+      set -euo pipefail
+
+      echo "Loggar in i Portainer..."
+      export PORTAINER_TOKEN=$(curl -s -X POST "https://portainer.cc25.chasacademy.dev/api/auth" \
         --json '{"username": "'$PORTAINER_USER'", "password": "'$PORTAINER_PASSWORD'"}' \
         | jq -r '.jwt')
 
-      # Bygg stack-namn med namespace, repo och gren
+      echo "Bygger stack-namn..."
       export STACK_NAME="$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME"
-
-      # Normalisera (ta bort mellanslag, specialtecken etc.)
       export NORMALIZED_STACK_NAME=$(echo "$STACK_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]_-')
-      
-      # Förhindra att stack-name är längre än 63chars
-      if [ ${#NORMALIZED_STACK_NAME} -gt 63 ]; then
-        echo "Error: Stack name '$NORMALIZED_STACK_NAME' exceeds 63 characters."
+      export SERVICE_NAME="frontend"
+      export FULL_SERVICE_NAME="${NORMALIZED_STACK_NAME}_${SERVICE_NAME}"
+
+      # Kontrollera fullständigt namn (stack + service)
+      if [ ${#FULL_SERVICE_NAME} -gt 63 ]; then
+        echo "ERROR: Tjänstnamn '$FULL_SERVICE_NAME' är ${#FULL_SERVICE_NAME} tecken långt. Max är 63."
         exit 1
       fi
 
-      # Sätt environment slug & Docker-tag
       export CI_ENVIRONMENT_SLUG="review-$(echo "$CI_COMMIT_REF_NAME" | tr '[:upper:]' '[:lower:]')"
       export DOCKER_TAG="$CI_COMMIT_REF_NAME"
 
@@ -118,11 +118,11 @@ deploy_review:
       echo "CI_ENVIRONMENT_SLUG: $CI_ENVIRONMENT_SLUG"
       echo "DOCKER_TAG: $DOCKER_TAG"
 
-      # Generera docker-compose med envsubst
+      echo "Genererar docker-compose-fil..."
       envsubst < docker-compose.yml > deployable-compose.yml
       cat deployable-compose.yml
 
-      # Hämta endpoint och swarm ID
+      echo "Hämtar endpoint och swarm info..."
       export ENDPOINT_ID=$(curl -sSL \
         -H "Authorization: Bearer $PORTAINER_TOKEN" \
         https://portainer.cc25.chasacademy.dev/api/endpoints \
@@ -133,33 +133,52 @@ deploy_review:
         https://portainer.cc25.chasacademy.dev/api/endpoints \
         | jq -r '.[] | select(.Name == "primary") | .Snapshots[0].DockerSnapshotRaw.Info.Swarm.Cluster.ID')
 
-      # Kolla om stack redan finns
+      echo "Kollar om stack redan finns..."
       STACK_ID=$(curl -sSL \
         -H "Authorization: Bearer $PORTAINER_TOKEN" \
         https://portainer.cc25.chasacademy.dev/api/stacks \
         | jq -r --arg NAME "$NORMALIZED_STACK_NAME" '.[] | select(.Name == $NAME) | .Id')
 
-      # Skapa eller uppdatera stack
       if [ -z "$STACK_ID" ]; then
-        echo "Creating stack $NORMALIZED_STACK_NAME"
-        curl -X POST \
+        echo "Skapar ny stack '$NORMALIZED_STACK_NAME'..."
+        response_code=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+          -X POST \
           "https://portainer.cc25.chasacademy.dev/api/stacks/create/swarm/file?endpointId=$ENDPOINT_ID" \
           -H "Authorization: Bearer $PORTAINER_TOKEN" \
           -F Name="$NORMALIZED_STACK_NAME" \
           -F SwarmID="$SWARM_ID" \
-          -F file=@deployable-compose.yml \
-          | jq
+          -F file=@deployable-compose.yml)
+
+        if [ "$response_code" -ge 400 ]; then
+          echo "ERROR: Kunde inte skapa stack (HTTP $response_code)"
+          cat /tmp/response.json
+          exit 1
+        fi
+
+        echo "Stack skapad."
+        cat /tmp/response.json
       else
-        echo "Updating stack $STACK_ID ($NORMALIZED_STACK_NAME)"
+        echo "Uppdaterar befintlig stack '$NORMALIZED_STACK_NAME'..."
         COMPOSE_CONTENTS=$(cat deployable-compose.yml)
         JSON_PAYLOAD=$(jq -n --arg compose "$COMPOSE_CONTENTS" \
           '{"prune": true, "pullImage": true, "stackFileContent": $compose}')
-        curl -X PUT \
+
+        response_code=$(curl -s -o /tmp/update-response.json -w "%{http_code}" \
+          -X PUT \
           "https://portainer.cc25.chasacademy.dev/api/stacks/$STACK_ID?endpointId=$ENDPOINT_ID" \
           -H "Authorization: Bearer $PORTAINER_TOKEN" \
-          --json "$JSON_PAYLOAD" \
-          | jq
+          --json "$JSON_PAYLOAD")
+
+        if [ "$response_code" -ge 400 ]; then
+          echo "ERROR: Kunde inte uppdatera stack (HTTP $response_code)"
+          cat /tmp/update-response.json
+          exit 1
+        fi
+
+        echo "Stack uppdaterad."
+        cat /tmp/update-response.json
       fi
+
 
 #############################################
 # 4) Deploy-job for main (production)
@@ -177,17 +196,24 @@ deploy_main:
 
   script:
     - |
-      set -e
-      # Logga in i Portainer
-      export PORTAINER_TOKEN=$(curl -X POST "https://portainer.cc25.chasacademy.dev/api/auth" \
+      set -euo pipefail
+
+      echo "Loggar in i Portainer..."
+      export PORTAINER_TOKEN=$(curl -s -X POST "https://portainer.cc25.chasacademy.dev/api/auth" \
         --json '{"username": "'$PORTAINER_USER'", "password": "'$PORTAINER_PASSWORD'"}' \
         | jq -r '.jwt')
 
-      # Bygg stack-namn
+      echo "Bygger stack-namn..."
       export STACK_NAME="$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME"
       export NORMALIZED_STACK_NAME=$(echo "$STACK_NAME" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]_-')
+      export SERVICE_NAME="frontend"
+      export FULL_SERVICE_NAME="${NORMALIZED_STACK_NAME}_${SERVICE_NAME}"
 
-      # För main => hårdkoda domain + Docker-tag
+      if [ ${#FULL_SERVICE_NAME} -gt 63 ]; then
+        echo "ERROR: Tjänstnamn '$FULL_SERVICE_NAME' är ${#FULL_SERVICE_NAME} tecken långt. Max är 63."
+        exit 1
+      fi
+
       export CI_ENVIRONMENT_SLUG="vibedrop-frontend"
       export DOCKER_TAG="latest"
 
@@ -196,11 +222,11 @@ deploy_main:
       echo "CI_ENVIRONMENT_SLUG: $CI_ENVIRONMENT_SLUG"
       echo "DOCKER_TAG: $DOCKER_TAG"
 
-      # Generera docker-compose
+      echo "Genererar docker-compose-fil..."
       envsubst < docker-compose.yml > deployable-compose.yml
       cat deployable-compose.yml
 
-      # Hämta endpoint & swarm
+      echo "Hämtar endpoint och swarm info..."
       export ENDPOINT_ID=$(curl -sSL \
         -H "Authorization: Bearer $PORTAINER_TOKEN" \
         https://portainer.cc25.chasacademy.dev/api/endpoints \
@@ -211,33 +237,52 @@ deploy_main:
         https://portainer.cc25.chasacademy.dev/api/endpoints \
         | jq -r '.[] | select(.Name == "primary") | .Snapshots[0].DockerSnapshotRaw.Info.Swarm.Cluster.ID')
 
-      # Kolla om stack redan finns
+      echo "Kollar om stack redan finns..."
       STACK_ID=$(curl -sSL \
         -H "Authorization: Bearer $PORTAINER_TOKEN" \
         https://portainer.cc25.chasacademy.dev/api/stacks \
         | jq -r --arg NAME "$NORMALIZED_STACK_NAME" '.[] | select(.Name == $NAME) | .Id')
 
-      # Skapa eller uppdatera
       if [ -z "$STACK_ID" ]; then
-        echo "Creating stack $NORMALIZED_STACK_NAME"
-        curl -X POST \
+        echo "Skapar ny stack '$NORMALIZED_STACK_NAME'..."
+        response_code=$(curl -s -o /tmp/response.json -w "%{http_code}" \
+          -X POST \
           "https://portainer.cc25.chasacademy.dev/api/stacks/create/swarm/file?endpointId=$ENDPOINT_ID" \
           -H "Authorization: Bearer $PORTAINER_TOKEN" \
           -F Name="$NORMALIZED_STACK_NAME" \
           -F SwarmID="$SWARM_ID" \
-          -F file=@deployable-compose.yml \
-          | jq
+          -F file=@deployable-compose.yml)
+
+        if [ "$response_code" -ge 400 ]; then
+          echo "ERROR: Kunde inte skapa stack (HTTP $response_code)"
+          cat /tmp/response.json
+          exit 1
+        fi
+
+        echo "Stack skapad."
+        cat /tmp/response.json
       else
-        echo "Updating stack $STACK_ID ($STACK_NAME)"
+        echo "Uppdaterar befintlig stack '$NORMALIZED_STACK_NAME'..."
         COMPOSE_CONTENTS=$(cat deployable-compose.yml)
         JSON_PAYLOAD=$(jq -n --arg compose "$COMPOSE_CONTENTS" \
           '{"prune": true, "pullImage": true, "stackFileContent": $compose}')
-        curl -X PUT \
+
+        response_code=$(curl -s -o /tmp/update-response.json -w "%{http_code}" \
+          -X PUT \
           "https://portainer.cc25.chasacademy.dev/api/stacks/$STACK_ID?endpointId=$ENDPOINT_ID" \
           -H "Authorization: Bearer $PORTAINER_TOKEN" \
-          --json "$JSON_PAYLOAD" \
-          | jq
+          --json "$JSON_PAYLOAD")
+
+        if [ "$response_code" -ge 400 ]; then
+          echo "❌ ERROR: Kunde inte uppdatera stack (HTTP $response_code)"
+          cat /tmp/update-response.json
+          exit 1
+        fi
+
+        echo "✅ Stack uppdaterad."
+        cat /tmp/update-response.json
       fi
+
 
 #############################################
 # 5) Teardown-job to stop review
