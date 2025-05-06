@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Radix Theme override */
+.radix-themes {
+  --default-font-family: var(--font-inter), system-ui, sans-serif;
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
+@layer base {
+  :root {
+    /* Mapped tailwind tokens */
+    --default-font: var(--font-inter);
+
+    /* Color tokens */
+    --background: #2A2A2A;  /* Dark background */
+    --foreground: #FFFFFF;  /* White text */
+    --muted: #A1A1A1;       /* Muted text */
+    --elevated: #343434;    /* Panels */
+    --highlight: #3F3F3F;   /* Extra level of elevation */
+
+     /* Global radius */
+    --radius: 0.5rem;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Typography */
+  .text-header-l,
+  .text-body-l,
+  .text-body-s {
+    @apply font-light;
+  }
+
+  .text-header-s,
+  .text-label-l,
+  .text-label-s,
+  .text-bold {
+    @apply font-semibold;
+  }
+}

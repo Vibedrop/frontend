@@ -139,21 +139,19 @@ function SignInPage() {
   }
 
   return (
-    <Flex className="w-full flex-col mx-auto max-w-sm pt-24 justify-center">
-      <Flex py="2">
-        <Heading className="text-center w-full font-normal">Sign In</Heading>
-      </Flex>
+    <Flex className="w-full flex-col mx-auto max-w-sm pt-24 justify-center gap-xl">
+      <img src="/vibedrop-logo.svg" alt="VibeDrop logo" className="h-[100px]"/>
 
-      <Flex py="4">
-        {error && (
-          <Callout.Root>
-            <Callout.Icon>
-              <Info size={14} />
-            </Callout.Icon>
-            <Callout.Text>{error}</Callout.Text>
-          </Callout.Root>
-        )}
-      </Flex>
+      <Heading className="text-header-l text-center">Sign In</Heading>
+
+      {error && (
+        <Callout.Root color="red" className="w-full">
+          <Callout.Icon>
+            <Info size={14} />
+          </Callout.Icon>
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
 
       <form onSubmit={handleSubmit}>
         <Flex gap="4" direction="column">
@@ -182,21 +180,25 @@ function SignInPage() {
             Forgot your password?
           </Link>
         </Flex>
-        <Button type="submit" size="3" className="w-full bg-[#5753C6]">
+        <Button type="submit" size="3" className="w-full">
           Sign In
         </Button>
       </form>
-      <Flex className="justify-center text-sm" py="4">
-        {/* TODO: Add divider */}
-        or
+
+      <Flex className="flex items-center justify-center w-full max-w-[200px] mx-auto">
+        <span className="flex-1 border-t border-gray-300"></span>
+        <span className="px-4">or</span>
+        <span className="flex-1 border-t border-gray-300"></span>
       </Flex>
-      <Flex className="justify-center gap-x-16 py-4">
+
+      <Flex className="justify-center gap-x-16">
         {/* TODO: Add social login functionality */}
         <GoogleIcon className="size-8" />
         <FacebookIcon className="size-8" />
         <AppleIcon className="size-8" />
       </Flex>
-      <Flex className="justify-center gap-x-2" pt="4">
+
+      <Flex className="justify-center gap-x-2">
         <span>Don't have an account?</span>
         <Link href="/sign-up" className="underline">
           Sign Up

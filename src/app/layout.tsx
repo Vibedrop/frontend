@@ -1,21 +1,11 @@
 import { metadata } from "@/utilities/metadata";
-import { Geist, Geist_Mono } from "next/font/google";
+import { inter } from "@/lib/fonts";
 import { Theme } from "@radix-ui/themes";
 import AuthGuard from "@/components/AuthGuard";
 import "@radix-ui/themes/styles.css";
-import "./globals.css";
+import "./globals.scss";
 
 export { metadata };
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function RootLayout({
   children,
@@ -23,15 +13,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-black">
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} antialiased`}
       >
         <Theme
           appearance="dark"
-          accentColor="red"
+          accentColor="iris"
           data-theme="custom"
-          className="flex bg-[#232323] flex-col h-screen px-2"
+          className="flex bg-background flex-col h-screen px-2 font-sans"
         >
           <AuthGuard>{children}</AuthGuard>
         </Theme>
