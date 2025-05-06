@@ -10,7 +10,7 @@ import DialogSquare from "@/components/UI/dialogSquare_wip";
 export default function Sidebar() {
   const { isOpen, toggleSidebar } = useSidebarStore();
   const [Ownedproject, setOwnedproject] = useState([]);
-  const [Collabproject, setCollabproject] = useState([]);
+  const [CollabProject, setCollabproject] = useState([]);
   async function getProjects() {
     try {
       const response = await fetch(`${BACKEND_URL}/users/me`, {
@@ -23,10 +23,8 @@ export default function Sidebar() {
       if (response.ok) {
         const data = await response.json();
         setOwnedproject(data.ownedProjects);
-        setCollabproject(data.collaborations)
-        console.log("data", data)
-        console.log("data.ownedProjects", data.ownedProjects);
-        console.log("data.collaborations", data.collaborations);
+        setCollabproject(data.collaborations);
+        console.log("data", data);
       } else {
         throw new Error("error");
       }
@@ -71,15 +69,15 @@ export default function Sidebar() {
             <p>No projects created yet</p>
           )}
           <h1>Collab</h1>
-          {Collabproject.length > 0 ? (
-            Collabproject.map((collab: any) => {
+          {CollabProject?.length > 0 ? (
+            CollabProject.map((collab: any) => {
               return (
                 <div key={collab.project.id}>
                   <ProjectItem
                     title={collab.project.name}
                     desc={collab.project.description}
                     src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8"
-                    projectId={collab.id}
+                    projectId={collab.project.id}
                   />
                 </div>
               );
