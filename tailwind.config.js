@@ -44,7 +44,7 @@ module.exports = {
           '--space-md': theme('spacing.md'),
           '--space-lg': theme('spacing.lg'),
           '--space-xl': theme('spacing.xl'),
-          '--space-xxl': theme('spacing.xxl'),
+          '--space-xxl': theme('spacing.xxl')
         },
       });
     },
