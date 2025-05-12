@@ -9,7 +9,7 @@
     --brand-accent: #B8BAF8;
     --background: #2A2A2A;  /* Dark background */
     --foreground: #FFFFFF;  /* White text */
-    --muted: #A1A1A1;       /* Muted text */
+    --muted: #BBBBBB;       /* Muted text */
     --elevated: #343434;    /* Panels */
     --highlight: #3F3F3F;   /* Extra level of elevation */
 
@@ -51,14 +51,13 @@
     @apply font-medium;
   }
 
-  .text-header-l,
+  .text-header-l {
+    @apply font-light;
+  }
+
   .text-body-l,
   .text-body-s {
-    @apply font-light;
-
-    &.text-bold {
-      @apply font-medium;
-    }
+    @apply font-normal;
   }
 
   .text-header-s,
@@ -115,11 +114,26 @@
   .rt-TextFieldRoot,
   .rt-TextFieldRoot input {
     --text-field-height: calc(var(--space-md) * 3.25);
+
+    &.error-bg {
+      @apply bg-red-200;
+    }
+  }
+
+  .rt-TextFieldRoot,
+  .rt-TextFieldRoot input {
+    --text-field-height: calc(var(--space-md) * 3.25);
+  }
+
+  .rt-TextFieldRoot { padding: 0; }
+  .rt-TextFieldRoot,
+  .rt-TextFieldRoot input {
+    --text-field-height: calc(var(--space-md) * 3.25);
   }
 
   /* Input */
   .rt-reset:where(textarea, input:not([type="button"], [type="image"], [type="reset"], [type="submit"], [type="checkbox"], [type="color"], [type="radio"], [type="range"])) {
-    @apply font-light;
+    @apply font-normal;
     @apply mx-2;
   }
 

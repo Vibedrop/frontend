@@ -9,7 +9,7 @@ import {
   Text
 } from "@radix-ui/themes";
 import { Eye, EyeOff, Info } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
 
 type Props = {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
@@ -87,9 +87,9 @@ export default function AuthForm({
               </TextField.Slot>
             </TextField.Root>
 
-            {isSignUp && (
-              <Text className="text-center text-muted">At least 8 characters long</Text>
-            )}
+            <Text className="text-center text-muted">
+              { isSignUp ? 'At least 8 characters long' : <Link href="#" className="underline">Forgot your password?</Link> }
+            </Text>
           </Flex>
         </Theme>
 
