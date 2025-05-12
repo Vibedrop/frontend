@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { LoaderCircle } from 'lucide-react';
+import { Flex } from '@radix-ui/themes';
 
 const PUBLIC_ROUTES = ['/sign-in', '/sign-up'];
 
@@ -40,7 +42,11 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) {
     // TODO: Add a loading spinner
-    return <div>Loading...</div>;
+    return (
+      <Flex className="w-full h-[80vh] max-h-[800px] justify-center items-center">
+        <LoaderCircle className="text-brand size-[40px] animate-spin" />
+      </Flex>
+    )
   }
 
   return <>{children}</>;
