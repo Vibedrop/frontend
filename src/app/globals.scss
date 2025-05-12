@@ -2,30 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Radix Theme override */
-.radix-themes {
-  --default-font-family: var(--font-inter), system-ui, sans-serif;
-
-  button,
-  [role="button"] {
-    cursor: pointer;
-  }
-}
-
 @layer base {
   :root {
-    /* Mapped tailwind tokens */
-    --default-font: var(--font-inter);
-
     /* Color tokens */
+    --brand: #5B5BD6;
+    --brand-accent: #B8BAF8;
     --background: #2A2A2A;  /* Dark background */
     --foreground: #FFFFFF;  /* White text */
     --muted: #A1A1A1;       /* Muted text */
     --elevated: #343434;    /* Panels */
     --highlight: #3F3F3F;   /* Extra level of elevation */
 
-     /* Global radius */
-    --radius: 0.5rem;
+
+    /* Typography */
+    --font-header-l: 36px;
+    --line-height-header-l: 1.1;
+    --font-header-s: 24px;
+    --line-height-header-s: 1.2;
+    --font-body-l: 24px;
+    --line-height-body-l: 1.5;
+    --font-body-s: 16px;
+    --line-height-body-s: 1.5;
+    --font-label-l: 24px;
+    --line-height-label-l: 1.2;
+    --font-label-s: 16px;
+    --line-height-label-s: 1.4;
+
+    /* Global radius */
+    --radius: 8px;
+
+    /* Global transition duration */
+    --transition-duration: 250ms;
   }
 
   html {
@@ -36,20 +43,96 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans text-body-s antialiased bg-background text-foreground;
   }
 
   /* Typography */
+  .text-bold {
+    @apply font-medium;
+  }
+
   .text-header-l,
   .text-body-l,
   .text-body-s {
     @apply font-light;
+
+    &.text-bold {
+      @apply font-medium;
+    }
   }
 
   .text-header-s,
   .text-label-l,
-  .text-label-s,
-  .text-bold {
-    @apply font-semibold;
+  .text-label-s {
+    @apply font-medium;
   }
+
+  /* Icon sizes */
+  .lucide {
+    @apply size-[32px];
+    &.icon-xs { @apply size-[18px]; }
+    &.icon-sm { @apply size-[24px]; }
+    &.icon-md { @apply size-[32px]; }
+    &.icon-lg { @apply size-[56px]; }
+    &.icon-xl { @apply size-[96px]; }
+  }
+}
+
+/* Radix Theme override */
+.radix-themes {
+  /* Typography */
+  /* Body default font size (matches Tailwind's body-s) */
+  --font-size-3: calc(text-body-s * var(--scaling));
+
+  /* Global styles */
+  --default-font-family: var(--font-inter), system-ui, sans-serif;
+  --cursor-button: pointer;
+  @apply font-light;
+
+  .rt-BaseButton {
+    --base-button-height: calc(var(--space-md) * 3.25);
+    @apply text-label-l;
+    @apply transition-colors ease-in-out;
+    transition-duration: var(--transition-duration);
+  }
+
+  /* Input wrapper */
+  .rt-TextFieldRoot {
+    padding: 0;
+    @apply transition-colors ease-in-out;
+    transition-duration: var(--transition-duration);
+
+    &:focus-within { @apply bg-white; }
+    &.error-bg {  @apply bg-red-200; }
+  }
+
+  .rt-TextFieldRoot,
+  .rt-TextFieldRoot input {
+    --text-field-height: calc(var(--space-md) * 3.25);
+  }
+
+  .rt-TextFieldRoot { padding: 0; }
+  .rt-TextFieldRoot,
+  .rt-TextFieldRoot input {
+    --text-field-height: calc(var(--space-md) * 3.25);
+  }
+
+  /* Input */
+  .rt-reset:where(textarea, input:not([type="button"], [type="image"], [type="reset"], [type="submit"], [type="checkbox"], [type="color"], [type="radio"], [type="range"])) {
+    @apply font-light;
+    @apply mx-2;
+  }
+
+  .rt-Link:where(:any-link, button) {
+    text-decoration-color: currentColor;
+  }
+
+  /* Radius */
+  &[data-radius] {
+    --radius-2: calc(var(--radius) * var(--scaling) * var(--radius-factor));
+  }
+
+  /* Colors */
+  --accent-9: var(--brand);
+  --accent-a11: var(--brand-accent);
 }

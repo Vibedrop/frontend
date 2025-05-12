@@ -1,30 +1,37 @@
 "use client";
-import { BACKEND_URL } from "@/utilities/config"
+import { BACKEND_URL } from "@/utilities/config";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Callout, IconButton, TextField, Theme } from "@radix-ui/themes";
-import { Eye, EyeOff, Info, Music } from "lucide-react";
-import Link from "next/link";
+import {
+  Flex,
+  Heading,
+  Link,
+  Text,
+} from "@radix-ui/themes";
+import AuthForm from "../Authform";
 
-function signUpPage() {
+function SignUpPage() {
   const router = useRouter();
 
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
 
-  const signUp = async (event: React.FormEvent) => {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    event.stopPropagation();
     setError(null);
     setErrors({});
+
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const username = formData.get("username") as string;
 
     try {
       const response = await fetch(`${BACKEND_URL}/auth/sign-up`, {
         method: "POST",
-        headers: { "Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, username }),
       });
 
@@ -40,99 +47,45 @@ function signUpPage() {
       router.push("/sign-in");
 
     } catch (err: any) {
-      // console.error(error);
-      setError(err.message || "Something went wrong.");
+      // console.error(err);
+      setError(err?.message ?? "Something went wrong.");
     }
-  };
-
-  const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const usernameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
-  };
+  }
 
   return (
     <>
-      <header></header>
-      <main className="flex flex-col items-center justify-center overflow-hidden">
-        <div className="flex flex-col items-center mt-[5rem] bg-zinc-900 p-5 justify-center w-[17rem] rounded-lg gap-5">
-          <h1>Join Vibedrop</h1>
+      <Heading className="text-header-l flex flex-col text-center h-16 justify-center">Sign Up</Heading>
 
-          {error && (
-            <Callout.Root className="justify-center p-3 gap-2">
-              <Callout.Icon>
-                <Info size={14} />
-              </Callout.Icon>
-              <Callout.Text>
-                {error}
-              </Callout.Text>
-            </Callout.Root>
-          )}
+      <AuthForm
+        onSubmit={handleSubmit}
+        errors={errors}
+        error={error}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
+        type="sign-up"
+      />
 
-          <Theme accentColor="gray" className="w-full">
-            <form className="flex flex-col gap-5 w-full">
-              <label>
-                Email:
-                <TextField.Root
-                  className="rounded-lg"
-                  type="email"
-                  color={errors.email ? "red" : "gray"}
-                  variant={errors.email ? "soft" : "surface"}
-                  onChange={emailHandler}
-                  autoFocus
-                />
-              </label>
-              <label>
-                Password:
-                <TextField.Root
-                  className="rounded-lg"
-                  type={showPassword ? "text" : "password"}
-                  color={errors.password ? "red" : "gray"}
-                  variant={errors.password ? "soft" : "surface"}
-                  onChange={passwordHandler}
-                >
-                  <TextField.Slot data-side="right">
-                    <IconButton
-                      className="bg-transparent text-inherit size-4 cursor-pointer"
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setShowPassword((prev) => !prev)}>
-                      {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
-                    </IconButton>
-                  </TextField.Slot>
-                </TextField.Root>
-              </label>
-              <label htmlFor="">
-                Username:
-                <TextField.Root
-                  className="rounded-lg"
-                  type="text"
-                  color={errors.email ? "red" : "gray"}
-                  variant={errors.email ? "soft" : "surface"}
-                  onChange={usernameHandler}
-                />
-              </label>
-              <input className="rounded-full p-2 bg-zinc-800 hover:bg-zinc-700" type="submit" value="Sign Up"  onClick={signUp} />
-              <p className="text-xs text-center">Already have an account? <span className="hover:underline"><Link href="/sign-in">SIGN IN</Link></span></p>
-            </form>
-          </Theme>
-        </div>
-      </main>
+      <Flex className="flex items-center justify-center w-full max-w-[170px] mx-auto">
+        <span className="flex-1 border-t border-gray-300"></span>
+        <span className="px-4">or</span>
+        <span className="flex-1 border-t border-gray-300"></span>
+      </Flex>
 
-      {/* <footer>
-        <div className="flex flex-col items-center justify-center mt-9">
-          <Link className="flex gap-3 justify-center font-bold bg-white text-black p-3 rounded-lg w-[17rem] hover:bg-gray-300" href="/">
-            <Music className="ml-[-0.5rem]"/>
-            App preview
-          </Link>
-        </div>
-      </footer> */}
+      {/* TODO: Add social login functionality */}
+      <Flex className="flex justify-between items-center w-full max-w-[180px] mx-auto">
+        <img src="/assets/icons/google.svg" alt="Google logo" />
+        <img src="/assets/icons/facebook.svg" alt="Facebook logo" />
+        <img src="/assets/icons/apple.svg" alt="Apple logo" />
+      </Flex>
+
+      <Flex className="justify-center gap-x-2">
+        <Text>Already have an account?</Text>
+        <Link href="/sign-in" className="underline text-bold">
+          Sign in here.
+        </Link>
+      </Flex>
     </>
   );
 }
 
-export default signUpPage;
+export default SignUpPage;

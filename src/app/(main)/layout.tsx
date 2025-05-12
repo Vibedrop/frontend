@@ -10,7 +10,7 @@ export default function AppLayout({
 }>) {
 
   return (
-    <>
+    <Flex className="px-2 flex-col h-full">
       <Header />
 
       <Flex direction="row" gap="2" className="grow overflow-hidden">
@@ -26,6 +26,6 @@ export default function AppLayout({
       <footer>
         <AudioPlayer />
       </footer>
-    </>
+    </Flex>
   );
 }

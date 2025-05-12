@@ -20,8 +20,8 @@ export default function RootLayout({
         <Theme
           appearance="dark"
           accentColor="iris"
-          data-theme="custom"
-          className="flex bg-background flex-col h-screen px-2 font-sans"
+          grayColor="gray"
+          className="flex bg-background flex-col h-screen font-sans"
         >
           <AuthGuard>{children}</AuthGuard>
         </Theme>

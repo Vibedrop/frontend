@@ -9,6 +9,8 @@ module.exports = {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       colors: {
+        brand: "var(--brand)",
+        "brand-accent": "var(--brand-accent)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         muted: "var(--muted)",
@@ -21,19 +23,30 @@ module.exports = {
         md: "16px",
         lg: "24px",
         xl: "32px",
-      },
-      borderRadius: {
-        DEFAULT: "var(--radius)",
+        xxl: "64px",
       },
       fontSize: {
-        "header-l": ["36px", { lineHeight: "1.1" }],
-        "header-s": ["24px", { lineHeight: "1.2" }],
-        "body-l": ["24px", { lineHeight: "1.5" }],
-        "body-s": ["16px", { lineHeight: "1.5" }],
-        "label-l": ["24px", { lineHeight: "1.2" }],
-        "label-s": ["16px", { lineHeight: "1.4" }],
-      },
+        'header-l': ['var(--font-header-l)', { lineHeight: 'var(--line-height-header-l)' }],
+        'header-s': ['var(--font-header-s)', { lineHeight: 'var(--line-height-header-s)' }],
+        'body-l': ['var(--font-body-l)', { lineHeight: 'var(--line-height-body-l)' }],
+        'body-s': ['var(--font-body-s)', { lineHeight: 'var(--line-height-body-s)' }],
+        'label-l': ['var(--font-label-l)', { lineHeight: 'var(--line-height-label-l)' }],
+        'label-s': ['var(--font-label-s)', { lineHeight: 'var(--line-height-label-s)' }],
+      }
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),
+    function ({ addBase, theme }) {
+      addBase({
+        ':root': {
+          '--space-xs': theme('spacing.xs'),
+          '--space-sm': theme('spacing.sm'),
+          '--space-md': theme('spacing.md'),
+          '--space-lg': theme('spacing.lg'),
+          '--space-xl': theme('spacing.xl'),
+          '--space-xxl': theme('spacing.xxl'),
+        },
+      });
+    },
+  ],
 };
