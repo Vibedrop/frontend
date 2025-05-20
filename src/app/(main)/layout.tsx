@@ -8,17 +8,16 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    <Flex className="px-2 flex-col h-full">
+    <Flex className="px-md xl:px-lg flex-col h-full">
       <Header />
 
-      <Flex direction="row" gap="2" className="grow overflow-hidden">
-        <Box className="bg-zinc-900 rounded-lg overflow-auto">
+      <Flex direction="row" className="grow gap-sm overflow-hidden">
+        <Box className="bg-elevated rounded-lg overflow-auto">
           <Sidebar />
         </Box>
 
-        <Box className="bg-zinc-900 flex flex-col grow p-4 rounded-lg overflow-auto">
+        <Box className="bg-elevated flex flex-col grow p-xl rounded-lg overflow-auto">
           {children}
         </Box>
       </Flex>

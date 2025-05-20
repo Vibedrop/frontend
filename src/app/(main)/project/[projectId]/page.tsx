@@ -1,196 +1,333 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
 import { BACKEND_URL } from "@/utilities/config";
-import { MessageSquareText } from "lucide-react";
-import { Project } from "@/types";
-import { AudioFile } from "@/types";
-import { Collaborator } from "@/types";
-import { Comment } from "@/types";
-import AudioDropzone from "@/components/UI/AudioDropzone"
+import { useParams } from "next/navigation";
+import { useAudioStore } from "@/stores/useAudioStore";
+import { useProjectStore } from "@/stores/useProjectStore";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { formatCommentDateTime, formatFriendlyDate } from "@/lib/formatTime";
+import { LoaderCircle, MessageSquare, PauseCircle, PlayCircle, Send, Trash2, Undo2, UserRound } from "lucide-react";
+import { AudioFile, Comment } from "@/types";
+import { Box, Flex, IconButton, Link, Text, TextField, Theme } from "@radix-ui/themes";
+import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
+import AudioDropzone from "@/components/UI/AudioDropzone";
 
 export default function Page() {
-  const { projectId } = useParams<{ projectId: string }>()
-  const [project, setProject] = useState<Project | null>(null)
-  const [collabs, setCollabs] = useState<Collaborator[] | null>(null)
-  const [audioFiles, setAudioFiles] = useState<AudioFile[] | null>(null)
-  const [comments, setComments] = useState<Comment[] | null>(null)
-  const [commentInput, setcommentInput] = useState("")
-  const [audioId, setaudioId] = useState("")
-  const handleComments = (audioID: string) => {
-    getComments(audioID)
-    setaudioId(audioID)
-  }
-  const handleCommentInput = (e: any) => {
-    setcommentInput(e.target.value)
-  }
-  const handleCommentSave = () => {
-    postComments(audioId)
-  }
-  async function getProjects() {
-    try {
-      const response = await fetch(`${BACKEND_URL}/projects/${projectId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ projectId: projectId }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setProject(data)
-        setCollabs(data.collaborators)
-        setAudioFiles(data.audioFiles)
-        console.log("project", data)
-      } else {
-        throw new Error("error")
-      }
-    } catch (error) {
-      console.error(error)
+    const { isOpen } = useSidebarStore();
+    const { projectId } = useParams<{ projectId: string }>();
+    const [comments, setComments] = useState<Comment[] | null>(null);
+    const [commentInput, setCommentInput] = useState("");
+    const [audioId, setaudioId] = useState("");
+    const fetchCurrentProject = useProjectStore( state => state.fetchCurrentProject);
+    const { currentProject, owner, collaborators, audioFiles } = useProjectStore();
+    const setfetchS3 = useAudioStore(state => state.fetchS3);
+    const setCurrentSong = useAudioStore(state => state.setCurrentSong);
+    const setCurrentSongId = useAudioStore(state => state.setCurrentSongId);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { currentSong, isPlaying, isBuffering } = useAudioStore();
+
+    const handlePlayPause = (song: any, index: number) => {
+        console.log("audioRef", audioRef);
+        if (currentSong?.id === song.id) {
+            isPlaying ? audioRef.current?.pause() : audioRef.current?.play();
+        } else {
+            setfetchS3(projectId, song.s3Key);
+            setCurrentSongId(index);
+            setCurrentSong(song);
+        }
+    };
+
+    const handleComments = (audioID: string) => {
+        setaudioId(audioID);
+        getComments(audioID);
+    };
+
+    useEffect(() => {
+        fetchCurrentProject(projectId);
+    }, []);
+
+    useEffect(() => {
+        if (audioId) {
+            getComments(audioId);
+        } else {
+            setComments(null);
+        }
+    }, [audioId]);
+
+    async function getComments(fileID: string) {
+        try {
+            const response = await fetch(`${BACKEND_URL}/comments/${fileID}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ fileid: fileID }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setComments(data);
+                console.log("getComments", data);
+            } else {
+                throw new Error("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
-  }
 
-  useEffect(() => {
-    getProjects()
-  }, [])
+    async function postComments(fileID: string) {
+        if (!commentInput.trim()) return;
 
-  async function getComments(fileID: string) {
-    try {
-      const response = await fetch(`${BACKEND_URL}/comments/${fileID}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ fileid: fileID }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setComments(data)
-        console.log("getComments", data)
-      } else {
-        throw new Error("error")
-      }
-    } catch (error) {
-      console.error(error)
+        try {
+            const response = await fetch(`${BACKEND_URL}/comments/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    content: commentInput,
+                    fileId: fileID,
+                    timestamp: 1,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("postComments", data);
+                setCommentInput("");
+                await getComments(fileID);
+            } else {
+                throw new Error("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
-  }
 
-  async function postComments(fileID: string) {
-    try {
-      const response = await fetch(`${BACKEND_URL}/comments/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          content: commentInput,
-          fileId: fileID,
-          timestamp: 1,
-        }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        console.log("postComments", data)
-      } else {
-        throw new Error("error")
-      }
-    } catch (error) {
-      console.error(error)
+    async function deleteAudioFile(fileID: string) {
+        try {
+            const response = await fetch(
+                `${BACKEND_URL}/audio/${projectId}/${fileID}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                },
+            );
+            if (response.ok) {
+                const data = await response.json();
+                console.log("postComments", data);
+            } else {
+                throw new Error("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
-  }
 
-  return (
-    <>
-      <section className="flex">
-        <img
-          className="object-cover"
-          src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
-          alt=""
-        />
-        <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
-          <h1 className="text-4xl">{project?.name}</h1>
-          <p>{project?.description}</p>
-          <ul className="flex gap-2">
-            <li>
-              <p>Owner: {project?.owner?.username}</p>
-            </li>
-            <p>Collaborators: </p>
-            {collabs?.map((user) => (
-              <li
-                key={user.user.username}
-                className="flex gap-2"
-              >
-                <div className="h-4 w-4"></div>
-                <p>{user.user.username}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+    return (
+        <Flex className={`flex-col w-full max-w-[1080px] gap-md self-center transition-all ${isOpen ? '2xl:ml-[-320px]' : '2xl:ml-[-80px]'}`}>
+            <Flex>
+                <img
+                    className="object-cover"
+                    src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
+                    alt=""
+                />
+                <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
+                    <h1 className="text-4xl">{currentProject?.name}</h1>
+                    <p>{currentProject?.description}</p>
+                    <ul className="flex gap-2">
+                        <li>
+                            <p>Owner: {owner?.username}</p>
+                        </li>
+                        <p>Collaborators: </p>
+                        {collaborators?.map((user: any) => (
+                            <li key={user.user.username} className="flex gap-2">
+                                <div className="h-4 w-4"></div>
+                                <p>{user.user.username}</p>
+                            </li>
+                        ))}
+                    </ul>
+                    <CollaboratorSquare />
+                </div>
+            </Flex>
 
-      <section className="m-4 h-16 w-1/4 border-dashed border-2">
-        <button>works</button>
-      </section>
 
-      <section className="flex grow">
-        <AudioDropzone />
-        <ul className="flex gap-2 flex-col w-9/12">
-          {audioFiles?.map((audio: AudioFile) => (
-            <li
-              key={audio.id}
-              className="flex gap-2"
-            >
-              <div className="bg-white h-full rounded-2xl w-1/12"></div>
-              <div className="w-5/12">
-                <h2>{audio.name}</h2>
-              </div>
-              <div className="w-2/12">
-                <p>info1</p>
-              </div>
-              <div className="w-2/12">
-                <p>info2</p>
-              </div>
-              <div className="w-2/12">
-                <p>info3</p>
-              </div>
-              <div>
-                <MessageSquareText onClick={() => handleComments(audio.id)} />
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="border-2 border-white rounded-lg p-2 mx-2 flex flex-col bg-gray-900 w-3/12">
-          <p className="text-center">comments</p>
-          <ul className="w-full">
-            {comments ? (
-              comments.map((comment, index) => (
-                <li
-                  key={index}
-                  className="flex gap-2"
-                >
-                  {<p>{comment.author.username}:</p>}
-                  {<p> {comment.content}</p>}
-                </li>
-              ))
-            ) : (
-              <p>No comments</p>
-            )}
-          </ul>
-          <input
-            type="text"
-            onChange={handleCommentInput}
-          />
-          <button
-            className="border-2"
-            onClick={handleCommentSave}
-          >
-            Send
-          </button>
-        </div>
-      </section>
-    </>
-  )
+
+            {!audioId &&
+                <>
+                    <section className="m-4">
+                        <AudioDropzone />
+                    </section>
+
+                    <Flex className="grow">
+                        <ul className="flex gap-lg flex-col w-full">
+                            {audioFiles
+                                ?.slice()
+                                .sort((a: AudioFile, b: AudioFile) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                                .map((audio: AudioFile, index: number) => (
+                                    <li key={audio.id} className="flex w-full gap-md items-center ">
+                                        <Flex className={`w-xl hidden lg:flex h-2/4 gap-xs shrink-0 justify-end transition-all duration-150 delay-500 ${currentSong?.id === audio.id && isPlaying ? 'opacity-100' : 'opacity-0'}`}>
+                                            {currentSong?.id === audio.id && isPlaying &&
+                                                [1, 2, 3].map(i => (
+                                                    <div key={i}
+                                                        className="w-0.5 h-full bg-brand-accent rounded origin-bottom animate-pulseEQ mt-xxs"
+                                                        style={{ animationDelay: `${i * 0.2}s` }}
+                                                    />
+                                                ))}
+                                        </Flex>
+
+                                        <Box
+                                            onClick={() => handlePlayPause(audio, index)}>
+                                            {currentSong?.id === audio.id && isBuffering
+                                                ? <LoaderCircle className="animate-spin icon-lg" />
+                                                : currentSong?.id === audio.id && isPlaying
+                                                    ? <PauseCircle className="icon-lg" />
+                                                    : <PlayCircle className="icon-lg" />
+                                            }
+                                        </Box>
+
+                                        <Flex className="flex-col max-w-full grow shrink overflow-auto">
+                                            <Text truncate className={currentSong?.id === audio.id ? 'text-brand-accent' : ''}>{audio.name}</Text>
+                                            <Text>{'Description'}</Text>
+                                        </Flex>
+
+                                        <Flex className="w-xxl justify-end shrink-0">
+                                            <Text>2:59</Text>
+                                        </Flex>
+
+                                        <Flex className="w-[120px] justify-center shrink-0">
+                                            <Text truncate>{formatFriendlyDate(audio.createdAt)}</Text>
+                                        </Flex>
+
+                                        <Flex className="w-xl shrink-0 items-end">
+                                            <MessageSquare
+                                                className="icon-sm cursor-pointer"
+                                                onClick={() => handleComments(audio.id)}
+                                            />
+                                        </Flex>
+
+                                        <Flex className="w-xl shrink-0 items-end">
+                                            <Trash2
+                                                className="icon-sm cursor-pointer"
+                                                onClick={() => deleteAudioFile(audio.id)}
+                                            />
+                                        </Flex>
+                                    </li>
+                                ))}
+                        </ul>
+                    </Flex>
+                </>
+            }
+
+            {audioId &&
+                <Flex className="w-full flex-col max-w-[940px] m-auto items-center gap-md">
+                    {/* TODO: Add current audio player progress */}
+                    {/* <Flex className="w-xxl">
+                        <Text className="text-label-s">1:06</Text>
+                    </Flex> */}
+
+                    <Flex className="w-full justify-end">
+                        <Link
+                            onClick={() => setaudioId("")}
+                            className="flex items-center gap-xs cursor-pointer">
+                            <Undo2 className="icon-xs" />
+                            Back
+                        </Link>
+                    </Flex>
+
+                    <Theme appearance="light" className="bg-transparent w-full">
+                        <TextField.Root
+                            onChange={(e) => setCommentInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey && commentInput.length > 0) {
+                                    e.preventDefault()
+                                    postComments(audioId)
+                                }
+                            }}
+                            value={commentInput}
+                            placeholder="Enter your comment here…"
+                            className="text-body-s overflow-hidden">
+                            <TextField.Slot
+                                side="right" className="pr-0 text-body-s">
+                                <IconButton radius="none" aria-label="Send"
+                                    disabled={!commentInput}
+                                    onClick={() => postComments(audioId)}>
+                                    <Send className="icon-sm" />
+                                </IconButton>
+                            </TextField.Slot>
+                        </TextField.Root>
+                    </Theme>
+
+                    <Flex className="w-full">
+                        {comments && comments.length === 0 && (
+                            <Flex className="flex items-center justify-center w-full ">
+                                <span className="flex-1 border-t"></span>
+                                <span className="px-4">No comments yet</span>
+                                <span className="flex-1 border-t"></span>
+                            </Flex>
+                        )}
+
+                        {comments && comments.length > 0 && (() => {
+                            const sorted = comments
+                                .slice()
+                                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
+                            const isSameDay = (d1: Date, d2: Date) =>
+                                d1.getFullYear() === d2.getFullYear() &&
+                                d1.getMonth() === d2.getMonth() &&
+                                d1.getDate() === d2.getDate()
+
+                            const now = new Date()
+
+                            return (
+                                <ul className="gap-md flex flex-col w-full">
+                                    {sorted.map((comment, index) => {
+                                    const currentDate = new Date(comment.createdAt)
+                                    const nextComment = sorted[index + 1]
+                                    const nextDate = nextComment ? new Date(nextComment.createdAt) : null
+                                    const insertSeparator = nextDate && isSameDay(currentDate, now) && !isSameDay(nextDate, now)
+
+                                    return (
+                                    <React.Fragment key={index}>
+                                        <li className="flex flex-col gap-xxs bg-highlight p-md rounded-custom overflow-hidden">
+                                            <Flex className="gap-sm w-full items-start md:items-center">
+                                                <Box>
+                                                    <UserRound className="icon-sm size-xl bg-brand-accent rounded-full" />
+                                                </Box>
+
+                                                <Flex className="flex-col md:flex-row gap-xs shrink">
+                                                    <Text>{comment.author.username}</Text>
+                                                    <Text className="text-muted font-medium">{formatCommentDateTime(comment.createdAt)}</Text>
+                                                </Flex>
+
+                                                {comment.author.id === owner?.id && (
+                                                    // TODO: Add delete comment functionality
+                                                    <Trash2 className="icon-xs ml-auto cursor-pointer shrink-0" />
+                                                )}
+                                            </Flex>
+
+                                            <Text className="text-body-s mt-xs">{comment.content}</Text>
+                                        </li>
+
+                                        {insertSeparator && (
+                                            <li className="flex items-center justify-center w-10/12 m-auto">
+                                                <span className="flex-1 border-t"></span>
+                                                <span className="px-4">New comments</span>
+                                                <span className="flex-1 border-t"></span>
+                                            </li>
+                                        )}
+                                    </React.Fragment>
+                                    )})}
+                                </ul>
+                            )
+                        })()}
+                    </Flex>
+                </Flex>
+            }
+        </Flex>
+    );
 }
