@@ -10,20 +10,25 @@
     --background: #2A2A2A;  /* Dark background */
     --foreground: #FFFFFF;  /* White text */
     --muted: #BBBBBB;       /* Muted text */
-    --elevated: #343434;    /* Panels */
-    --highlight: #3F3F3F;   /* Extra level of elevation */
+    --elevated: #363636;    /* Panels */
+    --highlight: #646464;   /* Extra level of elevation */
 
+    --tooltip: #191919;
 
     /* Typography */
-    --font-header-l: 36px;
+    --font-header-l: 32px;
     --line-height-header-l: 1.1;
-    --font-header-s: 24px;
+    --font-header-m: 21px;
+    --line-height-header-m: 1.4;
+    --font-header-s: 16px;
     --line-height-header-s: 1.2;
-    --font-body-l: 24px;
-    --line-height-body-l: 1.5;
+
+    --font-body-l: 20px;
+    --line-height-body-l: 1.25;
     --font-body-s: 16px;
     --line-height-body-s: 1.5;
-    --font-label-l: 24px;
+
+    --font-label-l: 22px;
     --line-height-label-l: 1.2;
     --font-label-s: 16px;
     --line-height-label-s: 1.4;
@@ -47,33 +52,33 @@
   }
 
   /* Typography */
-  .text-bold {
+  .text-bold,
+  .text-label-l,
+  .text-header-m {
     @apply font-medium;
   }
 
-  .text-header-l {
-    @apply font-light;
-  }
-
+  .text-header-l,
   .text-body-l,
   .text-body-s {
     @apply font-normal;
   }
 
   .text-header-s,
-  .text-label-l,
   .text-label-s {
-    @apply font-medium;
+    @apply font-semibold;
   }
 
   /* Icon sizes */
-  .lucide {
-    @apply size-[32px];
-    &.icon-xs { @apply size-[18px]; }
-    &.icon-sm { @apply size-[24px]; }
-    &.icon-md { @apply size-[32px]; }
-    &.icon-lg { @apply size-[56px]; }
-    &.icon-xl { @apply size-[96px]; }
+  [class^="lucide"] {
+    @apply size-[18px] stroke-[2] non-scaling-stroke;
+
+    &.icon-xs   { @apply size-[18px] stroke-[2]; }
+    &.icon-sm   { @apply size-[24px] stroke-[1.625]; }
+    &.icon-md   { @apply size-[32px] stroke-[1.25]; }
+    &.icon-lg   { @apply size-[56px] stroke-[0.875]; }
+    &.icon-xl   { @apply size-[64px] stroke-[0.875]; }
+    &.icon-xxl  { @apply size-[80px] stroke-[0.625]; }
   }
 }
 
@@ -89,10 +94,29 @@
   @apply font-light;
 
   .rt-BaseButton {
-    --base-button-height: calc(var(--space-md) * 3.25);
+    overflow: hidden;
     @apply text-label-l;
     @apply transition-colors ease-in-out;
+    --base-button-height: calc(var(--space-md) * 2.825);
     transition-duration: var(--transition-duration);
+    gap: var(--space-xs);
+
+    &.rt-variant-outline {
+      @apply text-foreground;
+      box-shadow: 0 0 0 1px var(--foreground);
+    }
+
+    &.icon-only {
+      width: var(--base-button-height);
+    }
+
+    &.has-icon-left {
+      padding-right: var(--space-4);
+    }
+
+    &.shadow-none {
+      box-shadow: none;
+    }
   }
 
   /* Input wrapper */
@@ -107,28 +131,17 @@
 
   .rt-TextFieldRoot,
   .rt-TextFieldRoot input {
-    --text-field-height: calc(var(--space-md) * 3.25);
+    --text-field-height: calc(var(--space-md) * 2.825);
   }
 
   .rt-TextFieldRoot { padding: 0; }
   .rt-TextFieldRoot,
   .rt-TextFieldRoot input {
-    --text-field-height: calc(var(--space-md) * 3.25);
+    --text-field-height: calc(var(--space-md) * 2.825);
 
     &.error-bg {
       @apply bg-red-200;
     }
-  }
-
-  .rt-TextFieldRoot,
-  .rt-TextFieldRoot input {
-    --text-field-height: calc(var(--space-md) * 3.25);
-  }
-
-  .rt-TextFieldRoot { padding: 0; }
-  .rt-TextFieldRoot,
-  .rt-TextFieldRoot input {
-    --text-field-height: calc(var(--space-md) * 3.25);
   }
 
   /* Input */
@@ -149,4 +162,44 @@
   /* Colors */
   --accent-9: var(--brand);
   --accent-a11: var(--brand-accent);
+
+  /* Panels */
+  --base-menu-content-padding: var(--space-xs);
+
+  /* Audio Player */
+  .rt-SliderRoot {
+    @apply cursor-pointer;
+
+    .rt-SliderTrack {
+      @apply bg-foreground;
+    }
+
+    .rt-SliderThumb {
+      &:where([data-disabled]) {
+        display: none;
+      }
+
+      &::after {
+        @apply bg-brand;
+      }
+    }
+
+    &:not(:hover) .rt-SliderThumb {
+      display: none;
+    }
+
+    &.slider-plain {
+      .rt-SliderTrack {
+        @apply bg-highlight;
+      }
+
+      .rt-SliderThumb::after {
+        @apply bg-foreground;
+      }
+
+      .rt-SliderRange {
+        @apply bg-foreground;
+      }
+    }
+  }
 }

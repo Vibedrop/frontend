@@ -1,11 +1,16 @@
 "use client";
 import { BACKEND_URL } from "@/utilities/config";
 import { useEffect, useState } from "react";
-import { Box } from "@radix-ui/themes";
+import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import AudioDropzone from "@/components/UI/AudioDropzone";
+import { Plus } from "lucide-react";
+import DialogSquare from "@/components/UI/DialogSquare";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { useProjectStore } from "@/stores/useProjectStore";
 
-export default function Home() {
-
+export default function Page() {
+  const { projects } = useProjectStore();
+  const { isOpen } = useSidebarStore();
   const [files, setFiles] = useState<
     {
       key: string;
@@ -58,34 +63,24 @@ export default function Home() {
   }
 
   useEffect(() => {
-    // logFiles();
-  }, []);
-
-  useEffect(() => {
     console.log("useEffect files", files);
   }, [files]);
 
   return (
-    <section className="container">
-      <ul>
-        {files.length > 0 ? (
-          files.map((file) =>
-            file.key !== ".emptyFolderPlaceholder" ? (
-              <li key={file.key}>
-                <audio controls>
-                  <source
-                    src={file.preSignedUrl}
-                    type="audio/wav"
-                  />
-                  Your browser does not support the audio element.
-                </audio>
-              </li>
-            ) : null
-          )
-        ) : (
-          <p>No projects created</p>
-        )}
-      </ul>
-    </section>
-  )
+    <Flex className={`flex-col w-full max-w-[1080px] h-full mt-[8vw] gap-md self-center transition-all ${isOpen ? '2xl:ml-[-320px]' : '2xl:ml-[-80px]'}`}>
+      <Flex className="flex-col gap-y-xl items-center">
+        <Text className="text-header-m max-w-[700px] text-center">
+
+          {projects?.ownedProjects.length > 0 ? (
+            'Got a new idea? Start a fresh project and keep the momentum going.'
+          ) : (
+            'Ready to bring your ideas to life? Start your first project and turn your creativity into something real.'
+          )}
+
+        </Text>
+
+        <DialogSquare />
+      </Flex>
+    </Flex>
+  );
 }
