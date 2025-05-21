@@ -6,8 +6,10 @@ module.exports = {
   theme: {
     extend: {
       screens: {
+        'md': '834px',
         'xl': '1440px',
         '2xl': '1660px',
+        '2xl-plus': '1840px',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
@@ -37,6 +39,7 @@ module.exports = {
         'header-s': ['var(--font-header-s)', { lineHeight: 'var(--line-height-header-s)' }],
         'body-l': ['var(--font-body-l)', { lineHeight: 'var(--line-height-body-l)' }],
         'body-s': ['var(--font-body-s)', { lineHeight: 'var(--line-height-body-s)' }],
+        'body-xs': ['var(--font-body-xs)', { lineHeight: 'var(--line-height-body-xs)' }],
         'label-l': ['var(--font-label-l)', { lineHeight: 'var(--line-height-label-l)' }],
         'label-s': ['var(--font-label-s)', { lineHeight: 'var(--line-height-label-s)' }],
       },

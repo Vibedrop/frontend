@@ -1,12 +1,10 @@
 "use client";
 import { BACKEND_URL } from "@/utilities/config";
 import { useEffect, useState } from "react";
-import { Box, Button, Flex, Text } from "@radix-ui/themes";
-import AudioDropzone from "@/components/UI/AudioDropzone";
-import { Plus } from "lucide-react";
-import DialogSquare from "@/components/UI/DialogSquare";
+import { Flex, Text } from "@radix-ui/themes";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useProjectStore } from "@/stores/useProjectStore";
+import DialogSquare from "@/components/UI/DialogSquare";
 
 export default function Page() {
   const { projects } = useProjectStore();
@@ -21,26 +19,6 @@ export default function Page() {
       preSignedUrl: string;
     }[]
   >([]);
-
-  const uploadFile = async (file: FormData) => {
-    try {
-      console.log("file get", file.get("file"));
-      const response = await fetch(`${BACKEND_URL}/test/s3`, {
-        method: "POST",
-        body: file,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("POST response uploadFile()", data);
-
-        await logFiles();
-      } else {
-        throw new Error("uploadFile() failed");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   async function logFiles() {
     try {
@@ -79,7 +57,7 @@ export default function Page() {
 
         </Text>
 
-        <DialogSquare />
+        <DialogSquare triggerClass="has-icon-left" />
       </Flex>
     </Flex>
   );
