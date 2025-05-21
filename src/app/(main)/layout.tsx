@@ -12,12 +12,10 @@ export default function AppLayout({
     <Flex className="px-md xl:px-lg flex-col h-full">
       <Header />
 
-      <Flex direction="row" className="grow gap-sm overflow-hidden">
-        <Box className="bg-elevated rounded-lg overflow-auto">
-          <Sidebar />
-        </Box>
+      <Flex className="flex-col md:flex-row grow md:gap-sm overflow-hidden">
+        <Sidebar />
 
-        <Box className="bg-elevated flex flex-col grow p-xl rounded-lg overflow-auto">
+        <Box className="bg-elevated flex flex-col grow p-sm sm:p-lg lg:p-xl rounded-lg overflow-auto">
           {children}
         </Box>
       </Flex>

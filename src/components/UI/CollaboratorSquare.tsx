@@ -1,4 +1,4 @@
-import { Dialog, Button, Flex, Text, TextField } from "@radix-ui/themes";
+import { Dialog, Button, Flex, Text, TextField, Box } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useParams } from "next/navigation";
@@ -84,10 +84,10 @@ export default function CollaboratorSquare() {
           <Text>Delete collaborators</Text>
           {collaborators?.map((collaborator: Collaborator) => {
             return (
-              <>
+              <Box key={collaborator.user.id}>
                 <Text>{collaborator.user.email}</Text>
                 <Button onClick={() => deleteCollaborator(collaborator)}>X</Button>
-              </>
+              </Box>
             );
           })}
         </Flex>

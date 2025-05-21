@@ -29,8 +29,9 @@ export default function AudioPlayer() {
     volume,
     setVolume,
   } = useAudioStore();
-
+  
   const { currentProject } = useProjectStore();
+  const sortedAudioFiles = currentProject?.audioFiles?.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -82,24 +83,24 @@ export default function AudioPlayer() {
     }
   };
 
+
   const handleNextSong = () => {
-    if (currentProject == null) return;
-    if (currentSongId == null) return;
-    const newId = currentSongId < currentProject.audioFiles.length - 1 ? currentSongId + 1 : currentSongId;
+    if (!sortedAudioFiles || currentSongId == null) return;
+    const newId = currentSongId < sortedAudioFiles.length - 1 ? currentSongId + 1 : currentSongId;
     setCurrentSongId(newId);
-    setCurrentSong(currentProject.audioFiles[newId]);
-    console.log("songs", currentProject.audioFiles);
+    setCurrentSong(sortedAudioFiles[newId]);
+    console.log("songs", sortedAudioFiles);
   };
+
 
   const handlePreviousSong = () => {
-    if (currentProject == null) return;
-    if (currentSongId == null) return;
+  if (!sortedAudioFiles || currentSongId == null) return;
 
-    // Calculate the new song ID before setting it
-    const newId = currentSongId > 0 ? currentSongId - 1 : currentSongId;
-    setCurrentSongId(newId);
-    setCurrentSong(currentProject.audioFiles[newId]);
-  };
+  // Calculate the new song ID before setting it
+  const newId = currentSongId > 0 ? currentSongId - 1 : currentSongId;
+  setCurrentSongId(newId);
+  setCurrentSong(sortedAudioFiles[newId]);
+};
 
   const toggleMute = () => {
     console.log("toggleMute");

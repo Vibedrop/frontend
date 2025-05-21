@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { BACKEND_URL } from "@/utilities/config";
-import { AudioFile, Collaborator, Project, User } from "@/types";
-import { useParams } from "next/navigation";
+import { AudioFile, Project, User } from "@/types";
 
 interface ProjectStore {
   projects: any | null;
@@ -9,6 +8,7 @@ interface ProjectStore {
   owner: User | null;
   collaborators: any | null;
   audioFiles: any | null;
+  sortedAudioFiles: AudioFile[] | null;
   fetchUsersProjects: () => void;
   fetchCurrentProject: (projectId: String) => void;
 }
@@ -19,6 +19,7 @@ export const useProjectStore = create<ProjectStore>((set) => ({
   owner: null,
   collaborators: null,
   audioFiles: null,
+  sortedAudioFiles: null,
   fetchUsersProjects: async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/users/me`, {
@@ -51,15 +52,28 @@ export const useProjectStore = create<ProjectStore>((set) => ({
       });
       if (response.ok) {
         const data = await response.json();
-        set({ currentProject: data });
-        set({ collaborators: data.collaborators });
-        set({ owner: data.owner });
-        set({ audioFiles: data.audioFiles });
+
+        if (!data) {
+          return null;
+        }
+
+        set({
+          collaborators: data.collaborators || [],
+          owner: data.owner || null,
+          audioFiles: data.audioFiles || [],
+          sortedAudioFiles: (data.audioFiles || [])
+          ?.slice()
+          .sort((a: AudioFile, b: AudioFile) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+          currentProject: data,
+        });
+        return data;
       } else {
-        throw new Error("error");
+        console.error("Fetch failed:", response.statusText);
+        return null;
       }
     } catch (error) {
       console.error(error);
+      return null;
     }
   },
 }));

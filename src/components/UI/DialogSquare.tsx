@@ -3,15 +3,24 @@ import { useEffect, useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import ImageDropzone from "./ImageDropzone";
 import { Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type DialogSquareProps = {
-    variant?: "outline" | "solid";
+    variant?: "outline" | "solid" | "smallNavigation";
+    triggerClass?: string;
     hideText?: Boolean;
+    type?: "smallNavigation" | undefined;
 };
 
-export default function DialogSquare({ variant, hideText }: DialogSquareProps) {
+export default function DialogSquare({ variant, triggerClass, hideText, type }: DialogSquareProps) {
     const [projectName, setProjectName] = useState<string>("");
     const [projectDesc, setProjectDesc] = useState<string>("");
+    const buttonClass = cn(
+        'whitespace-nowrap',
+        variant === 'outline' && 'hover:bg-background',
+        type !== 'smallNavigation' && hideText && 'icon-only rounded-full',
+        triggerClass
+    )
 
     const projectSave = () => {
         createProject();
@@ -51,7 +60,7 @@ export default function DialogSquare({ variant, hideText }: DialogSquareProps) {
         <Dialog.Root>
             <Dialog.Trigger>
                 <Button
-                    className={`whitespace-nowrap ${hideText ? 'icon-only rounded-full' : 'has-icon-left'} ${variant === 'outline' ? 'hover:bg-background' : ''}`}
+                    className={buttonClass}
                     variant={variant === "outline" ? "outline" : "solid"}
                 >
                     <Plus className="icon-sm" />

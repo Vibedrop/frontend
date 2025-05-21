@@ -11,6 +11,7 @@ import {
     Text,
     TextField,
     IconButton,
+    Box,
 } from "@radix-ui/themes";
 
 function AudioDropzone() {
@@ -73,8 +74,10 @@ function AudioDropzone() {
         onDropAccepted,
         noClick: true,
         noKeyboard: true,
+        maxFiles: 1,
+        maxSize: 20 * 1024 * 1024, // 20 MB
         accept: {
-            "audio/*": [".wav"],
+            "audio/*": [".mp3"],
         },
     });
 
@@ -83,20 +86,27 @@ function AudioDropzone() {
             <Dialog.Trigger>
                 <div
                     {...getRootProps()}
-                    className="flex flex-row h-20 w-40 bg-zinc-800 p-4 rounded-lg border-2 border-dashed border-zinc-500 text-center"
+                    className="flex flex-row w-full h-[100px] lg:max-w-[420px] bg-background p-md lg:p-lg border-2 border-dashed border-highlight justify-center items-center"
                 >
                     <input {...getInputProps()} />
                     {isDragActive ? (
-                        <span>Drop file here ...</span>
+                        <Text className="text-body-xs text-brand-accent">Drop audio file here…</Text>
                     ) : (
-                        <div>
-                            <Button variant="solid" color="gray">
-                                Import
+                        <Flex className="gap-sm items-center">
+                            <Button variant="solid" color="gray" highContrast className="px-xl py-lg">
+                                <Text className="text-body-s">Import</Text>
                             </Button>
-                            <Text as="div" size="2" mb="1">
-                                or drop your audio file here
-                            </Text>
-                        </div>
+
+                            <Flex className="flex-col">
+                                <Text className="text-body-xs md:text-body-s">
+                                    Or drop an audio file here
+                                </Text>
+
+                                <Text className="text-body-xs text-brand-accent">
+                                    (Mp3 only / 20MB max)
+                                </Text>
+                            </Flex>
+                        </Flex>
                     )}
                 </div>
             </Dialog.Trigger>
