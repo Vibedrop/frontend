@@ -93,7 +93,7 @@ function AudioDropzone() {
                         <Text className="text-body-xs text-brand-accent">Drop audio file here…</Text>
                     ) : (
                         <Flex className="gap-sm items-center">
-                            <Button variant="solid" color="gray" highContrast className="px-xl py-lg">
+                            <Button variant="solid" color="gray" highContrast className="p-md lg:px-xl lg:py-lg">
                                 <Text className="text-body-s">Import</Text>
                             </Button>
 
