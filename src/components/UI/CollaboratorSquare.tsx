@@ -1,9 +1,10 @@
 import { Dialog, Button, Flex, Text, TextField, Box } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useParams } from "next/navigation";
 import { Collaborator } from "@/types";
 import { useProjectStore } from "@/stores/useProjectStore";
+import { Plus } from "lucide-react";
 
 export default function CollaboratorSquare() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -62,8 +63,13 @@ export default function CollaboratorSquare() {
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger>
-        <Button>Invite Collab</Button>
+      <Dialog.Trigger className="cursor-pointer">
+        <Flex className="items-center gap-xs">
+          <Plus className="text-brand-accent border-2 border-brand-accent rounded-full icon-xs lg:icon-sm" />
+          <Text className="text-label-s text-brand-accent">
+            Invite
+          </Text>
+        </Flex>
       </Dialog.Trigger>
 
       <Dialog.Content maxWidth="450px">

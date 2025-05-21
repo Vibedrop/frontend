@@ -157,29 +157,38 @@ export default function Page() {
 
     return  (
         <Flex style={{ willChange: 'margin-left' }} className={`flex-col w-full max-w-[1080px] 2xl:max-w-[910px] 2xl-plus:max-w-[1080px] gap-md sm:gap-lg self-center transition-[margin-left] ${isOpen ? '2xl:ml-[-320px]' : '2xl:ml-[-80px]'}`}>
-            <Flex>
+            <Flex className="gap-sm lg:gap-lg flex-wrap">
                 <img
-                    className="object-cover"
+                    className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] xl:size-[296px]"
                     src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
-                    alt=""
+                    alt={currentProject?.name}
                 />
-                <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
-                    <h1 className="text-4xl">{currentProject?.name}</h1>
-                    <p>{currentProject?.description}</p>
-                    <ul className="flex gap-2">
-                        <li>
-                            <p>Owner: {owner?.username}</p>
-                        </li>
-                        <p>Collaborators: </p>
-                        {collaborators?.map((user: any) => (
-                            <li key={user.user.username} className="flex gap-2">
-                                <div className="h-4 w-4"></div>
-                                <p>{user.user.username}</p>
-                            </li>
-                        ))}
-                    </ul>
+
+                <Flex className="flex-col justify-center lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
+                    <Text className="text-body-s lg:text-header-l">{currentProject?.name}</Text>
+                    <Text className="text-body-s lg:text-body-l text-muted">{currentProject?.description}</Text>
+
+                    {collaborators?.length > 0 && (
+                        <ul className="flex flex-row gap-lg flex-wrap">
+                            {collaborators?.map((user: any) => (
+                                <li key={user.user.username} className="flex gap-xs items-center">
+                                    <Box>
+                                        <UserRound className="icon-xs lg:icon-sm size-xl bg-brand-accent rounded-full" />
+                                    </Box>
+                                    <Text className="text-body-xs lg:text-body-s truncate">{user.user.username}</Text>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    <Flex className="my-md hidden lg:flex">
+                        <CollaboratorSquare />
+                    </Flex>
+                </Flex>
+
+                <Flex className="my-xxs lg:hidden w-full">
                     <CollaboratorSquare />
-                </div>
+                </Flex>
             </Flex>
 
             {!audioId &&
@@ -187,86 +196,86 @@ export default function Page() {
                     {currentProject?.ownerId === user?.id && <AudioDropzone />}
 
                     <Flex className="grow">
-                        <ul className="flex gap-sm md:gap-lg flex-col w-full text-body-xs sm:text-body-s">
+                        <ul className="flex gap-sm md:gap-lg 2xl:gap-xl flex-col w-full text-body-xs sm:text-body-s">
                             {sortedAudioFiles?.map((audio: AudioFile, index: number) => (
-                                    <React.Fragment key={audio.id}>
-                                        {index !== 0 && (
-                                            <li className="h-[1px] md:hidden">
-                                                <Separator orientation="horizontal" className="w-full" />
-                                            </li>
-                                        )}
-
-                                        {index === 0 && (
-                                            <li className="hidden xl:flex gap-sm">
-                                                <Box className="w-xl ml-auto" />
-
-                                                <Box className="w-[50px] text-center">
-                                                    <Text className="text-body-s">Time</Text>
-                                                </Box>
-
-                                                <Box className="w-[120px] text-center">
-                                                    <Text className="text-body-s">Uploaded</Text>
-                                                </Box>
-
-                                                <Box className="w-[82px] text-center">
-                                                    <Text className="text-body-s">Comments</Text>
-                                                </Box>
-
-                                                <Box className="w-xl" />
-                                            </li>
-                                        )}
-
-                                        <li className="flex w-full gap-xs lg:gap-md items-start sm:items-center flex-wrap md:flex-nowrap">
-                                            <Flex className={`w-xl hidden lg:flex h-2/4 gap-xs shrink-0 justify-end transition-all duration-150 delay-500 ${currentSong?.id === audio.id && isPlaying ? 'opacity-100' : 'opacity-0'}`}>
-                                                {currentSong?.id === audio.id && isPlaying &&
-                                                    [1, 2, 3].map(i => (
-                                                        <div key={i}
-                                                            className="w-0.5 h-full bg-brand-accent rounded origin-bottom animate-pulseEQ mt-xxs"
-                                                            style={{ animationDelay: `${i * 0.2}s` }}
-                                                        />
-                                                    ))}
-                                            </Flex>
-
-                                            <Flex className="flex-col gap-xxs">
-                                                <Box onClick={() => handlePlayPause(audio, index)}>
-                                                    {currentSong?.id === audio.id && isBuffering
-                                                        ? <LoaderCircle className="animate-spin icon-md sm:icon-lg" />
-                                                        : currentSong?.id === audio.id && isPlaying
-                                                            ? <PauseCircle className="icon-md sm:icon-lg" />
-                                                            : <PlayCircle className="icon-md sm:icon-lg" />
-                                                    }
-                                                </Box>
-                                            </Flex>
-
-                                            <Flex className="flex-col max-w-full grow shrink overflow-auto">
-                                                <Text truncate className={currentSong?.id === audio.id ? 'text-brand-accent' : ''}>{audio.name}</Text>
-                                                <Text>{'Description'}</Text>
-                                            </Flex>
-
-                                            <Text className="xl:w-[50px] xl:text-center">{audioProgress}</Text>
-
-                                            <Flex className="gap-xs 2xl:gap-sm w-full md:w-auto">
-                                                <Flex className="w-[120px] lg:justify-center mr-auto shrink-0">
-                                                    <Text truncate>{formatFriendlyDate(audio.createdAt)}</Text>
-                                                </Flex>
-
-                                                <Flex className="w-lg lg:w-xl xl:w-[82px] shrink-0 items-center justify-end lg:justify-center">
-                                                    <MessageSquare
-                                                        className="icon-xs lg:icon-sm cursor-pointer"
-                                                        onClick={() => handleComments(audio.id)}
-                                                    />
-                                                </Flex>
-
-                                                <Flex className="w-lg lg:w-xl shrink-0 items-center justify-end lg:justify-center">
-                                                    <Trash2
-                                                        className="icon-xs lg:icon-sm cursor-pointer"
-                                                        onClick={() => deleteAudioFile(audio.id)}
-                                                    />
-                                                </Flex>
-                                            </Flex>
+                                <React.Fragment key={audio.id}>
+                                    {index !== 0 && (
+                                        <li className="h-[1px] md:hidden">
+                                            <Separator orientation="horizontal" className="w-full" />
                                         </li>
-                                    </React.Fragment>
-                                ))}
+                                    )}
+
+                                    {index === 0 && (
+                                        <li className="hidden xl:flex gap-sm">
+                                            <Box className="w-xl ml-auto" />
+
+                                            <Box className="w-[50px] text-center">
+                                                <Text className="text-body-s">Time</Text>
+                                            </Box>
+
+                                            <Box className="w-[120px] text-center">
+                                                <Text className="text-body-s">Uploaded</Text>
+                                            </Box>
+
+                                            <Box className="w-[82px] text-center">
+                                                <Text className="text-body-s">Comments</Text>
+                                            </Box>
+
+                                            <Box className="w-xl" />
+                                        </li>
+                                    )}
+
+                                    <li className="flex w-full gap-xs lg:gap-md items-start sm:items-center flex-wrap md:flex-nowrap">
+                                        <Flex className={`w-xl hidden lg:flex h-2/4 gap-xs shrink-0 justify-end transition-all duration-150 delay-500 ${currentSong?.id === audio.id && isPlaying ? 'opacity-100' : 'opacity-0'}`}>
+                                            {currentSong?.id === audio.id && isPlaying &&
+                                                [1, 2, 3].map(i => (
+                                                    <div key={i}
+                                                        className="w-0.5 h-full bg-brand-accent rounded origin-bottom animate-pulseEQ mt-xxs"
+                                                        style={{ animationDelay: `${i * 0.2}s` }}
+                                                    />
+                                                ))}
+                                        </Flex>
+
+                                        <Flex className="flex-col gap-xxs">
+                                            <Box onClick={() => handlePlayPause(audio, index)}>
+                                                {currentSong?.id === audio.id && isBuffering
+                                                    ? <LoaderCircle className="animate-spin icon-md sm:icon-lg" />
+                                                    : currentSong?.id === audio.id && isPlaying
+                                                        ? <PauseCircle className="icon-md sm:icon-lg" />
+                                                        : <PlayCircle className="icon-md sm:icon-lg" />
+                                                }
+                                            </Box>
+                                        </Flex>
+
+                                        <Flex className="flex-col max-w-full grow shrink overflow-auto">
+                                            <Text truncate className={currentSong?.id === audio.id ? 'text-brand-accent' : ''}>{audio.name}</Text>
+                                            <Text>{'Description'}</Text>
+                                        </Flex>
+
+                                        <Text className="xl:w-[50px] xl:text-center">{audioProgress}</Text>
+
+                                        <Flex className="gap-xs 2xl:gap-sm w-full md:w-auto">
+                                            <Flex className="w-[120px] lg:justify-center mr-auto shrink-0">
+                                                <Text truncate>{formatFriendlyDate(audio.createdAt)}</Text>
+                                            </Flex>
+
+                                            <Flex className="w-lg lg:w-xl xl:w-[82px] shrink-0 items-center justify-end lg:justify-center">
+                                                <MessageSquare
+                                                    className="icon-xs lg:icon-sm cursor-pointer"
+                                                    onClick={() => handleComments(audio.id)}
+                                                />
+                                            </Flex>
+
+                                            <Flex className="w-lg lg:w-xl shrink-0 items-center justify-end lg:justify-center">
+                                                <Trash2
+                                                    className="icon-xs lg:icon-sm cursor-pointer"
+                                                    onClick={() => deleteAudioFile(audio.id)}
+                                                />
+                                            </Flex>
+                                        </Flex>
+                                    </li>
+                                </React.Fragment>
+                            ))}
                         </ul>
                     </Flex>
                 </>
