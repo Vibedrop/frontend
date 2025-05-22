@@ -7,10 +7,11 @@ import { Avatar, Flex, Slider, Text } from "@radix-ui/themes";
 import { LoaderCircle, Volume2, VolumeX, PauseCircle, PlayCircle, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { formatTime } from "@/lib/formatTime";
 import { truncate } from "@/lib/utils";
+import { useAudio } from "@/context/AudioContext";
 
 export default function AudioPlayer() {
   const { projectId } = useParams<{ projectId: string }>();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useAudio();
   const {
     s3Url,
     fetchS3,
@@ -29,7 +30,7 @@ export default function AudioPlayer() {
     volume,
     setVolume,
   } = useAudioStore();
-  
+
   const { currentProject } = useProjectStore();
   const sortedAudioFiles = currentProject?.audioFiles?.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
@@ -158,7 +159,7 @@ export default function AudioPlayer() {
           </Text>
 
           <Flex className="gap-md items-center">
-            <ChevronsLeft onClick={handlePreviousSong} className="icon-xl" />
+            <ChevronsLeft onClick={handlePreviousSong} className="icon-xl cursor-pointer" />
 
             <button onClick={() => isPlaying ? audioRef.current?.pause() : audioRef.current?.play() } >
               {isBuffering ? (
@@ -170,13 +171,11 @@ export default function AudioPlayer() {
               )}
             </button>
 
-            <ChevronsRight onClick={handleNextSong} className="icon-xl" />
+            <ChevronsRight onClick={handleNextSong} className="icon-xl cursor-pointer" />
           </Flex>
 
           <Text className="text-body-s lg:text-body-l w-xxl text-right">{formatTime(duration)}</Text>
         </Flex>
-
-        <audio ref={audioRef} hidden />
       </Flex>
 
       <Flex className="w-full md:w-[32%] xl:w-[20%] items-center place-content-end hidden md:flex">

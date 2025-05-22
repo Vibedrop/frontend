@@ -5,6 +5,7 @@ import { AudioFile, Project, User } from "@/types";
 interface ProjectStore {
   projects: any | null;
   currentProject: Project | null;
+  currentProjectForPlayer: Project | null;
   owner: User | null;
   collaborators: any | null;
   audioFiles: any | null;
@@ -16,10 +17,12 @@ interface ProjectStore {
 export const useProjectStore = create<ProjectStore>((set) => ({
   projects: null,
   currentProject: null,
+  currentProjectForPlayer: null,
   owner: null,
   collaborators: null,
   audioFiles: null,
   sortedAudioFiles: null,
+  setCurrentProjectForPlayer: (project: Project | null) => set({ currentProjectForPlayer: project }),
   fetchUsersProjects: async () => {
     try {
       const response = await fetch(`${BACKEND_URL}/users/me`, {
