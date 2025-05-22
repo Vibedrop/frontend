@@ -9,10 +9,10 @@ import { formatCommentDateTime, formatFriendlyDate } from "@/lib/formatTime";
 import { LoaderCircle, MessageSquare, PauseCircle, PlayCircle, Send, Trash2, Undo2, UserRound } from "lucide-react";
 import { AudioFile, Comment } from "@/types";
 import { Box, Flex, IconButton, Link, Separator, Text, TextField, Theme } from "@radix-ui/themes";
-import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
-import AudioDropzone from "@/components/UI/AudioDropzone";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useAudio } from "@/context/AudioContext";
+import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
+import AudioDropzone from "@/components/UI/AudioDropzone";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -164,29 +164,37 @@ export default function Page() {
                 </Flex>
             ) : (
                 <>
-                    <Flex>
+                    <Flex className="gap-sm lg:gap-lg flex-wrap">
                         <img
-                            className="object-cover"
+                            className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] xl:size-[296px]"
                             src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
-                            alt=""
+                            alt={currentProject?.name}
                         />
-                        <div className="flex flex-col justify-end h-5/6 gap-2 ml-2">
-                            <h1 className="text-4xl">{currentProject?.name}</h1>
-                            <p>{currentProject?.description}</p>
-                            <ul className="flex gap-2">
-                                <li>
-                                    <p>Owner: {owner?.username}</p>
-                                </li>
-                                <p>Collaborators: </p>
-                                {collaborators?.map((user: any) => (
-                                    <li key={user.user.username} className="flex gap-2">
-                                        <div className="h-4 w-4"></div>
-                                        <p>{user.user.username}</p>
-                                    </li>
-                                ))}
-                            </ul>
+                        <Flex className="flex-col justify-center lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
+                            <Text className="text-body-s lg:text-header-l">{currentProject?.name}</Text>
+                            <Text className="text-body-s lg:text-body-l text-muted">{currentProject?.description}</Text>
+
+                            {collaborators?.length > 0 && (
+                                <ul className="flex flex-row gap-lg flex-wrap">
+                                    {collaborators?.map((user: any) => (
+                                        <li key={user.user.username} className="flex gap-xs items-center">
+                                            <Box>
+                                                <UserRound className="icon-xs lg:icon-sm size-xl bg-brand-accent rounded-full" />
+                                            </Box>
+                                            <Text className="text-body-xs lg:text-body-s truncate">{user.user.username}</Text>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            <Flex className="my-md hidden lg:flex">
+                                <CollaboratorSquare />
+                            </Flex>
+                        </Flex>
+
+                        <Flex className="my-xxs lg:hidden w-full">
                             <CollaboratorSquare />
-                        </div>
+                        </Flex>
                     </Flex>
 
                     {!audioId &&
