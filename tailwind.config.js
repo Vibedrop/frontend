@@ -51,9 +51,16 @@ module.exports = {
           '0%, 100%': { transform: 'scaleY(0.4)' },
           '50%': { transform: 'scaleY(1)' },
         },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-4px)' },
+          '50%': { transform: 'translateX(4px)' },
+          '75%': { transform: 'translateX(-2px)' },
+        },
       },
       animation: {
         pulseEQ: 'pulseEQ 0.5s ease-in-out infinite',
+        shake: 'shake 0.15s ease-in-out',
       },
     },
   },

@@ -1,7 +1,8 @@
-import { Dialog, Button, Flex, Text, TextField } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import { useProjectStore } from "@/stores/useProjectStore";
+import { useRouter } from "next/navigation";
+import { Dialog, Button, Flex, Text, TextField, Theme } from "@radix-ui/themes";
+import { useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
-import ImageDropzone from "./ImageDropzone";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +14,12 @@ type DialogSquareProps = {
 };
 
 export default function DialogSquare({ variant, triggerClass, hideText, type }: DialogSquareProps) {
+    const fetchUsersProjects = useProjectStore.getState().fetchUsersProjects;
+    const router = useRouter();
     const [projectName, setProjectName] = useState<string>("");
     const [projectDesc, setProjectDesc] = useState<string>("");
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
     const buttonClass = cn(
         'whitespace-nowrap',
         variant === 'outline' && 'hover:bg-background',
@@ -24,6 +29,7 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
 
     const projectSave = () => {
         createProject();
+        setIsDialogOpen(false);
     };
     const projectNameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setProjectName(e.target.value);
@@ -47,7 +53,11 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("hi", data);
+                setIsDialogOpen(false);
+                setProjectName("");
+                setProjectDesc("");
+                await fetchUsersProjects();
+                router.push(`/project/${data.id}`);
             } else {
                 throw new Error("error");
             }
@@ -57,56 +67,71 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
     }
 
     return (
-        <Dialog.Root>
+        <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <Dialog.Trigger>
                 <Button
                     className={buttonClass}
                     variant={variant === "outline" ? "outline" : "solid"}
                 >
                     <Plus className="icon-sm" />
-
                     <Text className={hideText ? 'hidden' : ''}>New project</Text>
                 </Button>
             </Dialog.Trigger>
 
-            <Dialog.Content maxWidth="450px">
-                <Dialog.Title>Create project</Dialog.Title>
-                <Dialog.Description size="2" mb="4">
-                    Create project
+            <Dialog.Content>
+                <Dialog.Title>
+                    <Text className="text-header-m">Create project</Text>
+                </Dialog.Title>
+
+                <Dialog.Description>
+                    <Text className="sr-only">
+                        Fill in the project name and description to create a new project.
+                    </Text>
                 </Dialog.Description>
 
-                <Flex direction="column" gap="3">
-                    <label>
-                        <Text as="div" size="2" mb="1" weight="bold">
-                            Project name:
-                        </Text>
-                        <TextField.Root
-                            onChange={projectNameHandler}
-                            defaultValue="Project-name"
-                            placeholder="Enter the name of the project"
-                        />
-                    </label>
-                    <label>
-                        <Text as="div" size="2" mb="1" weight="bold">
-                            Description
-                        </Text>
-                        <TextField.Root
-                            onChange={projectDescHandler}
-                            defaultValue="Description"
-                            placeholder="Enter the description"
-                        />
-                    </label>
-                </Flex>
+                <Theme appearance="light" className="bg-transparent">
+                    <Flex className="flex-col gap-sm">
+                        <Flex className="flex-col gap-xxs">
+                            <Text className="text-body-xs text-muted">
+                                Name <Text className="text-brand-accent">*</Text>
+                            </Text>
+                            <TextField.Root
+                                className="text-body-s"
+                                onChange={projectNameHandler}
+                                placeholder="Name your project"
+                            />
+                        </Flex>
 
-                <Flex gap="3" mt="4" justify="end">
-                    <Dialog.Close>
-                        <Button variant="solid" color="gray">
-                            Cancel
+                        <Flex className="flex-col gap-xxs">
+                            <Text className="text-body-xs text-muted">
+                                Description <Text className="text-brand-accent">*</Text>
+                            </Text>
+                            <TextField.Root
+                                className="text-body-s"
+                                onChange={projectDescHandler}
+                                placeholder="Describe your project"
+                            />
+                        </Flex>
+                    </Flex>
+                </Theme>
+
+                <Flex className="justify-end gap-md mt-lg xl:mt-xl">
+                    <Button
+                        className="flex-1 md:flex-none md:w-[192px]"
+                        variant="outline"
+                        color="iris"
+                        onClick={() => setIsDialogOpen(false)}
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button
+                        className="flex-1 md:flex-none md:w-[192px]"
+                        onClick={projectSave}
+                        disabled={!projectName || !projectDesc}
+                    >
+                            Create project
                         </Button>
-                    </Dialog.Close>
-                    <Dialog.Close>
-                        <Button onClick={projectSave}>Save</Button>
-                    </Dialog.Close>
                 </Flex>
             </Dialog.Content>
         </Dialog.Root>

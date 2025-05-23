@@ -91,6 +91,18 @@
   /* Body default font size (matches Tailwind's body-s) */
   --font-size-3: calc(text-body-s * var(--scaling));
 
+  /* Radius */
+  &[data-radius] {
+    --radius-2: calc(var(--radius) * var(--scaling) * var(--radius-factor));
+  }
+
+  /* Colors */
+  --accent-9: var(--brand);
+  --accent-a11: var(--brand-accent);
+
+  /* Panels */
+  --base-menu-content-padding: var(--space-xs);
+
   /* Global styles */
   --default-font-family: var(--font-inter), system-ui, sans-serif;
   --cursor-button: pointer;
@@ -98,15 +110,18 @@
 
   .rt-BaseButton {
     overflow: hidden;
-    @apply text-label-l;
-    @apply transition-colors ease-in-out;
     --base-button-height: calc(var(--space-md) * 2.825);
     transition-duration: var(--transition-duration);
     gap: var(--space-xs);
+    @apply text-label-s transition-colors ease-in-out;
+
+    @screen lg {
+        @apply text-label-l;
+    }
 
     &.rt-variant-outline {
+      box-shadow: 0 0 0 1.5px var(--foreground);
       @apply text-foreground;
-      box-shadow: 0 0 0 2px var(--foreground);
     }
 
     &.icon-only {
@@ -120,13 +135,35 @@
     &.shadow-none {
       box-shadow: none;
     }
+
+    &:disabled:not(.custom-disabled) {
+        @apply bg-brand text-foreground opacity-40;
+      }
+  }
+
+  /* Modals */
+  .rt-DialogScroll {
+    .rt-BaseDialogContent {
+      @apply bg-background rounded-[4px];
+
+      @screen xl {
+        @apply max-w-[920px] py-xl pt-[calc(var(--space-xl)*1.375)] px-xxl;
+      }
+    }
+
+    .rt-BaseButton {
+      &.rt-variant-outline {
+        @apply text-brand-accent;
+        box-shadow: 0 0 0 1.5px var(--brand-accent);
+      }
+    }
   }
 
   /* Input wrapper */
   .rt-TextFieldRoot {
     padding: 0;
-    @apply transition-colors ease-in-out;
     transition-duration: var(--transition-duration);
+    @apply transition-colors ease-in-out;
 
     &:focus-within { @apply bg-white; }
     &.error-bg {  @apply bg-red-200; }
@@ -149,25 +186,13 @@
 
   /* Input */
   .rt-reset:where(textarea, input:not([type="button"], [type="image"], [type="reset"], [type="submit"], [type="checkbox"], [type="color"], [type="radio"], [type="range"])) {
-    @apply font-normal;
-    @apply mx-2;
+    @apply font-normal mx-2;
   }
 
   .rt-Link:where(:any-link, button) {
     text-decoration-color: currentColor;
   }
 
-  /* Radius */
-  &[data-radius] {
-    --radius-2: calc(var(--radius) * var(--scaling) * var(--radius-factor));
-  }
-
-  /* Colors */
-  --accent-9: var(--brand);
-  --accent-a11: var(--brand-accent);
-
-  /* Panels */
-  --base-menu-content-padding: var(--space-xs);
 
   /* Audio Player */
   .rt-SliderRoot {
