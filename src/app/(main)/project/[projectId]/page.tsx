@@ -6,7 +6,16 @@ import { useAudioStore } from "@/stores/useAudioStore";
 import { useProjectStore } from "@/stores/useProjectStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { formatCommentDateTime, formatFriendlyDate } from "@/lib/formatTime";
-import { LoaderCircle, MessageSquare, PauseCircle, PlayCircle, Send, Trash2, Undo2, UserRound } from "lucide-react";
+import {
+    LoaderCircle,
+    MessageSquare,
+    PauseCircle,
+    PlayCircle,
+    Send,
+    Trash2,
+    Undo2,
+    UserRound,
+} from "lucide-react";
 import { AudioFile, Comment } from "@/types";
 import { Box, Flex, IconButton, Link, Separator, Text, TextField, Theme } from "@radix-ui/themes";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -73,6 +82,13 @@ export default function Page() {
             setComments(null);
         }
     }, [audioId]);
+
+    function formatSeconds(seconds: number): string {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        const paddedSeconds = remainingSeconds.toString().padStart(2, '0');
+        return `${minutes}:${paddedSeconds}`;
+    }
 
     async function getComments(fileID: string) {
         try {
@@ -255,10 +271,12 @@ export default function Page() {
 
                                                     <Flex className="flex-col max-w-full grow shrink overflow-auto">
                                                         <Text truncate className={currentSong?.id === audio.id ? 'text-brand-accent' : ''}>{audio.name}</Text>
-                                                        <Text>{'Description'}</Text>
+                                                        <Text>{audio.description}</Text>
                                                     </Flex>
 
-                                                    <Text className="xl:w-[50px] xl:text-center">{audioProgress}</Text>
+                                        <Flex className="xl:w-[50px] xl:text-center">
+                                            <Text>{formatSeconds(audio.duration ?? 0)}</Text>
+                                        </Flex>
 
                                                     <Flex className="gap-xs 2xl:gap-sm w-full md:w-auto">
                                                         <Flex className="w-[120px] lg:justify-center mr-auto shrink-0">

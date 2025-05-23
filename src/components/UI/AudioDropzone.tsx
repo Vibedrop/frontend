@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useDropzone } from "react-dropzone";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 import { FolderOpen } from "lucide-react";
 import {
     Dialog,
@@ -12,16 +11,17 @@ import {
     TextField,
     IconButton,
     Box,
+    Callout,
 } from "@radix-ui/themes";
 
 function AudioDropzone() {
     const { projectId } = useParams<{ projectId: string }>();
 
-    const [songTitle, setSongTitle] = useState<string>("Song-title");
-    const [songDescription, setSongDescription] =
-        useState<string>("Song-description");
+    const [songTitle, setSongTitle] = useState<string>("");
+    const [songDescription, setSongDescription] = useState<string>("");
     const [audioFile, setAudioFile] = useState<File | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dropError, setDropError] = useState<string | null>(null);
 
     const titleHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSongTitle(e.target.value);
@@ -36,6 +36,8 @@ function AudioDropzone() {
         }
         const formData = new FormData();
         formData.append("file", audioFile);
+        formData.append("title", songTitle);
+        formData.append("description", songDescription);
 
         try {
             const response = await fetch(`${BACKEND_URL}/audio/${projectId}`, {
@@ -59,6 +61,7 @@ function AudioDropzone() {
     };
 
     const onDropAccepted = async (acceptedFiles: File[]) => {
+        setDropError(null);
         const file = acceptedFiles[0];
         if (!file) {
             console.error("No file selected");
@@ -70,8 +73,15 @@ function AudioDropzone() {
         setIsDialogOpen(true);
     };
 
+    const onDropRejected = (fileRejections: any) => {
+        setDropError(
+            "Unsupported file type. Only .mp3 and .wav files are allowed.",
+        );
+    };
+
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDropAccepted,
+        onDropRejected,
         noClick: true,
         noKeyboard: true,
         maxFiles: 1,
@@ -83,32 +93,49 @@ function AudioDropzone() {
 
     return (
         <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <Dialog.Trigger>
-                <div
-                    {...getRootProps()}
-                    className="flex flex-row w-full h-[100px] lg:max-w-[420px] bg-background p-md lg:p-lg border-2 border-dashed border-highlight justify-center items-center"
-                >
-                    <input {...getInputProps()} />
-                    {isDragActive ? (
-                        <Text className="text-body-xs text-brand-accent">Drop audio file here…</Text>
-                    ) : (
-                        <Flex className="gap-sm items-center">
-                            <Button variant="solid" color="gray" highContrast className="p-md lg:px-xl lg:py-lg">
-                                <Text className="text-body-s">Import</Text>
-                            </Button>
-
-                            <Flex className="flex-col">
-                                <Text className="text-body-xs md:text-body-s">
-                                    Or drop an audio file here
-                                </Text>
-
-                                <Text className="text-body-xs text-brand-accent">
-                                    (Mp3 only / 20MB max)
-                                </Text>
+            <Dialog.Trigger onClick={() => setDropError(null)}>
+                <Flex align="center" gap="2">
+                    <Flex
+                        {...getRootProps()}
+                        className="flex flex-row w-full h-[100px] lg:max-w-[420px] bg-background p-md lg:p-lg border-2 border-dashed border-highlight justify-center items-center"
+                    >
+                        <input {...getInputProps()} />
+                        {isDragActive ? (
+                            <Text
+                                className="text-body-xs text-brand-accent"
+                                align="center"
+                            >
+                                Drop audio file here...
+                            </Text>
+                        ) : (
+                            <Flex className="gap-sm items-center">
+                                <Button
+                                    variant="solid"
+                                    color="gray"
+                                    highContrast
+                                    className="p-md lg:px-xl lg:py-lg"
+                                >
+                                    <Text className="text-body-s">Import</Text>
+                                </Button>
+                                <Flex className="flex-col">
+                                    <Text className="text-body-xs md:text-body-s">
+                                        or drop your audio file here
+                                    </Text>
+                                    <Text className="text-body-xs text-brand-accent">
+                                        (Mp3 only / 20MB max)
+                                    </Text>
+                                </Flex>
                             </Flex>
-                        </Flex>
+                        )}
+                    </Flex>
+                    {dropError && (
+                        <Callout.Root variant="surface" size="1" color="red">
+                            <Callout.Text align="center">
+                                {dropError}
+                            </Callout.Text>
+                        </Callout.Root>
                     )}
-                </div>
+                </Flex>
             </Dialog.Trigger>
 
             <Dialog.Content maxWidth="450px">
@@ -120,7 +147,7 @@ function AudioDropzone() {
                 <Flex direction="column" gap="3">
                     <label>
                         <Text as="div" size="2" mb="1" weight="bold">
-                            Song title:
+                            Song title *
                         </Text>
                         <TextField.Root
                             value={songTitle}
@@ -130,7 +157,7 @@ function AudioDropzone() {
                     </label>
                     <label>
                         <Text as="div" size="2" mb="1" weight="bold">
-                            Description
+                            Description (opt)
                         </Text>
                         <TextField.Root
                             value={songDescription}
@@ -140,12 +167,12 @@ function AudioDropzone() {
                     </label>
                     <label>
                         <Text as="div" size="2" mb="1" weight="bold">
-                            Audio file
+                            Audio file *
                         </Text>
                         <input
                             id="audio-upload"
                             type="file"
-                            accept="audio/*"
+                            accept=".wav,.mp3,audio/wav,audio/mpeg"
                             onChange={e =>
                                 setAudioFile(e.target.files?.[0] || null)
                             }
@@ -177,13 +204,22 @@ function AudioDropzone() {
                         <Button
                             variant="soft"
                             color="gray"
-                            onClick={() => setAudioFile(null)}
+                            onClick={() => {
+                                setAudioFile(null);
+                                setSongTitle("");
+                                setSongDescription("");
+                            }}
                         >
                             Cancel
                         </Button>
                     </Dialog.Close>
                     <Dialog.Close>
-                        <Button onClick={handleUpload}>Upload</Button>
+                        <Button
+                            onClick={handleUpload}
+                            disabled={!audioFile || songTitle.length < 1}
+                        >
+                            Upload
+                        </Button>
                     </Dialog.Close>
                 </Flex>
             </Dialog.Content>
