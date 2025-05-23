@@ -78,6 +78,21 @@ export default function AudioPlayer() {
     fetchS3(projectId, currentSong.s3Key);
   }, [currentSong]);
 
+  // Reset player when project changes
+  useEffect(() => {
+    setCurrentSong(null);
+    setCurrentSongId(null);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    setIsBuffering(false);
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
+  }, [currentProject]);
+
   const handleSliderChange = (value: number[]) => {
     if (audioRef.current) {
       audioRef.current.currentTime = value[0];
