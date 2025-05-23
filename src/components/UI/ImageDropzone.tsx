@@ -15,7 +15,7 @@ function ImageDropzone() {
         }
     };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, getInputProps } = useDropzone({
         onDropAccepted,
         accept: {
             "audio/*": [".wav"],

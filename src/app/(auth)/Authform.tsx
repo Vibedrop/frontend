@@ -6,10 +6,8 @@ import {
   TextField,
   Button,
   Theme,
-  Text
 } from "@radix-ui/themes";
 import { Eye, EyeOff, Info } from "lucide-react";
-import Link from "next/link";
 
 type Props = {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;

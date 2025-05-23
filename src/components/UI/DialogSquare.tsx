@@ -38,6 +38,17 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
         setProjectDesc(e.target.value);
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            if (!projectName || !projectDesc) {
+                e.preventDefault();
+                return;
+            }
+            createProject();
+            setIsDialogOpen(false);
+        }
+    };
+
     async function createProject() {
         try {
             const response = await fetch(`${BACKEND_URL}/projects`, {
@@ -98,6 +109,7 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
                             <TextField.Root
                                 className="text-body-s"
                                 onChange={projectNameHandler}
+                                onKeyDown={handleKeyDown}
                                 placeholder="Name your project"
                             />
                         </Flex>
@@ -109,6 +121,7 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
                             <TextField.Root
                                 className="text-body-s"
                                 onChange={projectDescHandler}
+                                onKeyDown={handleKeyDown}
                                 placeholder="Describe your project"
                             />
                         </Flex>

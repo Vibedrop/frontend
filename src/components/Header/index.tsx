@@ -19,6 +19,7 @@ export default function Header() {
   return (
     <header className="flex justify-between items-center my-md lg:my-lg">
       <Link href="/" className="flex items-center gap-md lg:gap-xl logo hover:opacity-80 transition-all duration-200">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src='/vibedrop-logo.svg' alt="Logo" className="w-[50px] xl:ml-xs lg:w-[75px] h-[auto]" />
 
         <Box className='mt-sm'>

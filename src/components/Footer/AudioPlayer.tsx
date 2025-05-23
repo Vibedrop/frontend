@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAudioStore } from "@/stores/useAudioStore";
 import { useProjectStore } from "@/stores/useProjectStore";
@@ -8,6 +8,7 @@ import { LoaderCircle, Volume2, VolumeX, PauseCircle, PlayCircle, ChevronsLeft, 
 import { formatTime } from "@/lib/formatTime";
 import { truncate } from "@/lib/utils";
 import { useAudio } from "@/context/AudioContext";
+import Link from "next/link";
 
 export default function AudioPlayer() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -139,14 +140,17 @@ export default function AudioPlayer() {
       <Flex className="w-full md:w-[32%] xl:w-[20%] place-content-start">
         {currentSong && (
           <Flex className={`flex w-full md:max-w-[420px] items-center gap-md ${!currentSong ? "hidden" : ""}`}>
-            <Avatar
-              src={`https://images.unsplash.com/photo-1693432480222-802b77347375?&w=64&h=64&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop`}
-              fallback="T" // TODO: use song name
-              className="size-[84px] xl:size-[104px] hidden lg:flex"
-            />
+            <Link href={`/project/${currentProject?.id}`} className="text-body-s xl:text-body-l hidden md:block text-brand-accent">
+              <Avatar
+                src={`https://images.unsplash.com/photo-1693432480222-802b77347375?&w=64&h=64&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop`}
+                className="size-[84px] xl:size-[104px] hidden lg:flex"
+                fallback={currentProject?.name ?? ""}
+                alt={currentProject?.name ?? ""}
+              />
+            </Link>
 
-            <Flex className="flex-row max-w-full md:flex-col gap-xs md:gap-0 content-center m-auto lg:m-0">
-              <Text className="text-body-s xl:text-body-l hidden md:block">{truncate("Project name", 32)}:</Text>
+            <Flex className="flex-row max-w-full md:flex-col gap-xs md:gap-0 content-center items-start m-auto lg:m-0">
+              <Link href={`/project/${currentProject?.id}`} className="text-body-s xl:text-body-l hidden md:block text-brand-accent">{truncate(currentProject?.name ?? "", 32)}</Link>
               <Text className="text-body-s xl:text-body-l text-muted hidden md:block">{truncate(currentSong.name, 32)}</Text>
 
               {/* For small screens */}

@@ -1,15 +1,25 @@
 "use client";
-import { BACKEND_URL } from "@/utilities/config";
 import { useEffect, useState } from "react";
 import { Flex, Text } from "@radix-ui/themes";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useProjectStore } from "@/stores/useProjectStore";
 import DialogSquare from "@/components/UI/DialogSquare";
+import { useAudio } from "@/context/AudioContext";
+import { useAudioStore } from "@/stores/useAudioStore";
 
 export default function Page() {
+  const audioRef = useAudio();
+  const {
+    setCurrentSong,
+    setCurrentSongId,
+    setIsPlaying,
+    setCurrentTime,
+    setDuration,
+  } = useAudioStore();
+
   const { projects } = useProjectStore();
   const { isOpen } = useSidebarStore();
-  const [files, setFiles] = useState<
+  const [files] = useState<
     {
       key: string;
       lastModified: string;
@@ -20,25 +30,31 @@ export default function Page() {
     }[]
   >([]);
 
-  async function logFiles() {
-    try {
-      const response = await fetch(`${BACKEND_URL}/test/s3`, {
-        method: "Get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log("GET response logFiles()", data);
-        setFiles(data);
-      } else {
-        throw new Error("logFiles() failed");
-      }
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    setCurrentSong(null);
+    setCurrentSongId(null);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+
+    if (audioRef?.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    useProjectStore.setState({
+      currentProject: null,
+      currentProjectForPlayer: null,
+      owner: null,
+      collaborators: null,
+      audioFiles: null,
+      sortedAudioFiles: null,
+    });
+  }, []);
 
   useEffect(() => {
     console.log("useEffect files", files);

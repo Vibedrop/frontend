@@ -22,6 +22,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useAudio } from "@/context/AudioContext";
 import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
+import Image from "next/image";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -89,12 +90,6 @@ export default function Page() {
         const paddedSeconds = remainingSeconds.toString().padStart(2, '0');
         return `${minutes}:${paddedSeconds}`;
     }
-
-    useEffect(() => {
-    if (currentProject) {
-        // When currentProject changes, update audio file list accordingly
-    }
-    }, [currentProject]);
 
     async function getComments(fileID: string) {
         try {
@@ -190,7 +185,7 @@ export default function Page() {
                         <img
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
                             src="https://images.unsplash.com/photo-1697464455500-35fbe5638ec8?&w=128&h=128&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
-                            alt={currentProject?.name}
+                            alt={currentProject?.name || ""}
                         />
                         <Flex className="flex-col justify-center lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
                             <Text className="text-body-s lg:text-header-l">{currentProject?.name}</Text>
