@@ -69,14 +69,20 @@ export default function CollaboratorSquare() {
   }
 
   return (
-    <Dialog.Root  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <Dialog.Trigger className="cursor-pointer">
+    <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog.Trigger>
+        <button
+          type="button"
+          className="cursor-pointer"
+          aria-label="Invite collaborator"
+        >
         <Flex className="items-center gap-xs">
           <Plus className="text-brand-accent border-2 border-brand-accent rounded-full icon-xs lg:icon-sm" />
           <Text className="text-label-s text-brand-accent">
             Invite
           </Text>
         </Flex>
+        </button>
       </Dialog.Trigger>
 
       <Dialog.Content>
