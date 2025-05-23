@@ -38,8 +38,8 @@ export default function Page() {
     const setCurrentSong = useAudioStore(state => state.setCurrentSong);
     const setCurrentSongId = useAudioStore(state => state.setCurrentSongId);
     const user = useAuthStore((state) => state.user);
+    const isOwner = currentProject?.ownerId === user?.id;
     const audioRef = useAudio();
-    const audioProgress = "2:59"
 
     const handlePlayPause = (song: any, index: number) => {
         console.log("audioRef", audioRef);
@@ -199,7 +199,7 @@ export default function Page() {
                             {collaborators?.length > 0 && (
                                 <ul className="flex flex-row gap-lg flex-wrap">
                                     {collaborators?.map((user: any) => (
-                                        <li key={user.user.username} className="flex gap-xs items-center">
+                                        <li key={user.user.username} className="flex gap-xs mb-md items-center">
                                             <Box>
                                                 <UserRound className="icon-xs lg:icon-sm size-xl bg-brand-accent rounded-full" />
                                             </Box>
@@ -209,9 +209,11 @@ export default function Page() {
                                 </ul>
                             )}
 
-                            <Flex className="my-md hidden lg:flex">
-                                <CollaboratorSquare />
-                            </Flex>
+                            {isOwner && (
+                                <Flex className="mb-md hidden lg:flex">
+                                    <CollaboratorSquare />
+                                </Flex>
+                            )}
                         </Flex>
 
                         <Flex className="my-xxs lg:hidden w-full">
@@ -221,7 +223,7 @@ export default function Page() {
 
                     {!audioId &&
                         <>
-                            {currentProject?.ownerId === user?.id && <AudioDropzone />}
+                            {isOwner && <AudioDropzone />}
 
                             <Flex className="grow">
                                 <ul className="flex gap-sm md:gap-lg flex-col w-full text-body-xs sm:text-body-s">
@@ -249,7 +251,7 @@ export default function Page() {
                                                         <Text className="text-body-s">Comments</Text>
                                                     </Box>
 
-                                                    <Box className="w-xl" />
+                                                    {isOwner && <Box className="w-xl" />}
                                                 </li>
                                             )}
 
@@ -280,12 +282,12 @@ export default function Page() {
                                                     <Text>{audio.description}</Text>
                                                 </Flex>
 
-                                                <Flex className="xl:w-[50px] xl:text-center">
+                                                <Flex className="xl:w-[50px] justify-center">
                                                     <Text>{formatSeconds(audio.duration ?? 0)}</Text>
                                                 </Flex>
 
                                                 <Flex className="gap-xs 2xl:gap-sm w-full md:w-auto">
-                                                    <Flex className="w-[120px] lg:justify-center mr-auto shrink-0">
+                                                    <Flex className="w-[120px] md:justify-center mr-auto shrink-0">
                                                         <Text truncate>{formatFriendlyDate(audio.createdAt)}</Text>
                                                     </Flex>
 
@@ -296,12 +298,14 @@ export default function Page() {
                                                         />
                                                     </Flex>
 
-                                                    <Flex className="w-lg lg:w-xl shrink-0 items-center justify-end lg:justify-center">
-                                                        <Trash2
-                                                            className="icon-xs lg:icon-sm cursor-pointer"
-                                                            onClick={() => deleteAudioFile(audio.id)}
-                                                        />
-                                                    </Flex>
+                                                    {isOwner && (
+                                                        <Flex className="w-lg lg:w-xl shrink-0 items-center justify-end lg:justify-center">
+                                                            <Trash2
+                                                                className="icon-xs lg:icon-sm cursor-pointer"
+                                                                onClick={() => deleteAudioFile(audio.id)}
+                                                            />
+                                                        </Flex>
+                                                    )}
                                                 </Flex>
                                             </li>
                                         </React.Fragment>
