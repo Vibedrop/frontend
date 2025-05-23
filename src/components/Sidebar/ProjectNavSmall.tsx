@@ -38,7 +38,7 @@ export default function ProjectNavSmall() {
         disabled={!hasOwnProjects}
         onClick={handleMyProjectsClick}
         variant="outline"
-        className={cn(smallNavigationClass, 'relative', !hasOwnProjects ? 'opacity-30' : '')}>
+        className={cn(smallNavigationClass, 'relative', !hasOwnProjects ? 'opacity-30 custom-disabled' : '')}>
         <Text className="text-body-s">My projects</Text>
 
         <select
@@ -60,7 +60,7 @@ export default function ProjectNavSmall() {
         disabled={!hasCollaborations}
         onClick={handleCollaborationsClick}
         variant="outline"
-        className={cn(smallNavigationClass, 'relative', !hasCollaborations ? 'opacity-30' : '')}>
+        className={cn(smallNavigationClass, 'relative', !hasCollaborations ? 'opacity-30 custom-disabled' : '')}>
         <Text className="text-body-s">Shared projects</Text>
 
         <select

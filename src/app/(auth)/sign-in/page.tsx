@@ -83,18 +83,18 @@ function SignInPage() {
         type="sign-in"
       />
 
-      <Flex className="flex items-center justify-center w-full max-w-[170px] mx-auto">
+      {/* TODO: Add social login functionality */}
+      {/* <Flex className="flex items-center justify-center w-full max-w-[170px] mx-auto">
         <span className="flex-1 border-t border-gray-300"></span>
         <span className="px-4">or</span>
         <span className="flex-1 border-t border-gray-300"></span>
-      </Flex>
+      </Flex> */}
 
-      {/* TODO: Add social login functionality */}
-      <Flex className="flex justify-between items-center w-full max-w-[180px] mx-auto">
+      {/* <Flex className="flex justify-between items-center w-full max-w-[180px] mx-auto">
         <img src="/assets/icons/google.svg" alt="Google logo" />
         <img src="/assets/icons/facebook.svg" alt="Facebook logo" />
         <img src="/assets/icons/apple.svg" alt="Apple logo" />
-      </Flex>
+      </Flex> */}
 
       <Flex className="justify-center gap-x-2">
         <span>Don't have an account?</span>
