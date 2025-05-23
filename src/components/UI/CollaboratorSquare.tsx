@@ -1,4 +1,4 @@
-import { Dialog, Button, Flex, Text, TextField, Box, Theme } from "@radix-ui/themes";
+import { Dialog, Button, Flex, Text, TextField, Theme, Callout } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useParams } from "next/navigation";
@@ -9,14 +9,9 @@ import { Plus, X } from "lucide-react";
 export default function CollaboratorSquare() {
   const { projectId } = useParams<{ projectId: string }>();
   const [CollaboratorEmail, setCollaboratorEmail] = useState<string>("");
+  const [inviteError, setInviteError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const { collaborators, fetchCurrentProject } = useProjectStore();
-
-  useEffect(() => {
-    if (isDialogOpen) {
-      fetchCurrentProject(projectId);
-    }
-  }, [isDialogOpen]);
 
   const collabSave = () => {
     inviteCollaborator();
@@ -28,6 +23,8 @@ export default function CollaboratorSquare() {
   };
 
   async function inviteCollaborator() {
+    setInviteError(null);
+
     try {
       const response = await fetch(`${BACKEND_URL}/collaborators/`, {
         method: "POST",
@@ -38,16 +35,20 @@ export default function CollaboratorSquare() {
         body: JSON.stringify({ projectId: projectId, email: CollaboratorEmail }),
       });
       if (response.ok) {
-
         await fetchCurrentProject(projectId);
         setCollaboratorEmail("");
       } else {
+
+        const errorData = await response.json();
+        setInviteError(errorData.message || "An error occurred");
+        setCollaboratorEmail("");
         throw new Error("error");
       }
     } catch (error) {
       console.error(error);
     }
   }
+
   async function deleteCollaborator(collaborator: Collaborator) {
     try {
       const response = await fetch(`${BACKEND_URL}/collaborators/`, {
@@ -60,6 +61,7 @@ export default function CollaboratorSquare() {
       });
       if (response.ok) {
         await fetchCurrentProject(projectId);
+        setInviteError(null);
       } else {
         throw new Error("error");
       }
@@ -67,6 +69,14 @@ export default function CollaboratorSquare() {
       console.error(error);
     }
   }
+
+  // Reset player when the dialog is opened
+  // and fetch the current project to get the latest collaborators
+  useEffect(() => {
+    if (isDialogOpen && projectId) {
+      fetchCurrentProject(projectId);
+    }
+  }, [isDialogOpen, projectId]);
 
   return (
     <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -100,7 +110,7 @@ export default function CollaboratorSquare() {
           <Flex className="flex-col gap-sm">
             <Flex className="flex-col gap-xxs">
                 <Text className="text-body-xs text-muted">
-                    Add collaborators email <Text className="text-brand-accent">*</Text>
+                  Add collaborators email <Text className="text-brand-accent">*</Text>
                 </Text>
                 <TextField.Root
                     className="text-body-s"
@@ -116,6 +126,16 @@ export default function CollaboratorSquare() {
                 />
             </Flex>
 
+            {inviteError && (
+              <Theme appearance="dark" className="bg-transparent relative">
+                <Callout.Root variant="surface" color="red" className="p-xs w-fit animate-shake">
+                  <Callout.Text className="relative">
+                    <Text className="text-body-xs">{inviteError}</Text>
+                  </Callout.Text>
+                </Callout.Root>
+              </Theme>
+            )}
+
             {collaborators?.length > 0 && (
               <Flex className="flex-col gap-xs">
                 <Text className="text-body-xs text-muted">
@@ -129,9 +149,9 @@ export default function CollaboratorSquare() {
                       onClick={() => deleteCollaborator(collaborator)}
                       variant="outline"
                       color="iris"
-                      className="h-min w-min px-xs pl-xxs rounded-full">
+                      className="h-min w-min mb-xxs px-xs pl-xxs rounded-full">
                         <X className="text-brand-accent icon-xs" />
-                        <Text className="text-body-s">{collaborator.user.email}</Text>
+                        <Text className="text-body-s text-nowrap">{collaborator.user.email}</Text>
                     </Button>
                   );
                 })}

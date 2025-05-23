@@ -11,7 +11,6 @@ import {
     TextField,
     Callout,
     Theme,
-    Box
 } from "@radix-ui/themes";
 import { useProjectStore } from "@/stores/useProjectStore";
 
@@ -52,7 +51,6 @@ function AudioDropzone() {
             console.error("No audio file selected");
             return;
         }
-
 
         setUploadError(null);
         setIsUploading(true);
@@ -101,7 +99,7 @@ function AudioDropzone() {
         setIsDialogOpen(true);
     };
 
-    const onDropRejected = (fileRejections: any) => {
+    const onDropRejected = () => {
         setDropError(
             "Unsupported file type. Only .mp3 and .wav files are allowed.",
         );

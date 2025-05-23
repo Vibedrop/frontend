@@ -41,7 +41,6 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [checkAuth, routePath, router]);
 
   if (loading) {
-    // TODO: Add a loading spinner
     return (
       <Flex className="w-full h-[80vh] max-h-[800px] justify-center items-center">
         <LoaderCircle className="text-brand size-[40px] animate-spin" />
