@@ -1,29 +1,67 @@
-"use client"
-import { LoginButton } from '@/components/UI/LoginButton';
-import { useAuthStore } from '@/stores/useAuthStore'
-import { TextField, Theme } from '@radix-ui/themes';
-import React, { useState } from 'react'
+"use client";
+import React, { useState, ChangeEvent, KeyboardEvent } from "react";
+import { BACKEND_URL } from "@/utilities/config";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function ProfilePage() {
-  const user = useAuthStore((state) => state.user);
-  const [username, setUsername] = useState<string>(user?.username || "");
+    const user = useAuthStore(state => state.user);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [name, setName] = useState<string>(user?.username || "");
 
-  return (
-    <>
-      <div>Hello {user?.username}</div>
+    const handleNameClick = () => setIsEditing(true);
 
-      <Theme accentColor="gray" className="w-full">
-        <TextField.Root
-          className="rounded-lg"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setName(e.target.value);
+    };
 
-        <LoginButton>
-          Save
-        </LoginButton>
-      </Theme>
-    </>
-  )
+    const handleBlur = () => setIsEditing(false);
+
+    async function changeName() {
+        try {
+            const response = await fetch(`${BACKEND_URL}/users/${user?.id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    username: name,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("postComments", data);
+            } else {
+                throw new Error("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            setIsEditing(false);
+            changeName();
+        }
+    };
+
+    return (
+        <div>
+            {isEditing ? (
+                <input
+                    type="text"
+                    value={name}
+                    autoFocus
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    onKeyDown={handleKeyDown}
+                />
+            ) : (
+                <span onClick={handleNameClick} style={{ cursor: "pointer" }}>
+                    {name}
+                </span>
+            )}
+        </div>
+    );
 }
