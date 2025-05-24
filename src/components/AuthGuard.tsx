@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { LoaderCircle } from 'lucide-react';
 import { Flex } from '@radix-ui/themes';
 
-const PUBLIC_ROUTES = ['/sign-in', '/sign-up'];
+const PUBLIC_ROUTES = ['/start', '/sign-in', '/sign-up'];
 
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const { checkAuth } = useAuthStore();
@@ -25,7 +25,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         }
 
         localStorage.setItem('redirectPath', routePath);
-        router.push('/sign-in');
+        router.push('/start');
       } else {
         setLoading(false);
 
