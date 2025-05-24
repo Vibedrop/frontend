@@ -1,13 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Flex, Text } from "@radix-ui/themes";
+import { useAuthStore } from '@/stores/useAuthStore'
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { useProjectStore } from "@/stores/useProjectStore";
-import DialogSquare from "@/components/UI/DialogSquare";
+import { useRouter } from 'next/navigation'
 import { useAudio } from "@/context/AudioContext";
 import { useAudioStore } from "@/stores/useAudioStore";
+import DialogSquare from "@/components/UI/DialogSquare";
 
 export default function Page() {
+  const { isAuthenticated } = useAuthStore()
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/start')
+    }
+  }, [isAuthenticated])
+
   const audioRef = useAudio();
   const {
     setCurrentSong,
