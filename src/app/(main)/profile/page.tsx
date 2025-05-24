@@ -4,6 +4,7 @@ import { BACKEND_URL } from "@/utilities/config";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function ProfilePage() {
+      const { checkAuth } = useAuthStore();
     const user = useAuthStore(state => state.user);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [name, setName] = useState<string>(user?.username || "");
@@ -30,7 +31,8 @@ export default function ProfilePage() {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("postComments", data);
+                console.log("changeName", data);
+                await checkAuth();
             } else {
                 throw new Error("error");
             }
