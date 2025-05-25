@@ -13,7 +13,6 @@ import shareAudioImage from '@/assets/images/startpage/share-audio.webp'
 import getFeedbackImage from '@/assets/images/startpage/get-feedback.webp'
 import stayOrganinzedImage from '@/assets/images/startpage/stay-organized.webp'
 import keepControlImage from '@/assets/images/startpage/keep-control.webp'
-import { get } from 'http'
 
 const bgGradient = 'linear-gradient(180deg, rgba(87, 83, 198, 0.672) 0%, rgba(184, 186, 248, 0.672) 100%);'
 

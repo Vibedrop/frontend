@@ -36,7 +36,7 @@ export default function Header() {
 
       {isAuthenticated && (
         <Box>
-          <ProfileMenu triggerIcon={ <CircleUserRound className="icon-sm lg:icon-md" />}/>
+          <ProfileMenu triggerIcon={<CircleUserRound className="icon-sm lg:icon-md" />}/>
         </Box>
       )}
 
