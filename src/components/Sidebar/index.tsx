@@ -33,9 +33,7 @@ export default function Sidebar() {
     useEffect(() => {
         fetchUsersProjects();
         setIsFetching(false);
-
-    }, [isFetching]);
-
+    }, [fetchUsersProjects, isFetching]);
 
     return (
         <>

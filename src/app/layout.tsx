@@ -7,24 +7,22 @@ import "./globals.scss";
 export { metadata };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} antialiased`}
-      >
-        <Theme
-          appearance="dark"
-          accentColor="iris"
-          grayColor="gray"
-          className="flex bg-background flex-col h-screen font-sans"
-        >
-          {children}
-        </Theme>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body className={`${inter.variable} antialiased`}>
+                <Theme
+                    appearance="dark"
+                    accentColor="iris"
+                    grayColor="gray"
+                    className="flex bg-background flex-col h-screen font-sans"
+                >
+                    {children}
+                </Theme>
+            </body>
+        </html>
+    );
 }

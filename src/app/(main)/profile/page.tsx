@@ -27,16 +27,19 @@ export default function ProfilePage() {
 
     async function changeName() {
         try {
-            const response = await fetch(`${BACKEND_URL}/users/${user?.id}/username`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `${BACKEND_URL}/users/${user?.id}/username`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        username: name,
+                    }),
                 },
-                credentials: "include",
-                body: JSON.stringify({
-                    username: name,
-                }),
-            });
+            );
             if (response.ok) {
                 const data = await response.json();
                 console.log("changeName", data);
@@ -50,16 +53,19 @@ export default function ProfilePage() {
     }
     async function changePassword() {
         try {
-            const response = await fetch(`${BACKEND_URL}/users/${user?.id}/password`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const response = await fetch(
+                `${BACKEND_URL}/users/${user?.id}/password`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        password: password,
+                    }),
                 },
-                credentials: "include",
-                body: JSON.stringify({
-                    password: password,
-                }),
-            });
+            );
             if (response.ok) {
                 const data = await response.json();
                 console.log("changePassword", data);
@@ -78,7 +84,7 @@ export default function ProfilePage() {
             changeName();
         }
     };
-        const handlePasswordKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const handlePasswordKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             setIsPasswordEditing(false);
             changePassword();
@@ -87,39 +93,45 @@ export default function ProfilePage() {
 
     return (
         <>
-        <div>
-        <Text>Name:</Text>
-            {isEditingName ? (
-                <input
-                type="text"
-                value={name}
-                autoFocus
-                onChange={handleNameInputChange}
-                onBlur={handleNameBlur}
-                onKeyDown={handleNameKeyDown}
-                />
-            ) : (
-                <span onClick={handleNameClick} style={{ cursor: "pointer" }}>
-                    {name}
-                </span>
-            )}
+            <div>
+                <Text>Name:</Text>
+                {isEditingName ? (
+                    <input
+                        type="text"
+                        value={name}
+                        autoFocus
+                        onChange={handleNameInputChange}
+                        onBlur={handleNameBlur}
+                        onKeyDown={handleNameKeyDown}
+                    />
+                ) : (
+                    <span
+                        onClick={handleNameClick}
+                        style={{ cursor: "pointer" }}
+                    >
+                        {name}
+                    </span>
+                )}
             </div>
             <div>
                 <Text>Pasword:</Text>
-            {isEditingPassword ? (
-                <input
-                type="text"
-                autoFocus
-                onChange={handlePasswordInputChange}
-                onBlur={handlePasswordBlur}
-                onKeyDown={handlePasswordKeyDown}
-                />
-            ) : (
-                <span onClick={handlePasswordClick} style={{ cursor: "pointer" }}>
-                    Change
-                </span>
-            )}
-        </div>
-            </>
+                {isEditingPassword ? (
+                    <input
+                        type="text"
+                        autoFocus
+                        onChange={handlePasswordInputChange}
+                        onBlur={handlePasswordBlur}
+                        onKeyDown={handlePasswordKeyDown}
+                    />
+                ) : (
+                    <span
+                        onClick={handlePasswordClick}
+                        style={{ cursor: "pointer" }}
+                    >
+                        Change
+                    </span>
+                )}
+            </div>
+        </>
     );
 }

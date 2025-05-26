@@ -9,11 +9,16 @@ import { cn } from "@/lib/utils";
 type DialogSquareProps = {
     variant?: "outline" | "solid" | "smallNavigation";
     triggerClass?: string;
-    hideText?: Boolean;
+    hideText?: boolean;
     type?: "smallNavigation" | undefined;
 };
 
-export default function DialogSquare({ variant, triggerClass, hideText, type }: DialogSquareProps) {
+export default function DialogSquare({
+    variant,
+    triggerClass,
+    hideText,
+    type,
+}: DialogSquareProps) {
     const fetchUsersProjects = useProjectStore.getState().fetchUsersProjects;
     const router = useRouter();
     const [projectName, setProjectName] = useState<string>("");
@@ -21,11 +26,11 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     const buttonClass = cn(
-        'whitespace-nowrap',
-        variant === 'outline' && 'hover:bg-background',
-        type !== 'smallNavigation' && hideText && 'icon-only rounded-full',
-        triggerClass
-    )
+        "whitespace-nowrap",
+        variant === "outline" && "hover:bg-background",
+        type !== "smallNavigation" && hideText && "icon-only rounded-full",
+        triggerClass,
+    );
 
     const projectSave = () => {
         createProject();
@@ -39,7 +44,7 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey) {
             if (!projectName || !projectDesc) {
                 e.preventDefault();
                 return;
@@ -85,7 +90,9 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
                     variant={variant === "outline" ? "outline" : "solid"}
                 >
                     <Plus className="icon-sm" />
-                    <Text className={hideText ? 'hidden' : ''}>New project</Text>
+                    <Text className={hideText ? "hidden" : ""}>
+                        New project
+                    </Text>
                 </Button>
             </Dialog.Trigger>
 
@@ -96,7 +103,8 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
 
                 <Dialog.Description>
                     <Text className="sr-only">
-                        Fill in the project name and description to create a new project.
+                        Fill in the project name and description to create a new
+                        project.
                     </Text>
                 </Dialog.Description>
 
@@ -104,7 +112,8 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
                     <Flex className="flex-col gap-sm">
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
-                                Name <Text className="text-brand-accent">*</Text>
+                                Name{" "}
+                                <Text className="text-brand-accent">*</Text>
                             </Text>
                             <TextField.Root
                                 className="text-body-s"
@@ -116,7 +125,8 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
 
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
-                                Description <Text className="text-brand-accent">*</Text>
+                                Description{" "}
+                                <Text className="text-brand-accent">*</Text>
                             </Text>
                             <TextField.Root
                                 className="text-body-s"
@@ -143,8 +153,8 @@ export default function DialogSquare({ variant, triggerClass, hideText, type }: 
                         onClick={projectSave}
                         disabled={!projectName || !projectDesc}
                     >
-                            Create project
-                        </Button>
+                        Create project
+                    </Button>
                 </Flex>
             </Dialog.Content>
         </Dialog.Root>

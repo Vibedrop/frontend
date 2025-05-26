@@ -11,7 +11,7 @@ interface SongStore {
     duration: number;
     isBuffering: boolean;
     volume: number;
-    fetchS3: (projectId: String, s3Key: String) => void;
+    fetchS3: (projectId: string, s3Key: string) => void;
     setCurrentSong: (song: AudioFile | null) => void;
     setCurrentSongId: (id: number | null) => void;
     setIsPlaying: (isPlaying: boolean) => void;

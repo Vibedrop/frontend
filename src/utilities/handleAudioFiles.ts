@@ -2,67 +2,70 @@ import { BACKEND_URL } from "@/utilities/config";
 // ? import { useParams } from "next/navigation"
 
 export const handleUpload = async (audioFile: File, projectId: string) => {
-  // ? const project = useParams<{ projectId: string }>()
+    // ? const project = useParams<{ projectId: string }>()
 
-  const formData = new FormData();
-  formData.append("file", audioFile);
+    const formData = new FormData();
+    formData.append("file", audioFile);
 
-  try {
-    const response = await fetch(`${BACKEND_URL}/audio/${projectId}`, {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    });
+    try {
+        const response = await fetch(`${BACKEND_URL}/audio/${projectId}`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
 
-    if (!response.ok) {
-      throw new Error("handleUpload failed");
+        if (!response.ok) {
+            throw new Error("handleUpload failed");
+        }
+
+        const data = await response.json();
+        console.log("POST response handleUpload()", data);
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
-
-    const data = await response.json();
-    console.log("POST response handleUpload()", data);
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 };
 
 export const getSignedUrl = async (s3Key: string, projectId: string) => {
-  try {
-    const response = await fetch(`${BACKEND_URL}/audio/${projectId}/${s3Key}`, {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+        const response = await fetch(
+            `${BACKEND_URL}/audio/${projectId}/${s3Key}`,
+            {
+                method: "GET",
+                credentials: "include",
+            },
+        );
 
-    if (!response.ok) {
-      throw new Error("getSignedUrl failed");
+        if (!response.ok) {
+            throw new Error("getSignedUrl failed");
+        }
+
+        const data = await response.json();
+        console.log("GET response getSignedUrl()", data);
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
-
-    const data = await response.json();
-    console.log("GET response getSignedUrl()", data);
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 };
 
 export const getSignedUrls = async (projectId: string) => {
-  try {
-    const response = await fetch(`${BACKEND_URL}/audio/${projectId}`, {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+        const response = await fetch(`${BACKEND_URL}/audio/${projectId}`, {
+            method: "GET",
+            credentials: "include",
+        });
 
-    if (!response.ok) {
-      throw new Error("getSignedUrls failed");
+        if (!response.ok) {
+            throw new Error("getSignedUrls failed");
+        }
+
+        const data = await response.json();
+        console.log("GET response getSignedUrls()", data);
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
-
-    const data = await response.json();
-    console.log("GET response getSignedUrls()", data);
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
 };
