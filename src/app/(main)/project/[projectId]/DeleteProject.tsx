@@ -3,12 +3,14 @@ import { BACKEND_URL } from "@/utilities/config";
 import { useRouter } from "next/navigation";
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { Trash2 } from "lucide-react";
+import { useProjectStore } from "@/stores/useProjectStore";
 
 type DeleteProjectProps = {
     projectId: string;
 };
 
 export default function DeleteProject({ projectId }: DeleteProjectProps) {
+    const fetchUsersProjects = useProjectStore.getState().fetchUsersProjects;
     const router = useRouter();
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +30,8 @@ export default function DeleteProject({ projectId }: DeleteProjectProps) {
                 },
             );
             if (response.ok) {
-                router.push("/");
+              await fetchUsersProjects();
+              router.push("/");
             } else {
                 throw new Error("Error deleting project");
             }
