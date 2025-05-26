@@ -12,4 +12,4 @@ export type User = {
     ownedProjects: Project[];
     collaborations: Collaborator[];
     comments: Comment[];
-  }
+};

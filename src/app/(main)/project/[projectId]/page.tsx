@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useParams } from "next/navigation";
 import { useAudioStore } from "@/stores/useAudioStore";
@@ -41,6 +41,10 @@ export default function Page() {
     const [comments, setComments] = useState<Comment[] | null>(null);
     const [commentInput, setCommentInput] = useState("");
     const [audioId, setaudioId] = useState("");
+    const [unreadComments, setUnreadComments] = useState<
+        Record<string, boolean>
+    >({});
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { currentProject, owner, collaborators, sortedAudioFiles } =
         useProjectStore();
     const { currentSong, isPlaying, isBuffering } = useAudioStore();
@@ -54,9 +58,11 @@ export default function Page() {
     const isOwner = currentProject?.ownerId === user?.id;
     const audioRef = useAudio();
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handlePlayPause = (song: any, index: number) => {
         console.log("audioRef", audioRef);
         if (currentSong?.id === song.id) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             isPlaying ? audioRef.current?.pause() : audioRef.current?.play();
         } else {
             setfetchS3(projectId, song.s3Key);
@@ -68,6 +74,7 @@ export default function Page() {
     const handleComments = (audioID: string) => {
         setaudioId(audioID);
         getComments(audioID);
+        updateReadAt(audioID);
     };
 
     useEffect(() => {
@@ -78,7 +85,7 @@ export default function Page() {
                 if (!useProjectStore.getState().currentProject) {
                     setNotFound(true);
                 }
-            } catch (error) {
+            } catch {
                 setNotFound(true);
             } finally {
                 setIsLoading(false);
@@ -86,7 +93,7 @@ export default function Page() {
         };
 
         loadProject();
-    }, []);
+    }, [fetchCurrentProject, projectId]);
 
     useEffect(() => {
         if (audioId) {
@@ -95,6 +102,72 @@ export default function Page() {
             setComments(null);
         }
     }, [audioId]);
+
+    const getUnreadComments = useCallback(async () => {
+        if (!sortedAudioFiles || sortedAudioFiles.length === 0) return;
+
+        for (const fileID of sortedAudioFiles.map(file => file.id)) {
+            try {
+                const response = await fetch(
+                    `${BACKEND_URL}/comments/${fileID}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({ fileid: fileID }),
+                    },
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch comments");
+                }
+                const data = (await response.json()) as {
+                    comments: Comment[];
+                    lastReadAt: string;
+                };
+                const hasUnread =
+                    data.comments.filter(
+                        comment =>
+                            comment.author.id !== user?.id &&
+                            new Date(comment.createdAt).getTime() >
+                                new Date(data.lastReadAt).getTime(),
+                    ).length > 0;
+
+                setUnreadComments(prev => ({
+                    ...prev,
+                    [fileID]: hasUnread,
+                }));
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }, [sortedAudioFiles, user]);
+
+    useEffect(() => {
+        if (sortedAudioFiles && sortedAudioFiles.length > 0) {
+            getUnreadComments();
+        }
+    }, [getUnreadComments, sortedAudioFiles]);
+
+    async function updateReadAt(fileID: string) {
+        try {
+            const response = await fetch(
+                `${BACKEND_URL}/comments/${fileID}/read`,
+                {
+                    method: "PUT",
+                    credentials: "include",
+                },
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to update read status");
+            }
+        } catch {
+            console.error("Failed to update read status for fileID");
+        }
+    }
 
     function formatSeconds(seconds: number): string {
         const minutes = Math.floor(seconds / 60);
@@ -122,7 +195,7 @@ export default function Page() {
             });
             if (response.ok) {
                 const data = await response.json();
-                setComments(data);
+                setComments(data.comments);
                 console.log("getComments", data);
             } else {
                 throw new Error("error");
@@ -184,7 +257,7 @@ export default function Page() {
         }
     }
 
-        async function deleteComment(commentId: string, fileID: string) {
+    async function deleteComment(commentId: string, fileID: string) {
         try {
             const response = await fetch(
                 `${BACKEND_URL}/comments/${commentId}`,
@@ -229,6 +302,7 @@ export default function Page() {
             ) : (
                 <>
                     <Flex className="gap-sm lg:gap-lg flex-wrap">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
                             src="/assets/imgs/default-img-purple.jpg"
@@ -244,6 +318,7 @@ export default function Page() {
 
                             {collaborators?.length > 0 && (
                                 <ul className="flex flex-row gap-lg flex-wrap">
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     {collaborators?.map((user: any) => (
                                         <li
                                             key={user.user.username}
@@ -408,7 +483,7 @@ export default function Page() {
                                                             </Text>
                                                         </Flex>
 
-                                                        <Flex className="w-lg lg:w-xl xl:w-[82px] shrink-0 items-center justify-end lg:justify-center">
+                                                        <Flex className="w-lg relative lg:w-xl xl:w-[82px] shrink-0 items-center justify-start">
                                                             <MessageSquare
                                                                 className="icon-xs lg:icon-sm cursor-pointer"
                                                                 onClick={() =>
@@ -417,6 +492,11 @@ export default function Page() {
                                                                     )
                                                                 }
                                                             />
+                                                            {unreadComments[
+                                                                audio.id
+                                                            ] && (
+                                                                <span className="text-xs bg-brand-accent rounded-full absolute text-center h-3 lg:h-4 aspect-square -top-1 lg:-top-2 left-3 lg:left-4"></span>
+                                                            )}
                                                         </Flex>
 
                                                         {isOwner && (
@@ -445,7 +525,10 @@ export default function Page() {
                         <Flex className="w-full flex-col max-w-[940px] m-auto items-center gap-md">
                             <Flex className="w-full justify-end">
                                 <Link
-                                    onClick={() => setaudioId("")}
+                                    onClick={() => {
+                                        setaudioId("");
+                                        getUnreadComments();
+                                    }}
                                     className="flex items-center gap-xs cursor-pointer"
                                 >
                                     <Undo2 className="icon-xs" />
@@ -599,7 +682,15 @@ export default function Page() {
                                                                             .id ===
                                                                             user?.id && (
                                                                             // TODO: Add delete comment functionality
-                                                                            <Trash2 className="icon-xs ml-auto cursor-pointer shrink-0" onClick={() => {deleteComment(comment.id, audioId)}} />
+                                                                            <Trash2
+                                                                                className="icon-xs ml-auto cursor-pointer shrink-0"
+                                                                                onClick={() => {
+                                                                                    deleteComment(
+                                                                                        comment.id,
+                                                                                        audioId,
+                                                                                    );
+                                                                                }}
+                                                                            />
                                                                         )}
                                                                     </Flex>
 

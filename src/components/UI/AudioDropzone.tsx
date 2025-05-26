@@ -24,7 +24,9 @@ function AudioDropzone() {
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
-    const fetchCurrentProject = useProjectStore((state) => state.fetchCurrentProject);
+    const fetchCurrentProject = useProjectStore(
+        state => state.fetchCurrentProject,
+    );
 
     const titleHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSongTitle(e.target.value);
@@ -36,7 +38,7 @@ function AudioDropzone() {
     const handleCancelUpload = () => {
         setAudioFile(null);
         setIsDialogOpen(false);
-    }
+    };
 
     const handleDialogOpen = () => {
         setDropError(null);
@@ -44,7 +46,7 @@ function AudioDropzone() {
         setSongTitle("");
         setSongDescription("");
         setAudioFile(null);
-    }
+    };
 
     const handleUpload = async () => {
         if (!audioFile) {
@@ -156,9 +158,15 @@ function AudioDropzone() {
                     </Flex>
 
                     {dropError && (
-                        <Callout.Root variant="surface" color="red" className="p-xs w-full lg:max-w-[420px] justify-center">
+                        <Callout.Root
+                            variant="surface"
+                            color="red"
+                            className="p-xs w-full lg:max-w-[420px] justify-center"
+                        >
                             <Callout.Text>
-                                <Text className="text-body-xs">{dropError}</Text>
+                                <Text className="text-body-xs">
+                                    {dropError}
+                                </Text>
                             </Callout.Text>
                         </Callout.Root>
                     )}
@@ -172,7 +180,8 @@ function AudioDropzone() {
 
                 <Dialog.Description>
                     <Text className="sr-only">
-                        Fill in the song title and description to add a new track.
+                        Fill in the song title and description to add a new
+                        track.
                     </Text>
                 </Dialog.Description>
 
@@ -180,7 +189,8 @@ function AudioDropzone() {
                     <Flex className="flex-col gap-sm">
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
-                                Song title <Text className="text-brand-accent">*</Text>
+                                Song title{" "}
+                                <Text className="text-brand-accent">*</Text>
                             </Text>
                             <TextField.Root
                                 className="text-body-s"
@@ -191,7 +201,8 @@ function AudioDropzone() {
 
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
-                                Description <Text className="text-brand-accent">*</Text>
+                                Description{" "}
+                                <Text className="text-brand-accent">*</Text>
                             </Text>
                             <TextField.Root
                                 className="text-body-s"
@@ -212,10 +223,19 @@ function AudioDropzone() {
                             />
 
                             {uploadError && (
-                                <Theme appearance="dark" className="bg-transparent relative">
-                                    <Callout.Root variant="surface" color="red" className="p-xs w-fit animate-shake">
+                                <Theme
+                                    appearance="dark"
+                                    className="bg-transparent relative"
+                                >
+                                    <Callout.Root
+                                        variant="surface"
+                                        color="red"
+                                        className="p-xs w-fit animate-shake"
+                                    >
                                         <Callout.Text className="relative">
-                                            <Text className="text-body-xs">{uploadError}</Text>
+                                            <Text className="text-body-xs">
+                                                {uploadError}
+                                            </Text>
                                         </Callout.Text>
                                     </Callout.Root>
                                 </Theme>
@@ -232,7 +252,9 @@ function AudioDropzone() {
                                     }
                                 >
                                     <FolderOpen />
-                                    <Text className="text-body-xs font-medium">Upload file</Text>
+                                    <Text className="text-body-xs font-medium">
+                                        Upload file
+                                    </Text>
                                 </Button>
                                 {audioFile && (
                                     <Text className="text-body-xs text-brand-accent">
@@ -257,7 +279,12 @@ function AudioDropzone() {
                             loading={isUploading}
                             className="flex-1 md:flex-none md:w-[192px]"
                             onClick={handleUpload}
-                            disabled={!songTitle || !songDescription || !audioFile || isUploading}
+                            disabled={
+                                !songTitle ||
+                                !songDescription ||
+                                !audioFile ||
+                                isUploading
+                            }
                         >
                             Add track
                         </Button>
