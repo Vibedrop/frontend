@@ -172,6 +172,29 @@ export default function Page() {
         }
     }
 
+        async function deleteComment(commentId: string, fileID: string) {
+        try {
+            const response = await fetch(
+                `${BACKEND_URL}/comments/${commentId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                },
+            );
+            if (response.ok) {
+                const data = await response.json();
+                console.log("postComments", data);
+                await getComments(fileID);
+            } else {
+                throw new Error("error");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
     if (!isLoading && notFound && !currentProject) {
         return (
             <Flex className="w-full mt-xl ml-xl max-h-[800px] items-center">
@@ -395,7 +418,7 @@ export default function Page() {
 
                                                         {comment.author.id === owner?.id && (
                                                             // TODO: Add delete comment functionality
-                                                            <Trash2 className="icon-xs ml-auto cursor-pointer shrink-0" />
+                                                            <Trash2 className="icon-xs ml-auto cursor-pointer shrink-0" onClick={() => {deleteComment(comment.id, audioId)}} />
                                                         )}
                                                     </Flex>
 
