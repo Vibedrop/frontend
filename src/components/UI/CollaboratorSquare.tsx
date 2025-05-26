@@ -75,6 +75,8 @@ export default function CollaboratorSquare() {
   useEffect(() => {
     if (isDialogOpen && projectId) {
       fetchCurrentProject(projectId);
+      setInviteError(null);
+      setCollaboratorEmail("");
     }
   }, [isDialogOpen, projectId]);
 

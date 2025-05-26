@@ -60,7 +60,7 @@ export default function StartPage() {
 
         <Flex className="w-full max-w-[1000px] my-lg mb-xl">
           <VideoPlayer
-            videoUrl="/assets/videos/vibedrop-promo-video.mp4"
+            videoUrl="/assets/videos/vibedrop-promo-720p.mp4"
             thumbnailUrl="/assets/videos/vibedrop-promo-thumb.webp"
             alt="Viebedrop promo video"
           />

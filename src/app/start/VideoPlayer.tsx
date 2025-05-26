@@ -1,7 +1,17 @@
-import { Box } from '@radix-ui/themes';
-import { Play } from 'lucide-react';
+'use client';
+import dynamic from 'next/dynamic';
+import { Box, Flex } from '@radix-ui/themes';
+import { LoaderCircle, Play } from 'lucide-react';
 import { useState } from 'react';
-import ReactPlayer from 'react-player';
+
+const ReactPlayer = dynamic(() => import('react-player'), {
+  ssr: false,
+  loading: () => (
+    <Flex className="w-full h-full items-center justify-center">
+      <LoaderCircle className="animate-spin size-[40px] text-foreground" />
+    </Flex>
+  ),
+});
 
 interface VideoPlayerProps {
   videoUrl: string
