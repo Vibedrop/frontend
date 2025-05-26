@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
@@ -177,6 +177,59 @@ export default function StartPage() {
                     </Flex>
                 </Flex>
             </Flex>
+
+            {/* Footer */}
+            <footer>
+                <Flex className="flex-col md:flex-row p-xl md:p-xxl pt-xl pb-xxl sm:pt-xxl justify-center bg-background gap-md max-w-[1140px] mx-auto">
+                    <Flex className="flex-1 flex-col gap-sm">
+                        <Flex className="w-full flex-row gap-md justify-end mb-md">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src='/vibedrop-logo.svg' alt="Logo" className="w-[50px]" />
+
+                            <Text className="w-full text-[22px] mt-sm font-medium">
+                                Team Vibedrop
+                            </Text>
+                        </Flex>
+
+                        <Flex className="flex-col">
+                            <Box>
+                                <Text className="text-body-s text-brand-accent font-medium">UX/UI:</Text>
+                            </Box>
+
+                            <Box>
+                                <Text className="text-body-xs">Emma Druzic, Priscilla Carlsson</Text>
+                            </Box>
+                        </Flex>
+
+                        <Flex className="flex-col mt-dm">
+                            <Box>
+                                <Text className="text-body-s text-brand-accent font-medium">Fullstack:</Text>
+                            </Box>
+
+                            <Box className="max-w-[420px]">
+                                <Text className="text-body-xs">Cristian Pencheff, Elin Suvinen, Fares Elloumi, Kristoffer Benckert, Kristoffer Larsson, Sixten Ekblad, Stella Jakstrand</Text>
+                            </Box>
+                        </Flex>
+
+                        <Flex className="flex-col mt-dm">
+                            <Box>
+                        <Text className="text-body-s text-brand-accent font-medium">DevOps:</Text>
+                            </Box>
+
+                            <Box>
+                                <Text className="text-body-xs">David Jonsson</Text>
+                            </Box>
+                        </Flex>
+                    </Flex>
+
+                    <Flex>
+                        <Text className="text-body-xs text-muted-foreground mt-md">
+                            © 2025 Vibedrop. All rights reserved.
+                        </Text>
+                    </Flex>
+                </Flex>
+            </footer>
         </>
-    );
+    )
 }
+
