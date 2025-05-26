@@ -22,7 +22,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useAudio } from "@/context/AudioContext";
 import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
-import Image from "next/image";
+import DeleteProject from "./DeleteProject";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +90,13 @@ export default function Page() {
         const paddedSeconds = remainingSeconds.toString().padStart(2, '0');
         return `${minutes}:${paddedSeconds}`;
     }
+
+    const ownerControls = (
+        <>
+            <CollaboratorSquare />
+            <DeleteProject projectId={projectId} />
+        </>
+    );
 
     async function getComments(fileID: string) {
         try {
@@ -176,7 +183,7 @@ export default function Page() {
     return  (
         <Flex style={{ willChange: 'margin-left' }} className={`flex-col w-full max-w-[1080px] 2xl:max-w-[910px] 2xl-plus:max-w-[1080px] gap-md sm:gap-lg self-center transition-[margin-left] ${isOpen ? '2xl:ml-[-320px]' : '2xl:ml-[-80px]'}`}>
             {isLoading ? (
-                <Flex className="w-full h-[80vh] max-h-[500px] items-center justify-center">
+                <Flex className="w-full mt-[100px] items-center justify-center">
                     <LoaderCircle className="animate-spin size-[40px] text-background" />
                 </Flex>
             ) : (
@@ -205,14 +212,14 @@ export default function Page() {
                             )}
 
                             {isOwner && (
-                                <Flex className="mb-md hidden lg:flex">
-                                    <CollaboratorSquare />
+                                <Flex className="mb-md hidden lg:flex gap-xl justify-between">
+                                    {ownerControls}
                                 </Flex>
                             )}
                         </Flex>
 
-                        <Flex className="my-xxs lg:hidden w-full">
-                            <CollaboratorSquare />
+                        <Flex className="my-xxs lg:hidden w-full gap-md justify-between items-center">
+                            {ownerControls}
                         </Flex>
                     </Flex>
 
@@ -312,11 +319,6 @@ export default function Page() {
 
                     {audioId &&
                         <Flex className="w-full flex-col max-w-[940px] m-auto items-center gap-md">
-                            {/* TODO: Add current audio player progress */}
-                            {/* <Flex className="w-xxl">
-                                <Text className="text-label-s">1:06</Text>
-                            </Flex> */}
-
                             <Flex className="w-full justify-end">
                                 <Link
                                     onClick={() => setaudioId("")}

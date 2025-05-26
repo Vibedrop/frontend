@@ -36,30 +36,7 @@ export default function Sidebar() {
     useEffect(() => {
         fetchUsersProjects();
         setIsFetching(false);
-    }, []);
-
-    async function deleteProject(projectId: string) {
-        try {
-            const response = await fetch(
-                `${BACKEND_URL}/projects/${projectId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                },
-            );
-            if (response.ok) {
-                const data = await response.json();
-                console.log("postComments", data);
-            } else {
-                throw new Error("error");
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    }, [currentProject]);
 
     return (
         <>
@@ -160,14 +137,6 @@ export default function Sidebar() {
                                                 <Text className="text-body-s overflow-hidden whitespace-nowrap text-ellipsis">
                                                     {project.name}
                                                 </Text>
-                                                <Trash2
-                                                    className="icon-xs lg:icon-sm cursor-pointer"
-                                                    onClick={() =>
-                                                        deleteProject(
-                                                            project.id,
-                                                        )
-                                                    }
-                                                />
                                             </>
                                         )}
                                     </Flex>
