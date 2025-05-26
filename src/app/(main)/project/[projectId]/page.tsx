@@ -128,7 +128,7 @@ export default function Page() {
                     lastReadAt: string;
                 };
                 const hasUnread =
-                    data.comments.filter(
+                    data?.comments?.filter(
                         comment =>
                             comment.author.id !== user?.id &&
                             new Date(comment.createdAt).getTime() >
@@ -249,6 +249,7 @@ export default function Page() {
             if (response.ok) {
                 const data = await response.json();
                 console.log("postComments", data);
+                await fetchCurrentProject(projectId);
             } else {
                 throw new Error("error");
             }
