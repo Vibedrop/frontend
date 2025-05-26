@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import { LoaderCircle } from 'lucide-react';
 import { Flex } from '@radix-ui/themes';
 
-const PUBLIC_ROUTES = ['/start', '/sign-in', '/sign-up'];
+const PUBLIC_ROUTES = ['/start', '/sign-in', '/sign-up', '/404'];
 
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   const { checkAuth } = useAuthStore();

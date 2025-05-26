@@ -1,7 +1,6 @@
 import { metadata } from "@/utilities/metadata";
 import { inter } from "@/lib/fonts";
 import { Theme } from "@radix-ui/themes";
-import AuthGuard from "@/components/AuthGuard";
 import "@radix-ui/themes/styles.css";
 import "./globals.scss";
 
@@ -23,7 +22,7 @@ export default function RootLayout({
           grayColor="gray"
           className="flex bg-background flex-col h-screen font-sans"
         >
-          <AuthGuard>{children}</AuthGuard>
+          {children}
         </Theme>
       </body>
     </html>

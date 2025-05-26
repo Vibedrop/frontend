@@ -1,5 +1,6 @@
 import { Flex } from "@radix-ui/themes";
 import Link from "next/link";
+
 function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-lg py-lg">
