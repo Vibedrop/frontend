@@ -10,7 +10,6 @@ export default function NotFound() {
         <Header />
       </Flex>
 
-      {/* HERO */}
       <Flex className="flex-col items-center px-lg pb-md xl:px-lg sm:pb-lg 2xl:pb-xxl pt-xxl justify-center bg-background gap-lg lg:gap-xxl">
         <Flex className="w-full flex-col lg:flex-row items-center max-w-screen-xl gap-md lg:gap-xxl text-center lg:text-left 2xl:mt-xxl">
           <Flex className="flex-1 flex-col md:px-lg items-center lg:items-start">
