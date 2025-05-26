@@ -14,6 +14,9 @@
     --highlight: #646464;   /* Extra level of elevation */
     --brand-gradient: linear-gradient(135deg, #5B5BD6 0%, #B8BAF8 100%);
 
+    --owner-comment: linear-gradient(to bottom, #8B89D0, #47466A); /* Owner comment background */
+    --collaborator-comment: linear-gradient(to bottom, #9AD089, #4E6A46); /* Collaborator comment background */
+
     --tooltip: #191919;
 
     /* Typography */
@@ -41,6 +44,13 @@
 
     /* Global transition duration */
     --transition-duration: 250ms;
+  }
+
+  .owner-comment-gradient {
+    background: var(--owner-comment);
+  }
+  .collaborator-comment-gradient {
+    background: var(--collaborator-comment);
   }
 
   html {
