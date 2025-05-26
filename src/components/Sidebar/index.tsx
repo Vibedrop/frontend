@@ -2,8 +2,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { BACKEND_URL } from "@/utilities/config";
-import { Trash2 } from "lucide-react";
 import { Collaborator, Project } from "@/types";
 import {
     PanelLeftClose,
@@ -17,8 +15,6 @@ import Link from "next/link";
 import DialogSquare from "../UI/DialogSquare";
 import ProjectNavSmall from "./ProjectNavSmall";
 import ProjectItemSkeleton from "./ProjectItemSkeleton";
-import { useParams } from "next/navigation";
-import { useRouter } from 'next/navigation';
 
 const projectTitleClass =
     "text-[18px] font-medium overflow-hidden whitespace-nowrap text-ellipsis mt-lg";
@@ -27,11 +23,9 @@ const projectClass =
     "p-xs rounded-lg overflow-hidden w-full gap-x-2 items-center hover:opacity-70 transition-all";
 
 export default function Sidebar() {
-    const { projectId } = useParams<{ projectId: string }>();
     const { isOpen, toggleSidebar } = useSidebarStore();
     const { projects, currentProject } = useProjectStore();
     const [isFetching, setIsFetching] = useState(true);
-    const router = useRouter();
     const fetchUsersProjects = useProjectStore(
         state => state.fetchUsersProjects,
     );
@@ -39,35 +33,9 @@ export default function Sidebar() {
     useEffect(() => {
         fetchUsersProjects();
         setIsFetching(false);
-        console.log("hi")
-    }, [isFetching === true]);
 
-    async function deleteProject(fetchProjectId: string) {
-        try {
-            const response = await fetch(
-                `${BACKEND_URL}/projects/${fetchProjectId}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                },
-            );
-            if (response.ok) {
-                const data = await response.json();
-                console.log("postComments", data);
-                setIsFetching(true)
-                if(projectId === fetchProjectId) {
-                    router.push('/');
-                }
-            } else {
-                throw new Error("error");
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    }, [isFetching]);
+
 
     return (
         <>
