@@ -125,7 +125,7 @@ export default function Sidebar() {
                                         <Theme accentColor="gray">
                                             <Avatar
                                                 fallback="P"
-                                                src="https://placehold.co/400"
+                                                src="/assets/imgs/default-img-purple.jpg"
                                                 alt={project.name}
                                                 className="size-xl"
                                                 radius="small"
@@ -186,7 +186,7 @@ export default function Sidebar() {
                                             <Theme accentColor="gray">
                                                 <Avatar
                                                     fallback="P"
-                                                    src="https://placehold.co/400"
+                                                    src="/assets/imgs/default-img-green.jpg"
                                                     alt={project.project.name}
                                                     className="size-xl"
                                                     radius="small"
