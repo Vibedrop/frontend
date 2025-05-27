@@ -1,103 +1,99 @@
 # [Latest Deployment](https://vibedrop-frontend.cc25.chasacademy.dev/)
 
-# Arbetsflöde för Vibedrop
+# Vibedrop – Användarguide
 
-All kod ändras via Merge Requests (MR).
-Direktpush eller force-push till main är förbjudet.
+Vibedrop är en modern webbapplikation för samarbete kring musikprojekt. Den här guiden hjälper dig att komma igång, utveckla, bygga och förstå de viktigaste funktionerna i frontend-projektet.
 
-Endast MR kan ändra main, så håll koden ren.
-Om du märker att .gitignore saknar något, meddela David eller lägg till en ändring via en egen branch.
+## Innehåll
+- [Förutsättningar](#förutsättningar)
+- [Installation](#installation)
+- [Utvecklingsläge](#utvecklingsläge)
+- [Bygga för produktion](#bygga-för-produktion)
+- [Struktur och viktiga mappar](#struktur-och-viktiga-mappar)
+- [Användbara npm-skript](#användbara-npm-skript)
+- [Felsökning](#felsökning)
+- [Ytterligare dokumentation](#ytterligare-dokumentation)
 
-#### 1.a Klona FRONTEND repot - ssh
+## Förutsättningar
 
+- Node.js (rekommenderad version: 18.x eller senare)
+- npm (medföljer Node.js)
+- Git
+
+## Installation
+
+1. Klona repot:
+   ```bash
+   git clone https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend.git
+   ```
+2. Gå in i projektmappen:
+   ```bash
+   cd frontend
+   ```
+3. Installera beroenden:
+   ```bash
+   npm install
+   ```
+
+## Utvecklingsläge
+
+> **Viktigt:** Frontend måste köras på port 3001. Backend måste vara igång på port 3000 innan du startar frontend.
+
+1. Starta backend-servern (i backend-mappen):
+   ```bash
+   npm run dev
+   ```
+   Backend körs då på [http://localhost:3000](http://localhost:3000).
+
+2. Starta frontend:
+   ```bash
+   npm run dev
+   ```
+   - Appen körs på [http://localhost:3000](http://localhost:3000) om porten är ledig men eftersom backend redan behöver vara igång på port 3000 kommer den testa nästa lediga port (3001).
+   - Alternativt tvinga den att starta på port 3001 genom att köra:
+     ```bash
+     PORT=3001 npm run dev
+     ```
+   - Alla ändringar i koden laddas automatiskt om i webbläsaren.
+
+## Bygga för produktion
+
+Bygg en optimerad version av appen:
+```bash
+npm run build
 ```
-git clone git@git.chasacademy.dev:chas-challenge-2025/vibedrop/frontend.git
+- Detta skapar en `.next`-mapp med produktionsfärdiga filer.
+
+Starta produktionen lokalt (efter build):
+```bash
+npm start
 ```
+- Används för att testa den byggda appen i produktionsläge.
 
-#### 1.b Klona FRONTEND repot - https
+## Struktur och viktiga mappar
 
-```
-git clone https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend.git
-```
+- `src/app/` – Sidor och routing enligt Next.js App Router.
+- `src/components/` – Återanvändbara React-komponenter.
+- `src/context/` – React Contexts för global state.
+- `src/stores/` – Zustand stores för state management.
+- `src/utilities/` – Hjälpfunktioner och verktyg.
+- `public/` – Statisk media (bilder, videos, fonter).
+- `styles/` eller `src/app/globals.scss` – Globala stilar (Tailwind/SCSS).
 
-#### 2. Skapa en ny branch
+## Användbara npm-skript
 
-Skapa en branch från main med ett beskrivande namn på din feature - OBS: Max 30 tecken långt.
-Exempel:
+- `npm run dev` – Startar utvecklingsservern (se till att starta backend på port 3000 först, alternativt ange PORT=3001 för rätt port).
+- `npm run build` – Bygger appen för produktion.
+- `npm start` – Startar den byggda appen i produktionsläge.
+- `npm run lint` – Kör ESLint för att hitta kodproblem.
 
-```
-git checkout -b ny-feature
-```
+## Felsökning
 
-#### 3. Utveckla och testa lokalt
+- Kontrollera att alla beroenden är installerade (`npm install`).
+- Vid portkonflikt, försäkra dig att frontend körs på port 3001 med `PORT=3001 npm run dev`.
+- Läs konsolens felmeddelanden för mer information.
 
-Gör dina ändringar i din feature‑branch.
-Kör lokala tester (t.ex. npm run dev) för att säkerställa att allt fungerar. ??
+## Ytterligare dokumentation
 
-#### 4.a Pusha din branch och skapa en Merge Request
-
-```
-git push -u origin ny-feature
-```
-
-Skapa en Merge Request i GitLab WebGUI från din branch mot main.
-Välj om du vill att någon annan ska granska din kod innan den godkänns.
-Markera MR:n som "Draft" tills din funktion är klar.
-Välj alternativen SQUASH COMMITS och DELETE SOURCE BRANCH för att hålla historiken ren.
-
-#### 4.b Gå tillbaks till main och kör en ny Pull
-
-```
-git checkout main
-git pull
-```
-
-Detta gör att du har din senaste MR även lokalt.
-
-#### 5. CI/CD Pipeline och Review Environment
-
-När MR:n skapas startas pipelinen automatiskt. Den gör följande:
-Bygger din kod och skapar en Docker‑image.
-Deployar en temporär review‑environment, t.ex. https://review-ny-feature.cc25.chasacademy.dev, där du kan se dina ändringar live.
-
-I MR:n finns länk till testmiljön under Operate->Environments
-
-#### 6. Granskning och Merge
-
-Om allt fungerar, ändra MR:n från "Draft" till klar och mergea den till main.
-Vid merge tas den temporära review‑miljön automatiskt ner, och production‑miljön deployas med den nya koden från din branch.
-
-## 7. Git-kommandon
-
-Din bästa vän!
-
-```
-git status
-```
-
-Visa alla branches, MR's och commits i CLI
-
-```
-git log --oneline --graph --decorate --all
-```
-
-Visa ändringsdetaljer
-
-```
-git log -p
-```
-
-Visa vem som ändrat varje rad i en fil
-
-```
-git blame <sökväg+filnamn>
-exempel: git blame src/app/sign-in/page.tsx
-```
-
-#### Använd Rebase kontinuerligt om du arbetar på en branch länge för att inte hamna för långt efter de andra som kör sina egna branches emot main.
-
-Mer info om Rebase finns här:
-
-[Atlassin Guide](https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase)
-
-[Youtube-genomgång](https://www.youtube.com/watch?v=f1wnYdLEpgI)
+- [Next.js Docs](https://nextjs.org/docs)
+- [Chas Academy GitLab](https://git.chasacademy.dev/chas-challenge-2025/vibedrop/frontend)
