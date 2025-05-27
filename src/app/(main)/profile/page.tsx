@@ -192,7 +192,6 @@ export default function ProfilePage() {
                     <Flex className="flex-row mt-sm justify-start">
                         <Button
                             variant="outline"
-                            // onClick={handleDeleteUser}
                             onClick={() => setDialogOpen(true)}
                             >
                             <Trash2 className="icon-xs" />
