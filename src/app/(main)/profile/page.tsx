@@ -3,8 +3,10 @@ import React, { useState, ChangeEvent, KeyboardEvent } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Text } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
+    const router = useRouter();
     const { checkAuth } = useAuthStore();
     const user = useAuthStore(state => state.user);
     const [isEditingName, setIsNameEditing] = useState<boolean>(false);
@@ -41,7 +43,6 @@ export default function ProfilePage() {
                 },
             );
             if (response.ok) {
-                const data = await response.json();
                 await checkAuth();
             } else {
                 throw new Error("error");
@@ -66,7 +67,6 @@ export default function ProfilePage() {
                 },
             );
             if (response.ok) {
-                const data = await response.json();
                 await checkAuth();
             } else {
                 throw new Error("error");
@@ -75,6 +75,28 @@ export default function ProfilePage() {
             console.error(error);
         }
     }
+
+        const handleDeleteUser = async () => {
+        try {
+            const response = await fetch(
+                `${BACKEND_URL}/users/me`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                },
+            );
+            if (response.ok) {
+                router.push("/start")
+            } else {
+                throw new Error("Error deleting user");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleNameKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -130,6 +152,7 @@ export default function ProfilePage() {
                     </span>
                 )}
             </div>
+            <button className="bg-red-600 p-4 rounded-lg" onClick={handleDeleteUser}>Delete User</button>
         </>
     );
 }
