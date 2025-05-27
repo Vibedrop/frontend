@@ -18,7 +18,6 @@ export const handleUploadImage = async (audioFile: File, projectId: string) => {
         }
 
         const data = await response.json();
-        console.log("POST response handleUpload()", data);
         return data;
     } catch (error) {
         console.error(error);

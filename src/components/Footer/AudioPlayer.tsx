@@ -140,7 +140,6 @@ export default function AudioPlayer() {
                 : currentSongId;
         setCurrentSongId(newId);
         setCurrentSong(sortedAudioFiles[newId]);
-        console.log("songs", sortedAudioFiles);
     };
 
     const handlePreviousSong = () => {
@@ -153,14 +152,12 @@ export default function AudioPlayer() {
     };
 
     const toggleMute = () => {
-        console.log("toggleMute");
         if (audioRef.current) {
             audioRef.current.muted = !audioRef.current.muted;
         }
     };
 
     const handleVolumeChange = (value: number[]) => {
-        console.log("handleVolumeChange", value);
         setVolume(value[0]);
         if (audioRef.current) {
             audioRef.current.volume = value[0];

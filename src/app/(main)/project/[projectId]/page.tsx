@@ -60,7 +60,6 @@ export default function Page() {
 
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handlePlayPause = (song: any, index: number) => {
-        console.log("audioRef", audioRef);
         if (currentSong?.id === song.id) {
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             isPlaying ? audioRef.current?.pause() : audioRef.current?.play();
@@ -196,7 +195,6 @@ export default function Page() {
             if (response.ok) {
                 const data = await response.json();
                 setComments(data.comments);
-                console.log("getComments", data);
             } else {
                 throw new Error("error");
             }
@@ -223,7 +221,6 @@ export default function Page() {
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("postComments", data);
                 setCommentInput("");
                 await getComments(fileID);
             } else {
@@ -248,7 +245,6 @@ export default function Page() {
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log("postComments", data);
                 await fetchCurrentProject(projectId);
             } else {
                 throw new Error("error");
@@ -272,7 +268,6 @@ export default function Page() {
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log("postComments", data);
                 await getComments(fileID);
             } else {
                 throw new Error("error");

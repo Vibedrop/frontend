@@ -27,7 +27,6 @@ export default function CollaboratorSquare() {
 
     const UserEmailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCollaboratorEmail(e.target.value);
-        console.log("collaborators", collaborators);
     };
 
     async function inviteCollaborator() {

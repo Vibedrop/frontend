@@ -74,10 +74,6 @@ export default function Page() {
         });
     }, []);
 
-    useEffect(() => {
-        console.log("useEffect files", files);
-    }, [files]);
-
     return (
         <Flex
             className={`flex-col w-full max-w-[1080px] h-full mt-[8vw] gap-md self-center transition-all ${isOpen ? "2xl:ml-[-320px]" : "2xl:ml-[-80px]"}`}

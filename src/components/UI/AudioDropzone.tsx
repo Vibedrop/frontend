@@ -74,7 +74,6 @@ function AudioDropzone() {
             }
 
             const data = await response.json();
-            console.log("POST response handleAudio", data);
 
             setIsDialogOpen(false);
             setAudioFile(null);

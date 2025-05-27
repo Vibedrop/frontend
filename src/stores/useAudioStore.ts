@@ -44,7 +44,6 @@ export const useAudioStore = create<SongStore>(set => ({
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log("data.url", data.url);
                 set({ s3Url: data.url });
             } else {
                 throw new Error("error");
