@@ -19,6 +19,7 @@ import {
 import { AudioFile, Comment } from "@/types";
 import {
     Box,
+    Button,
     Flex,
     IconButton,
     Link,
@@ -31,7 +32,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useAudio } from "@/context/AudioContext";
 import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
-import DeleteProject from "./DeleteProject";
+import { ConfirmDialog } from "@/components/UI/ConfirmDialog";
 import Image from "next/image";
 
 export default function Page() {
@@ -45,6 +46,14 @@ export default function Page() {
     const [unreadComments, setUnreadComments] = useState<
         Record<string, boolean>
     >({});
+    const [deleteAudioDialogOpen, setDeleteAudioDialogOpen] = useState(false);
+    const [audioToDelete, setAudioToDelete] = useState<AudioFile | null>(null);
+    const [isDeletingAudio, setIsDeletingAudio] = useState(false);
+    const [deleteCommentDialogOpen, setDeleteCommentDialogOpen] = useState(false);
+    const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null);
+    const [isDeletingComment, setIsDeletingComment] = useState(false);
+    const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false);
+    const [isDeletingProject, setIsDeletingProject] = useState(false);
 
     const { currentProject, collaborators, sortedAudioFiles } =
         useProjectStore();
@@ -177,10 +186,45 @@ export default function Page() {
         return `${minutes}:${paddedSeconds}`;
     }
 
+    const handleDeleteProject = async () => {
+        setIsDeletingProject(true);
+        try {
+            const response = await fetch(
+                `${BACKEND_URL}/projects/${projectId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                },
+            );
+            if (response.ok) {
+                await useProjectStore.getState().fetchUsersProjects();
+                window.location.href = "/";
+            } else {
+                throw new Error("Error deleting project");
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setDeleteProjectDialogOpen(false);
+            setIsDeletingProject(false);
+        }
+    };
+
     const ownerControls = (
         <>
             <CollaboratorSquare />
-            <DeleteProject projectId={projectId} />
+            <Button
+                className="py-xxs pl-xs h-xl bg-background text-muted hover:text-foreground transition-colors "
+                radius="full"
+                aria-label="Delete project"
+                onClick={() => setDeleteProjectDialogOpen(true)}
+            >
+                <Trash2 className="icon-xs" />
+                <Text className="text-body-s">Delete project</Text>
+            </Button>
         </>
     );
 
@@ -192,7 +236,8 @@ export default function Page() {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ fileid: fileID }),
+                body: JSON.stringify({ fileid: fileID },
+                ),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -516,11 +561,10 @@ export default function Page() {
                                                             <Flex className="w-lg lg:w-xl shrink-0 items-center justify-end lg:justify-center">
                                                                 <Trash2
                                                                     className="icon-xs lg:icon-sm cursor-pointer"
-                                                                    onClick={() =>
-                                                                        deleteAudioFile(
-                                                                            audio.id,
-                                                                        )
-                                                                    }
+                                                                    onClick={() => {
+                                                                        setAudioToDelete(audio);
+                                                                        setDeleteAudioDialogOpen(true);
+                                                                    }}
                                                                 />
                                                             </Flex>
                                                         )}
@@ -694,14 +738,11 @@ export default function Page() {
                                                                             .author
                                                                             .id ===
                                                                             user?.id && (
-                                                                            // TODO: Add delete comment functionality
                                                                             <Trash2
                                                                                 className="icon-xs ml-auto cursor-pointer shrink-0"
                                                                                 onClick={() => {
-                                                                                    deleteComment(
-                                                                                        comment.id,
-                                                                                        audioId,
-                                                                                    );
+                                                                                    setCommentToDelete(comment);
+                                                                                    setDeleteCommentDialogOpen(true);
                                                                                 }}
                                                                             />
                                                                         )}
@@ -736,6 +777,59 @@ export default function Page() {
                     )}
                 </>
             )}
+            <ConfirmDialog
+                open={deleteAudioDialogOpen}
+                onOpenChange={open => {
+                    setDeleteAudioDialogOpen(open);
+                    if (!open) setAudioToDelete(null);
+                }}
+                onConfirm={async () => {
+                    if (!audioToDelete) return;
+                    setIsDeletingAudio(true);
+                    await deleteAudioFile(audioToDelete.id);
+                    setIsDeletingAudio(false);
+                    setDeleteAudioDialogOpen(false);
+                    setAudioToDelete(null);
+                }}
+                onCancel={() => setAudioToDelete(null)}
+                title="Delete audio file"
+                description="Are you sure you want to delete this audio file? This action cannot be undone."
+                confirmLabel="Delete audio"
+                cancelLabel="Cancel"
+                loading={isDeletingAudio}
+            />
+            <ConfirmDialog
+                open={deleteCommentDialogOpen}
+                onOpenChange={open => {
+                    setDeleteCommentDialogOpen(open);
+                    if (!open) setCommentToDelete(null);
+                }}
+                onConfirm={async () => {
+                    if (!commentToDelete) return;
+                    setIsDeletingComment(true);
+                    await deleteComment(commentToDelete.id, audioId);
+                    setIsDeletingComment(false);
+                    setDeleteCommentDialogOpen(false);
+                    setCommentToDelete(null);
+                }}
+                onCancel={() => setCommentToDelete(null)}
+                title="Delete comment"
+                description="Are you sure you want to delete this comment? This action cannot be undone."
+                confirmLabel="Delete"
+                cancelLabel="Cancel"
+                loading={isDeletingComment}
+            />
+            <ConfirmDialog
+                open={deleteProjectDialogOpen}
+                onOpenChange={open => setDeleteProjectDialogOpen(open)}
+                onConfirm={handleDeleteProject}
+                onCancel={() => {}}
+                title="Delete project"
+                description="Are you sure? This will permanently delete the project along with all audio files and feedback. This action cannot be undone."
+                confirmLabel="Delete project"
+                cancelLabel="Cancel"
+                loading={isDeletingProject}
+            />
         </Flex>
     );
 }
