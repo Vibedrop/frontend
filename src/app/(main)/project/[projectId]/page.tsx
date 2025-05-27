@@ -32,6 +32,7 @@ import { useAudio } from "@/context/AudioContext";
 import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
 import DeleteProject from "./DeleteProject";
+import Image from "next/image";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +56,7 @@ export default function Page() {
     const setCurrentSong = useAudioStore(state => state.setCurrentSong);
     const setCurrentSongId = useAudioStore(state => state.setCurrentSongId);
     const user = useAuthStore(state => state.user);
+    // const { user } = useAuthStore();
     const isOwner = currentProject?.ownerId === user?.id;
     const audioRef = useAudio();
 
@@ -298,11 +300,12 @@ export default function Page() {
             ) : (
                 <>
                     <Flex className="gap-sm lg:gap-lg flex-wrap lg:flex-nowrap">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
-                            src="/assets/imgs/default-img-purple.jpg"
+                            src={isOwner ? "/assets/imgs/default-img-purple.jpg" : "/assets/imgs/default-img-green.jpg"}
                             alt={currentProject?.name || ""}
+                            width={296}
+                            height={296}
                         />
                         <Flex className="flex-col justify-center flex-1 lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
                             <Text className="text-body-s lg:text-header-l">
@@ -312,23 +315,37 @@ export default function Page() {
                                 {currentProject?.description}
                             </Text>
 
+                            {/* TODO: add owner before collaborators */}
+
                             {collaborators?.length > 0 && (
                                 <ul className="flex flex-row gap-lg flex-wrap">
                                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                    {collaborators?.map((user: any) => (
+                                    <li
+                                        // key={collaborator.user.id}
+                                        className={isOwner ? "flex gap-xs items-center" : "flex gap-xs mb-md items-center"}
+                                    >
+                                        <Box>
+                                            <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
+                                        </Box>
+                                        <Text className="text-body-xs lg:text-body-s truncate">
+                                            {currentProject?.owner?.username || "Unknown Owner"}
+                                            {currentProject?.owner.username === user?.username ? " (you)" : " (owner)"}
+                                        </Text>
+                                    </li>
+                                    {collaborators?.map((collaborator: any) => (
                                         <li
-                                            key={user.user.username}
-                                            className="flex gap-xs mb-md items-center"
+                                            key={collaborator.user.id}
+                                            className={isOwner ? "flex gap-xs items-center" : "flex gap-xs mb-md items-center"}
                                         >
                                             <Box>
-                                                {isOwner ? (
-                                                    <UserRound className="icon-xs lg:icon-sm size-xl collaborator-comment-gradient rounded-full" />
+                                                {collaborator.user.username === user?.username ? (
+                                                    <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
                                                 ) : (
-                                                    <UserRound className="icon-xs lg:icon-sm size-xl owner-comment-gradient rounded-full" />
+                                                    <UserRound className="icon-xs lg:icon-sm size-xl collaborator-gradient rounded-full" />
                                                 )}
                                             </Box>
                                             <Text className="text-body-xs lg:text-body-s truncate">
-                                                {user.user.username}
+                                                {collaborator.user.username}
                                             </Text>
                                         </li>
                                     ))}
@@ -647,9 +664,9 @@ export default function Page() {
                                                                                 .author
                                                                                 .id ===
                                                                             user?.id ? (
-                                                                                <UserRound className="icon-xs lg:icon-sm size-xl owner-comment-gradient rounded-full" />
+                                                                                <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
                                                                             ) : (
-                                                                                <UserRound className="icon-xs lg:icon-sm size-xl collaborator-comment-gradient rounded-full" />
+                                                                                <UserRound className="icon-xs lg:icon-sm size-xl collaborator-gradient rounded-full" />
                                                                             )}
                                                                         </Box>
 

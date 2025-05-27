@@ -18,7 +18,12 @@ import { truncate } from "@/lib/utils";
 import { useAudio } from "@/context/AudioContext";
 import Link from "next/link";
 
+import { useAuthStore } from "@/stores/useAuthStore";
+
+
 export default function AudioPlayer() {
+    const { user } = useAuthStore();
+
     const { projectId } = useParams<{ projectId: string }>();
     const audioRef = useAudio();
     const {
@@ -178,7 +183,7 @@ export default function AudioPlayer() {
                             className="text-body-s xl:text-body-l hidden md:block text-brand-accent"
                         >
                             <Avatar
-                                src={`https://images.unsplash.com/photo-1693432480222-802b77347375?&w=64&h=64&dpr=2&q=70&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop`}
+                                src={currentProject?.owner.id === user?.id ? "/assets/imgs/default-img-purple.jpg" : "/assets/imgs/default-img-green.jpg"}
                                 className="size-[84px] xl:size-[104px] hidden lg:flex"
                                 fallback={currentProject?.name ?? ""}
                                 alt={currentProject?.name ?? ""}
@@ -290,3 +295,4 @@ export default function AudioPlayer() {
         </Flex>
     );
 }
+
