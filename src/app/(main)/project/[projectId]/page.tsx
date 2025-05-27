@@ -44,8 +44,8 @@ export default function Page() {
     const [unreadComments, setUnreadComments] = useState<
         Record<string, boolean>
     >({});
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { currentProject, owner, collaborators, sortedAudioFiles } =
+
+    const { currentProject, collaborators, sortedAudioFiles } =
         useProjectStore();
     const { currentSong, isPlaying, isBuffering } = useAudioStore();
     const fetchCurrentProject = useProjectStore(
@@ -302,14 +302,14 @@ export default function Page() {
                 </Flex>
             ) : (
                 <>
-                    <Flex className="gap-sm lg:gap-lg flex-wrap">
+                    <Flex className="gap-sm lg:gap-lg flex-wrap lg:flex-nowrap">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
                             src="/assets/imgs/default-img-purple.jpg"
                             alt={currentProject?.name || ""}
                         />
-                        <Flex className="flex-col justify-center lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
+                        <Flex className="flex-col justify-center flex-1 lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
                             <Text className="text-body-s lg:text-header-l">
                                 {currentProject?.name}
                             </Text>
@@ -440,8 +440,8 @@ export default function Page() {
                                                             isBuffering ? (
                                                                 <LoaderCircle className="animate-spin icon-md sm:icon-lg" />
                                                             ) : currentSong?.id ===
-                                                                  audio.id &&
-                                                              isPlaying ? (
+                                                                audio.id &&
+                                                            isPlaying ? (
                                                                 <PauseCircle className="icon-md sm:icon-lg" />
                                                             ) : (
                                                                 <PlayCircle className="icon-md sm:icon-lg" />
@@ -627,8 +627,8 @@ export default function Page() {
                                                         const nextDate =
                                                             nextComment
                                                                 ? new Date(
-                                                                      nextComment.createdAt,
-                                                                  )
+                                                                    nextComment.createdAt,
+                                                                )
                                                                 : null;
                                                         const insertSeparator =
                                                             nextDate &&

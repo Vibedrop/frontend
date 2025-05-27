@@ -30,8 +30,8 @@ export default function DeleteProject({ projectId }: DeleteProjectProps) {
                 },
             );
             if (response.ok) {
-              await fetchUsersProjects();
-              router.push("/");
+                await fetchUsersProjects();
+                router.push("/");
             } else {
                 throw new Error("Error deleting project");
             }
