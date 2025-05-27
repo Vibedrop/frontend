@@ -14,12 +14,12 @@
         --highlight: #646464; /* Extra level of elevation */
         --brand-gradient: linear-gradient(135deg, #5b5bd6 0%, #b8baf8 100%);
 
-        --owner-comment: linear-gradient(
+        --owner-gradient: linear-gradient(
             to bottom,
             #8b89d0,
             #47466a
-        ); /* Owner comment background */
-        --collaborator-comment: linear-gradient(
+        ); /* Owner gradient background */
+        --collaborator-gradient: linear-gradient(
             to bottom,
             #9ad089,
             #4e6a46
@@ -54,11 +54,11 @@
         --transition-duration: 250ms;
     }
 
-    .owner-comment-gradient {
-        background: var(--owner-comment);
+    .owner-gradient {
+        background: var(--owner-gradient);
     }
-    .collaborator-comment-gradient {
-        background: var(--collaborator-comment);
+    .collaborator-gradient {
+        background: var(--collaborator-gradient);
     }
 
     html {
