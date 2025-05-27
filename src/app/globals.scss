@@ -196,6 +196,10 @@
         transition-duration: var(--transition-duration);
         @apply transition-colors ease-in-out;
 
+        :-moz-focusring {
+            outline: none;
+        }
+
         &:focus-within {
             @apply bg-white;
         }
@@ -235,7 +239,7 @@
                     [type="range"]
                 )
         ) {
-        @apply font-normal mx-2;
+        @apply font-normal px-2;
     }
 
     .rt-Link:where(:any-link, button) {

@@ -115,14 +115,13 @@ export default function CollaboratorSquare() {
                 </Dialog.Title>
 
                 <Dialog.Description>
-                    <Text className="sr-only">
-                        Fill in collaborator email address to add a
-                        collaborator.
+                    <Text>
+                        The email address must be linked to an existing account in order to be invited to the project.
                     </Text>
                 </Dialog.Description>
 
                 <Theme appearance="light" className="bg-transparent">
-                    <Flex className="flex-col gap-sm">
+                    <Flex className="flex-col gap-sm mt-md">
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
                                 Add collaborators email{" "}
