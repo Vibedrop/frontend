@@ -1,4 +1,4 @@
-# [Latest Deployment](https://vibedrop-frontend.cc25.chasacademy.dev/)
+# [Live version](https://vibedrop-frontend.cc25.chasacademy.dev/)
 
 # Vibedrop – Användarguide
 
