@@ -2,15 +2,22 @@
 import React, { useState, ChangeEvent, KeyboardEvent } from "react";
 import { BACKEND_URL } from "@/utilities/config";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Text } from "@radix-ui/themes";
+import { Button, Flex, Text } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
+import { Pencil, Trash2, UserCircle2 } from "lucide-react";
+import { useSidebarStore } from "@/stores/useSidebarStore";
+import { ConfirmDialog } from "@/components/UI/ConfirmDialog";
 
 export default function ProfilePage() {
     const router = useRouter();
     const { checkAuth } = useAuthStore();
+    const { isOpen } = useSidebarStore();
     const user = useAuthStore(state => state.user);
     const [isEditingName, setIsNameEditing] = useState<boolean>(false);
     const [isEditingPassword, setIsPasswordEditing] = useState<boolean>(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [isDeletingUser, setIsDeletingUser] = useState(false);
+
     const [name, setName] = useState<string>(user?.username || "");
     const [password, setPassword] = useState<string>(user?.username || "");
 
@@ -77,25 +84,28 @@ export default function ProfilePage() {
     }
 
         const handleDeleteUser = async () => {
-        try {
-            const response = await fetch(
-                `${BACKEND_URL}/users/me`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
+            setIsDeletingUser(true);
+            try {
+                const response = await fetch(
+                    `${BACKEND_URL}/users/me`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        credentials: "include",
                     },
-                    credentials: "include",
-                },
-            );
-            if (response.ok) {
-                router.push("/start")
-            } else {
-                throw new Error("Error deleting user");
+                );
+                if (response.ok) {
+                    router.push("/start")
+                } else {
+                    throw new Error("Error deleting user");
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsDeletingUser(false);
             }
-        } catch (error) {
-            console.error(error);
-        }
     };
 
     const handleNameKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -113,46 +123,95 @@ export default function ProfilePage() {
 
     return (
         <>
-            <div>
-                <Text>Name:</Text>
-                {isEditingName ? (
-                    <input
-                        type="text"
-                        value={name}
-                        autoFocus
-                        onChange={handleNameInputChange}
-                        onBlur={handleNameBlur}
-                        onKeyDown={handleNameKeyDown}
-                    />
-                ) : (
-                    <span
-                        onClick={handleNameClick}
-                        style={{ cursor: "pointer" }}
+            <Flex
+                style={{ willChange: "margin-left" }}
+                className={`flex-col w-full max-w-[1080px] 2xl:max-w-[910px] 2xl-plus:max-w-[1080px] gap-xs self-center transition-[margin-left] ${
+                            isOpen ? "2xl:ml-[-320px]" : "2xl:ml-[-80px]"
+                        }`}
                     >
-                        {name}
-                    </span>
-                )}
-            </div>
-            <div>
-                <Text>Pasword:</Text>
-                {isEditingPassword ? (
-                    <input
-                        type="text"
-                        autoFocus
-                        onChange={handlePasswordInputChange}
-                        onBlur={handlePasswordBlur}
-                        onKeyDown={handlePasswordKeyDown}
-                    />
-                ) : (
-                    <span
-                        onClick={handlePasswordClick}
-                        style={{ cursor: "pointer" }}
-                    >
-                        Change
-                    </span>
-                )}
-            </div>
-            <button className="bg-red-600 p-4 rounded-lg" onClick={handleDeleteUser}>Delete User</button>
+                    <Flex className="flex-col w-fill justify-start">
+                        <UserCircle2 className="icon-xxl" />
+                        <Text className="text-header-m font-normal text-muted mt-sm">{user?.email}</Text>
+                        <Text className="text-header-s text-muted lg:text-header-m font-thin">Your updates are saved as you go</Text>
+                    </Flex>
+
+                    <Flex className="flex-row w-fill justify-between items-center gap-md mt-md">
+                        <Text>User name:</Text>
+
+                        <Flex className="items-center gap-xxs">
+                            {isEditingName ? (
+                                <input
+                                    type="text"
+                                    className="text-right bg-background p-sm w-full max-w-[200px]"
+                                    value={name}
+                                    autoFocus
+                                    onChange={handleNameInputChange}
+                                    onBlur={handleNameBlur}
+                                    onKeyDown={handleNameKeyDown}
+                                />
+                            ) : (
+                                <Text
+                                    onClick={handleNameClick}
+                                    className="h-12 p-sm pointer"
+                                >
+                                    {name}
+                                </Text>
+                            )}
+
+                            <Pencil className="icon-xxs text-background" />
+                        </Flex>
+                    </Flex>
+
+                    <Flex className="flex-row w-fill justify-between items-center gap-md">
+                        <Text className="text-foreground">Pasword:</Text>
+
+                        <Flex className="items-center gap-xxs">
+                            {isEditingPassword ? (
+                                <input
+                                    type="text"
+                                    className="text-right bg-background p-sm w-full max-w-[200px]"
+                                    placeholder="•••••••••"
+                                    autoFocus
+                                    onChange={handlePasswordInputChange}
+                                    onBlur={handlePasswordBlur}
+                                    onKeyDown={handlePasswordKeyDown}
+                                />
+                            ) : (
+                                <Text
+                                    onClick={handlePasswordClick}
+                                    className="h-12 p-sm pointer"
+                                >
+                                    •••••••••
+                                </Text>
+                            )}
+
+                            <Pencil className="icon-xxs text-background" />
+                        </Flex>
+                    </Flex>
+
+                    <Flex className="flex-row mt-sm justify-start">
+                        <Button
+                            variant="outline"
+                            // onClick={handleDeleteUser}
+                            onClick={() => setDialogOpen(true)}
+                            >
+                            <Trash2 className="icon-xs" />
+                            Delete user
+                        </Button>
+                    </Flex>
+            </Flex>
+
+            <ConfirmDialog
+                open={dialogOpen}
+                onOpenChange={open => setDialogOpen(open)}
+                onConfirm={handleDeleteUser}
+                onCancel={() => {}}
+                title="Delete user"
+                description="Are you sure? This will permanently delete the user along with all projects, audio files and feedback. This action cannot be undone."
+                confirmLabel="Delete user"
+                cancelLabel="Cancel"
+                loading={isDeletingUser}
+            />
         </>
     );
 }
