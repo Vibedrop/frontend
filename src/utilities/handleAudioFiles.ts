@@ -19,7 +19,6 @@ export const handleUpload = async (audioFile: File, projectId: string) => {
         }
 
         const data = await response.json();
-        console.log("POST response handleUpload()", data);
         return data;
     } catch (error) {
         console.error(error);
@@ -42,7 +41,6 @@ export const getSignedUrl = async (s3Key: string, projectId: string) => {
         }
 
         const data = await response.json();
-        console.log("GET response getSignedUrl()", data);
         return data;
     } catch (error) {
         console.error(error);
@@ -62,7 +60,6 @@ export const getSignedUrls = async (projectId: string) => {
         }
 
         const data = await response.json();
-        console.log("GET response getSignedUrls()", data);
         return data;
     } catch (error) {
         console.error(error);

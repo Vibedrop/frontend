@@ -38,7 +38,6 @@ export const useProjectStore = create<ProjectStore>(set => ({
             });
             if (response.ok) {
                 const data = await response.json();
-                // console.log("fetchUsersProjects", data);
                 set({ projects: data });
             } else {
                 throw new Error("error");

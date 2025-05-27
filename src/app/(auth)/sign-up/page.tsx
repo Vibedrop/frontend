@@ -38,7 +38,6 @@ function SignUpPage() {
             }
 
             const data = await response.json();
-            console.log("response", data);
             router.push("/sign-in");
         } catch (err: unknown) {
             const errorMessage =

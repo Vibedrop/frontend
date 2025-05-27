@@ -26,9 +26,6 @@ function SignInPage() {
         const password = formData.get("password") as string;
 
         try {
-            console.log("email", email);
-            console.log("password", password);
-            console.log("formData", formData);
             const response = await fetch(`${BACKEND_URL}/auth/sign-in`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -53,7 +50,6 @@ function SignInPage() {
             }
 
             const user = await profileRes.json();
-            console.log("user from profile:", user);
             setAuth(true, user);
 
             const redirectPath = localStorage.getItem("redirectPath") || "/";

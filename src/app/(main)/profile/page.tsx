@@ -42,7 +42,6 @@ export default function ProfilePage() {
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log("changeName", data);
                 await checkAuth();
             } else {
                 throw new Error("error");
@@ -68,7 +67,6 @@ export default function ProfilePage() {
             );
             if (response.ok) {
                 const data = await response.json();
-                console.log("changePassword", data);
                 await checkAuth();
             } else {
                 throw new Error("error");
