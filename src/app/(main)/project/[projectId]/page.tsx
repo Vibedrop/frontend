@@ -12,6 +12,7 @@ import {
     PauseCircle,
     PlayCircle,
     Send,
+    Timer,
     Trash2,
     Undo2,
     UserRound,
@@ -49,10 +50,14 @@ export default function Page() {
     const [deleteAudioDialogOpen, setDeleteAudioDialogOpen] = useState(false);
     const [audioToDelete, setAudioToDelete] = useState<AudioFile | null>(null);
     const [isDeletingAudio, setIsDeletingAudio] = useState(false);
-    const [deleteCommentDialogOpen, setDeleteCommentDialogOpen] = useState(false);
-    const [commentToDelete, setCommentToDelete] = useState<Comment | null>(null);
+    const [deleteCommentDialogOpen, setDeleteCommentDialogOpen] =
+        useState(false);
+    const [commentToDelete, setCommentToDelete] = useState<Comment | null>(
+        null,
+    );
     const [isDeletingComment, setIsDeletingComment] = useState(false);
-    const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false);
+    const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] =
+        useState(false);
     const [isDeletingProject, setIsDeletingProject] = useState(false);
 
     const { currentProject, collaborators, sortedAudioFiles } =
@@ -236,8 +241,7 @@ export default function Page() {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ fileid: fileID },
-                ),
+                body: JSON.stringify({ fileid: fileID }),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -347,12 +351,27 @@ export default function Page() {
                     <Flex className="gap-sm lg:gap-lg flex-wrap lg:flex-nowrap">
                         <Image
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
-                            src={isOwner ? "/assets/imgs/default-img-purple.jpg" : "/assets/imgs/default-img-green.jpg"}
+                            src={
+                                isOwner
+                                    ? "/assets/imgs/default-img-purple.jpg"
+                                    : "/assets/imgs/default-img-green.jpg"
+                            }
                             alt={currentProject?.name || ""}
                             width={296}
                             height={296}
                         />
                         <Flex className="flex-col justify-center flex-1 lg:justify-end gap-xxs lg:gap-md xl:gap-lg">
+                            {currentProject?.deadline && (
+                                <Flex className="justify-end items-center gap-x-1">
+                                    <Timer className="icon-sm text-foreground" />
+                                    <Text className="text-body-s font-bold">
+                                        {currentProject?.deadline
+                                            .toLocaleString()
+                                            .slice(0, -14)}
+                                    </Text>
+                                </Flex>
+                            )}
+
                             <Text className="text-body-s lg:text-header-l">
                                 {currentProject?.name}
                             </Text>
@@ -367,23 +386,36 @@ export default function Page() {
                                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     <li
                                         // key={collaborator.user.id}
-                                        className={isOwner ? "flex gap-xs items-center" : "flex gap-xs mb-md items-center"}
+                                        className={
+                                            isOwner
+                                                ? "flex gap-xs items-center"
+                                                : "flex gap-xs mb-md items-center"
+                                        }
                                     >
                                         <Box>
                                             <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
                                         </Box>
                                         <Text className="text-body-xs lg:text-body-s truncate">
-                                            {currentProject?.owner?.username || "Unknown Owner"}
-                                            {currentProject?.owner.username === user?.username ? " (you)" : " (owner)"}
+                                            {currentProject?.owner?.username ||
+                                                "Unknown Owner"}
+                                            {currentProject?.owner.username ===
+                                            user?.username
+                                                ? " (you)"
+                                                : " (owner)"}
                                         </Text>
                                     </li>
                                     {collaborators?.map((collaborator: any) => (
                                         <li
                                             key={collaborator.user.id}
-                                            className={isOwner ? "flex gap-xs items-center" : "flex gap-xs mb-md items-center"}
+                                            className={
+                                                isOwner
+                                                    ? "flex gap-xs items-center"
+                                                    : "flex gap-xs mb-md items-center"
+                                            }
                                         >
                                             <Box>
-                                                {collaborator.user.username === user?.username ? (
+                                                {collaborator.user.username ===
+                                                user?.username ? (
                                                     <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
                                                 ) : (
                                                     <UserRound className="icon-xs lg:icon-sm size-xl collaborator-gradient rounded-full" />
@@ -497,8 +529,8 @@ export default function Page() {
                                                             isBuffering ? (
                                                                 <LoaderCircle className="animate-spin icon-md sm:icon-lg" />
                                                             ) : currentSong?.id ===
-                                                                audio.id &&
-                                                            isPlaying ? (
+                                                                  audio.id &&
+                                                              isPlaying ? (
                                                                 <PauseCircle className="icon-md sm:icon-lg" />
                                                             ) : (
                                                                 <PlayCircle className="icon-md sm:icon-lg" />
@@ -562,8 +594,12 @@ export default function Page() {
                                                                 <Trash2
                                                                     className="icon-xs lg:icon-sm cursor-pointer"
                                                                     onClick={() => {
-                                                                        setAudioToDelete(audio);
-                                                                        setDeleteAudioDialogOpen(true);
+                                                                        setAudioToDelete(
+                                                                            audio,
+                                                                        );
+                                                                        setDeleteAudioDialogOpen(
+                                                                            true,
+                                                                        );
                                                                     }}
                                                                 />
                                                             </Flex>
@@ -683,8 +719,8 @@ export default function Page() {
                                                         const nextDate =
                                                             nextComment
                                                                 ? new Date(
-                                                                    nextComment.createdAt,
-                                                                )
+                                                                      nextComment.createdAt,
+                                                                  )
                                                                 : null;
                                                         const insertSeparator =
                                                             nextDate &&
@@ -741,8 +777,12 @@ export default function Page() {
                                                                             <Trash2
                                                                                 className="icon-xs ml-auto cursor-pointer shrink-0"
                                                                                 onClick={() => {
-                                                                                    setCommentToDelete(comment);
-                                                                                    setDeleteCommentDialogOpen(true);
+                                                                                    setCommentToDelete(
+                                                                                        comment,
+                                                                                    );
+                                                                                    setDeleteCommentDialogOpen(
+                                                                                        true,
+                                                                                    );
                                                                                 }}
                                                                             />
                                                                         )}
