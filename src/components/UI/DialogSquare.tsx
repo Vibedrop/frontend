@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { Dialog, Button, Flex, Text, TextField, Theme } from "@radix-ui/themes";
 import { useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
-import { Plus } from "lucide-react";
+import { Plus, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type DialogSquareProps = {
@@ -23,6 +23,7 @@ export default function DialogSquare({
     const router = useRouter();
     const [projectName, setProjectName] = useState<string>("");
     const [projectDesc, setProjectDesc] = useState<string>("");
+    const [projectDeadline, setProjectDeadline] = useState<string>("");
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     const buttonClass = cn(
@@ -41,6 +42,9 @@ export default function DialogSquare({
     };
     const projectDescHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setProjectDesc(e.target.value);
+    };
+    const projectDeadlineHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setProjectDeadline(new Date(e.target.value).toISOString());
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -65,6 +69,7 @@ export default function DialogSquare({
                 body: JSON.stringify({
                     name: projectName,
                     description: projectDesc,
+                    deadline: projectDeadline,
                 }),
             });
             if (response.ok) {
@@ -72,6 +77,7 @@ export default function DialogSquare({
                 setIsDialogOpen(false);
                 setProjectName("");
                 setProjectDesc("");
+                setProjectDeadline("");
                 await fetchUsersProjects();
                 router.push(`/project/${data.id}`);
             } else {
@@ -110,6 +116,20 @@ export default function DialogSquare({
 
                 <Theme appearance="light" className="bg-transparent">
                     <Flex className="flex-col gap-sm">
+                        <Flex className="relative justify-end h-8 gap-x-1 items-center">
+                            <Text className="text-body-s text-muted">
+                                Add deadline
+                            </Text>
+                            <Timer className="icon-sm text-foreground" />
+
+                            <input
+                                type="date"
+                                name="deadline"
+                                id="deadline"
+                                className="rounded h-full"
+                                onChange={projectDeadlineHandler}
+                            />
+                        </Flex>
                         <Flex className="flex-col gap-xxs">
                             <Text className="text-body-xs text-muted">
                                 Name{" "}
@@ -120,6 +140,7 @@ export default function DialogSquare({
                                 onChange={projectNameHandler}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Name your project"
+                                autoFocus
                             />
                         </Flex>
 
