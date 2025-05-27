@@ -14,4 +14,5 @@ export type Project = {
     ownerId: string;
     audioFiles: AudioFile[];
     collaborators: Collaborator[];
+    deadline?: Date;
 };
