@@ -183,14 +183,14 @@ export default function AudioPlayer() {
                             className="text-body-s xl:text-body-l hidden md:block text-brand-accent"
                         >
                             <Avatar
-                                src={currentProject?.owner.id === user?.id ? "/assets/imgs/default-img-purple.jpg" : "/assets/imgs/default-img-green.jpg"}
+                                src={currentProject?.owner.id === user?.id ? "/assets/imgs/default-img-purple.webp" : "/assets/imgs/default-img-green.webp"}
                                 className="size-[84px] xl:size-[104px] hidden lg:flex"
                                 fallback={currentProject?.name ?? ""}
                                 alt={currentProject?.name ?? ""}
                             />
                         </Link>
 
-                        <Flex className="flex-row max-w-full md:flex-col gap-xs md:gap-0 content-center items-start m-auto lg:m-0">
+                        <Flex className="flex-row max-w-full md:flex-col gap-xs md:gap-0 content-center items-start ml-auto mr-auto md:ml-0">
                             <Link
                                 href={`/project/${currentProject?.id}`}
                                 className="text-body-s xl:text-body-l hidden md:block text-brand-accent"

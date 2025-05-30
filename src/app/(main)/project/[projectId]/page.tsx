@@ -35,6 +35,7 @@ import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
 import { ConfirmDialog } from "@/components/UI/ConfirmDialog";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -351,10 +352,11 @@ export default function Page() {
                     <Flex className="gap-sm lg:gap-lg flex-wrap lg:flex-nowrap">
                         <Image
                             className="rounded-custom size-[100px] sm:size-[160px] lg:size-[200px] 2xl:size-[296px]"
+                            priority
                             src={
                                 isOwner
-                                    ? "/assets/imgs/default-img-purple.jpg"
-                                    : "/assets/imgs/default-img-green.jpg"
+                                    ? "/assets/imgs/default-img-purple.webp"
+                                    : "/assets/imgs/default-img-green.webp"
                             }
                             alt={currentProject?.name || ""}
                             width={296}
@@ -379,18 +381,12 @@ export default function Page() {
                                 {currentProject?.description}
                             </Text>
 
-                            {/* TODO: add owner before collaborators */}
-
                             {collaborators?.length > 0 && (
-                                <ul className="flex flex-row gap-lg flex-wrap">
+                                <ul className="flex flex-row gap-xs lg:gap-md flex-wrap">
                                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     <li
-                                        // key={collaborator.user.id}
-                                        className={
-                                            isOwner
-                                                ? "flex gap-xs items-center"
-                                                : "flex gap-xs mb-md items-center"
-                                        }
+                                        key={currentProject?.owner?.id}
+                                        className={"flex gap-xs items-center mr-sm"}
                                     >
                                         <Box>
                                             <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
@@ -399,19 +395,16 @@ export default function Page() {
                                             {currentProject?.owner?.username ||
                                                 "Unknown Owner"}
                                             {currentProject?.owner.username ===
-                                            user?.username
-                                                ? " (you)"
-                                                : " (owner)"}
+                                                user?.username
+                                                    ? " (you)"
+                                                    : " (owner)"}
                                         </Text>
                                     </li>
+
                                     {collaborators?.map((collaborator: any) => (
                                         <li
                                             key={collaborator.user.id}
-                                            className={
-                                                isOwner
-                                                    ? "flex gap-xs items-center"
-                                                    : "flex gap-xs mb-md items-center"
-                                            }
+                                            className={"flex gap-xs items-center mr-sm"}
                                         >
                                             <Box>
                                                 {collaborator.user.username ===
