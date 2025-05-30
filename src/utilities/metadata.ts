@@ -17,14 +17,14 @@ export const metadata: Metadata = {
         {
             rel: "icon",
             type: "image/svg+xml",
-            url: "/favicon-black.svg",
-            media: "(prefers-color-scheme: light)",
+            url: "/favicon-white.svg",
+            media: "(prefers-color-scheme: dark)",
         },
         {
             rel: "icon",
             type: "image/svg+xml",
-            url: "/favicon-white.svg",
-            media: "(prefers-color-scheme: dark)",
+            url: "/favicon-black.svg",
+            media: "(prefers-color-scheme: light)",
         },
     ],
     openGraph: {

@@ -102,7 +102,7 @@ function AudioDropzone() {
 
     const onDropRejected = () => {
         setDropError(
-            "Unsupported file type. Only .mp3 and .wav files are allowed.",
+            "Unsupported file type. Only .mp3 files are allowed.",
         );
     };
 
@@ -114,9 +114,9 @@ function AudioDropzone() {
         maxFiles: 1,
         maxSize: 20 * 1024 * 1024, // 20 MB
         accept: {
-            "audio/*": [".mp3"],
-        },
-    });
+            "audio/mpeg": [".mp3"],
+    },
+});
 
     return (
         <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
