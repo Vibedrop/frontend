@@ -123,7 +123,7 @@ export default function Sidebar() {
                                         <Theme accentColor="gray">
                                             <Avatar
                                                 fallback="P"
-                                                src="/assets/imgs/default-img-purple.jpg"
+                                                src="/assets/imgs/default-img-purple.webp"
                                                 alt={project.name}
                                                 className="size-xl"
                                                 radius="small"
@@ -184,7 +184,7 @@ export default function Sidebar() {
                                             <Theme accentColor="gray">
                                                 <Avatar
                                                     fallback="P"
-                                                    src="/assets/imgs/default-img-green.jpg"
+                                                    src="/assets/imgs/default-img-green.webp"
                                                     alt={project.project.name}
                                                     className="size-xl"
                                                     radius="small"
