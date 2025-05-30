@@ -20,7 +20,6 @@ import Link from "next/link";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 
-
 export default function AudioPlayer() {
     const { user } = useAuthStore();
 
@@ -85,7 +84,6 @@ export default function AudioPlayer() {
                 updateSongDuration,
             );
             audioRef.current?.removeEventListener("waiting", handleWaiting);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             audioRef.current?.removeEventListener("playing", handlePlaying);
         };
     }, [setIsPlaying, setCurrentTime, setDuration, setIsBuffering, audioRef]);
@@ -183,7 +181,11 @@ export default function AudioPlayer() {
                             className="text-body-s xl:text-body-l hidden md:block text-brand-accent"
                         >
                             <Avatar
-                                src={currentProject?.owner.id === user?.id ? "/assets/imgs/default-img-purple.webp" : "/assets/imgs/default-img-green.webp"}
+                                src={
+                                    currentProject?.owner.id === user?.id
+                                        ? "/assets/imgs/default-img-purple.webp"
+                                        : "/assets/imgs/default-img-green.webp"
+                                }
                                 className="size-[84px] xl:size-[104px] hidden lg:flex"
                                 fallback={currentProject?.name ?? ""}
                                 alt={currentProject?.name ?? ""}
@@ -295,4 +297,3 @@ export default function AudioPlayer() {
         </Flex>
     );
 }
-

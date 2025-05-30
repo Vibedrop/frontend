@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { Collaborator, Project } from "@/types";
+import { Project } from "@/types";
 import {
     PanelLeftClose,
     PanelRightClose,
@@ -24,7 +24,7 @@ const projectClass =
 
 export default function Sidebar() {
     const { isOpen, toggleSidebar } = useSidebarStore();
-    const { projects, currentProject } = useProjectStore();
+    const { collaborations, ownedProjects, currentProject } = useProjectStore();
     const [isFetching, setIsFetching] = useState(true);
     const fetchUsersProjects = useProjectStore(
         state => state.fetchUsersProjects,
@@ -86,7 +86,7 @@ export default function Sidebar() {
                                     My projects
                                 </Text>
 
-                                {!projects?.ownedProjects.length && (
+                                {!ownedProjects?.length && (
                                     <Text className={`text-[12px] text-muted`}>
                                         – No projects yet.
                                     </Text>
@@ -104,7 +104,7 @@ export default function Sidebar() {
                         )}
 
                         {!isFetching &&
-                            projects?.ownedProjects?.map((project: Project) => (
+                            ownedProjects?.map((project: Project) => (
                                 <Link
                                     key={project.id}
                                     href={`/project/${project.id}`}
@@ -147,7 +147,7 @@ export default function Sidebar() {
                                     Shared Projects
                                 </Text>
 
-                                {!projects?.collaborations.length && (
+                                {!collaborations?.length && (
                                     <Text className={`text-[12px] text-muted`}>
                                         – No invites yet.
                                     </Text>
@@ -164,39 +164,42 @@ export default function Sidebar() {
                         )}
 
                         {!isFetching &&
-                            projects?.collaborations?.map(
-                                (project: Collaborator) => (
-                                    <Link
-                                        key={project.project.id}
-                                        href={`/project/${project.project.id}`}
-                                        className="mx-[-10px]"
-                                    >
-                                        <Flex
-                                            className={cn(
-                                                projectClass,
-                                                `${
-                                                    project.project.id ===
-                                                        currentProject?.id &&
-                                                    "bg-highlight"
-                                                }`,
-                                            )}
+                            collaborations?.map(
+                                (project: Project) => (
+                                    console.log("project", project),
+                                    (
+                                        <Link
+                                            key={project.id}
+                                            href={`/project/${project.id}`}
+                                            className="mx-[-10px]"
                                         >
-                                            <Theme accentColor="gray">
-                                                <Avatar
-                                                    fallback="P"
-                                                    src="/assets/imgs/default-img-green.webp"
-                                                    alt={project.project.name}
-                                                    className="size-xl"
-                                                    radius="small"
-                                                />
-                                            </Theme>
-                                            {isOpen && (
-                                                <Text className="text-body-s overflow-hidden whitespace-nowrap text-ellipsis">
-                                                    {project.project.name}
-                                                </Text>
-                                            )}
-                                        </Flex>
-                                    </Link>
+                                            <Flex
+                                                className={cn(
+                                                    projectClass,
+                                                    `${
+                                                        project.id ===
+                                                            currentProject?.id &&
+                                                        "bg-highlight"
+                                                    }`,
+                                                )}
+                                            >
+                                                <Theme accentColor="gray">
+                                                    <Avatar
+                                                        fallback="P"
+                                                        src="/assets/imgs/default-img-green.webp"
+                                                        alt={project.name}
+                                                        className="size-xl"
+                                                        radius="small"
+                                                    />
+                                                </Theme>
+                                                {isOpen && (
+                                                    <Text className="text-body-s overflow-hidden whitespace-nowrap text-ellipsis">
+                                                        {project.name}
+                                                    </Text>
+                                                )}
+                                            </Flex>
+                                        </Link>
+                                    )
                                 ),
                             )}
                     </Flex>
