@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Flex, Text } from "@radix-ui/themes";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
@@ -28,18 +28,8 @@ export default function Page() {
         setDuration,
     } = useAudioStore();
 
-    const { projects } = useProjectStore();
+    const { ownedProjects } = useProjectStore();
     const { isOpen } = useSidebarStore();
-    const [files] = useState<
-        {
-            key: string;
-            lastModified: string;
-            size: number;
-            etag: string;
-            storageClass: string;
-            preSignedUrl: string;
-        }[]
-    >([]);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -80,7 +70,7 @@ export default function Page() {
         >
             <Flex className="flex-col gap-y-xl items-center">
                 <Text className="text-header-m max-w-[700px] text-center">
-                    {projects?.ownedProjects.length > 0
+                    {ownedProjects && ownedProjects?.length > 0
                         ? "Got a new idea? Start a fresh project and keep the momentum going."
                         : "Ready to bring your ideas to life? Start your first project and turn your creativity into something real."}
                 </Text>

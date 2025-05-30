@@ -116,7 +116,8 @@ export default function CollaboratorSquare() {
 
                 <Dialog.Description>
                     <Text>
-                        The email address must be linked to an existing account in order to be invited to the project.
+                        The email address must be linked to an existing account
+                        in order to be invited to the project.
                     </Text>
                 </Dialog.Description>
 
@@ -164,7 +165,7 @@ export default function CollaboratorSquare() {
                             </Theme>
                         )}
 
-                        {collaborators?.length > 0 && (
+                        {collaborators && collaborators?.length > 0 && (
                             <Flex className="flex-col gap-xs">
                                 <Text className="text-body-xs text-muted">
                                     Remove collaborators:

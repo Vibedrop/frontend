@@ -5,7 +5,11 @@ import { useParams } from "next/navigation";
 import { useAudioStore } from "@/stores/useAudioStore";
 import { useProjectStore } from "@/stores/useProjectStore";
 import { useSidebarStore } from "@/stores/useSidebarStore";
-import { formatCommentDateTime, formatFriendlyDate } from "@/lib/formatTime";
+import {
+    formatTime,
+    formatCommentDateTime,
+    formatFriendlyDate,
+} from "@/lib/formatTime";
 import {
     LoaderCircle,
     MessageSquare,
@@ -17,7 +21,7 @@ import {
     Undo2,
     UserRound,
 } from "lucide-react";
-import { AudioFile, Comment } from "@/types";
+import { AudioFile, Collaborator, Comment } from "@/types";
 import {
     Box,
     Button,
@@ -35,7 +39,6 @@ import CollaboratorSquare from "@/components/UI/CollaboratorSquare";
 import AudioDropzone from "@/components/UI/AudioDropzone";
 import { ConfirmDialog } from "@/components/UI/ConfirmDialog";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 export default function Page() {
     const [isLoading, setIsLoading] = useState(true);
@@ -71,15 +74,16 @@ export default function Page() {
     const setCurrentSong = useAudioStore(state => state.setCurrentSong);
     const setCurrentSongId = useAudioStore(state => state.setCurrentSongId);
     const user = useAuthStore(state => state.user);
-    // const { user } = useAuthStore();
     const isOwner = currentProject?.ownerId === user?.id;
     const audioRef = useAudio();
 
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handlePlayPause = (song: any, index: number) => {
+    const handlePlayPause = (song: AudioFile, index: number) => {
         if (currentSong?.id === song.id) {
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-            isPlaying ? audioRef.current?.pause() : audioRef.current?.play();
+            if (isPlaying) {
+                audioRef.current?.pause();
+            } else {
+                audioRef.current?.play();
+            }
         } else {
             setfetchS3(projectId, song.s3Key);
             setCurrentSongId(index);
@@ -183,13 +187,6 @@ export default function Page() {
         } catch {
             console.error("Failed to update read status for fileID");
         }
-    }
-
-    function formatSeconds(seconds: number): string {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = Math.floor(seconds % 60);
-        const paddedSeconds = remainingSeconds.toString().padStart(2, "0");
-        return `${minutes}:${paddedSeconds}`;
     }
 
     const handleDeleteProject = async () => {
@@ -381,12 +378,13 @@ export default function Page() {
                                 {currentProject?.description}
                             </Text>
 
-                            {collaborators?.length > 0 && (
+                            {collaborators && collaborators?.length > 0 && (
                                 <ul className="flex flex-row gap-xs lg:gap-md flex-wrap">
-                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                     <li
                                         key={currentProject?.owner?.id}
-                                        className={"flex gap-xs items-center mr-sm"}
+                                        className={
+                                            "flex gap-xs items-center mr-sm"
+                                        }
                                     >
                                         <Box>
                                             <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
@@ -395,30 +393,35 @@ export default function Page() {
                                             {currentProject?.owner?.username ||
                                                 "Unknown Owner"}
                                             {currentProject?.owner.username ===
-                                                user?.username
-                                                    ? " (you)"
-                                                    : " (owner)"}
+                                            user?.username
+                                                ? " (you)"
+                                                : " (owner)"}
                                         </Text>
                                     </li>
 
-                                    {collaborators?.map((collaborator: any) => (
-                                        <li
-                                            key={collaborator.user.id}
-                                            className={"flex gap-xs items-center mr-sm"}
-                                        >
-                                            <Box>
-                                                {collaborator.user.username ===
-                                                user?.username ? (
-                                                    <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
-                                                ) : (
-                                                    <UserRound className="icon-xs lg:icon-sm size-xl collaborator-gradient rounded-full" />
-                                                )}
-                                            </Box>
-                                            <Text className="text-body-xs lg:text-body-s truncate">
-                                                {collaborator.user.username}
-                                            </Text>
-                                        </li>
-                                    ))}
+                                    {collaborators?.map(
+                                        (collaborator: Collaborator) => (
+                                            <li
+                                                key={collaborator.user.id}
+                                                className={
+                                                    "flex gap-xs items-center mr-sm"
+                                                }
+                                            >
+                                                <Box>
+                                                    {collaborator.user
+                                                        .username ===
+                                                    user?.username ? (
+                                                        <UserRound className="icon-xs lg:icon-sm size-xl owner-gradient rounded-full" />
+                                                    ) : (
+                                                        <UserRound className="icon-xs lg:icon-sm size-xl collaborator-gradient rounded-full" />
+                                                    )}
+                                                </Box>
+                                                <Text className="text-body-xs lg:text-body-s truncate">
+                                                    {collaborator.user.username}
+                                                </Text>
+                                            </li>
+                                        ),
+                                    )}
                                 </ul>
                             )}
 
@@ -550,7 +553,7 @@ export default function Page() {
 
                                                     <Flex className="xl:w-[50px] justify-center">
                                                         <Text>
-                                                            {formatSeconds(
+                                                            {formatTime(
                                                                 audio.duration ??
                                                                     0,
                                                             )}

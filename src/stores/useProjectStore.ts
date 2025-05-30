@@ -1,28 +1,27 @@
 import { create } from "zustand";
 import { BACKEND_URL } from "@/utilities/config";
-import { AudioFile, Project, User } from "@/types";
+import { AudioFile, Collaborator, Project, User } from "@/types";
 
 interface ProjectStore {
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    projects: any | null;
+    ownedProjects: Project[] | null;
     currentProject: Project | null;
     currentProjectForPlayer: Project | null;
     owner: User | null;
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    collaborators: any | null;
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    audioFiles: any | null;
+    collaborators: Collaborator[] | null;
+    collaborations?: Project[] | null;
+    audioFiles: AudioFile[] | null;
     sortedAudioFiles: AudioFile[] | null;
     fetchUsersProjects: () => void;
     fetchCurrentProject: (projectId: string) => void;
 }
 
 export const useProjectStore = create<ProjectStore>(set => ({
-    projects: null,
+    ownedProjects: null,
     currentProject: null,
     currentProjectForPlayer: null,
     owner: null,
     collaborators: null,
+    collaborations: null,
     audioFiles: null,
     sortedAudioFiles: null,
     setCurrentProjectForPlayer: (project: Project | null) =>
@@ -37,8 +36,21 @@ export const useProjectStore = create<ProjectStore>(set => ({
                 credentials: "include",
             });
             if (response.ok) {
-                const data = await response.json();
-                set({ projects: data });
+                const data: User = await response.json();
+                console.log(
+                    "fetchUserProjects data.ownedProjects:",
+                    data.ownedProjects,
+                );
+                console.log(
+                    "fetchUserProjects data.collaborations:",
+                    data.collaborations,
+                );
+                set({
+                    ownedProjects: data.ownedProjects,
+                    collaborations: data.collaborations
+                        ? data.collaborations.map(c => c.project)
+                        : [],
+                });
             } else {
                 throw new Error("error");
             }

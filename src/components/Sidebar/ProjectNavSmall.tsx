@@ -2,17 +2,17 @@ import { Button, Flex, Text } from "@radix-ui/themes";
 import React, { useRef } from "react";
 import DialogSquare from "../UI/DialogSquare";
 import { cn } from "@/lib/utils";
-import { Collaborator, Project } from "@/types";
+import { Project } from "@/types";
 import { useProjectStore } from "@/stores/useProjectStore";
 
 export default function ProjectNavSmall() {
     const smallNavigationClass = "rounded-full h-xl hover:bg-background";
     const myProjectRef = useRef<HTMLSelectElement | null>(null);
     const collaborationsRef = useRef<HTMLSelectElement | null>(null);
-    const { projects } = useProjectStore();
+    const { collaborations, ownedProjects } = useProjectStore();
 
-    const hasOwnProjects = projects?.ownedProjects.length > 0;
-    const hasCollaborations = projects?.collaborations.length > 0;
+    const hasOwnProjects = ownedProjects && ownedProjects.length > 0;
+    const hasCollaborations = collaborations && collaborations.length > 0;
 
     const handleMyProjectsClick = () => {
         myProjectRef.current?.focus();
@@ -59,10 +59,10 @@ export default function ProjectNavSmall() {
                     className={`absolute top-0 left-0 w-full h-full opacity-0 ${!hasOwnProjects ? "hidden" : ""}`}
                     defaultValue={""}
                 >
-                    <option value="" disabled>
+                    <option value="" key="my-projects" disabled>
                         My projects
                     </option>
-                    {projects?.ownedProjects?.map((project: Project) => (
+                    {ownedProjects?.map((project: Project) => (
                         <option
                             key={project.id}
                             value={`/project/${project.id}`}
@@ -91,15 +91,15 @@ export default function ProjectNavSmall() {
                     className={`absolute top-0 left-0 w-full h-full opacity-0 ${!hasCollaborations ? "hidden" : ""}`}
                     defaultValue={""}
                 >
-                    <option value="" disabled>
+                    <option value="" key="shared-projects" disabled>
                         Shared projects
                     </option>
-                    {projects?.collaborations?.map((project: Collaborator) => (
+                    {collaborations?.map((project: Project) => (
                         <option
-                            key={project.project.id}
-                            value={`/project/${project.project.id}`}
+                            key={project.id}
+                            value={`/project/${project.id}`}
                         >
-                            {project.project.name}
+                            {project.name}
                         </option>
                     ))}
                 </select>

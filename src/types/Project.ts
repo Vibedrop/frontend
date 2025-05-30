@@ -4,6 +4,7 @@ import { Collaborator } from "./Collaborator";
 
 export type Project = {
     id: string;
+    projectId: string;
     name: string;
     description?: string;
     isPublic: boolean;
@@ -14,5 +15,6 @@ export type Project = {
     ownerId: string;
     audioFiles: AudioFile[];
     collaborators: Collaborator[];
+    collaborations?: Project[];
     deadline?: Date;
 };

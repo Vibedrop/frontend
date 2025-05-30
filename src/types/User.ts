@@ -1,5 +1,4 @@
 import { Project } from "./Project";
-import { Collaborator } from "./Collaborator";
 import { Comment } from "./Comment";
 
 export type User = {
@@ -10,6 +9,6 @@ export type User = {
     emailVerified: boolean;
     createdAt: Date;
     ownedProjects: Project[];
-    collaborations: Collaborator[];
+    collaborations: { project: Project }[];
     comments: Comment[];
 };
