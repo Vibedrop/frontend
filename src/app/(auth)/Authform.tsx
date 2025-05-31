@@ -92,8 +92,8 @@ export default function AuthForm({
                         </TextField.Root>
 
                         {/* <Text className="text-center text-muted">
-              { isSignUp ? 'At least 8 characters long' : <Link href="#" className="underline">Forgot your password?</Link> }
-            </Text> */}
+                            { isSignUp ? 'At least 8 characters long' : <Link href="#" className="underline">Forgot your    password?</Link> }
+                        </Text> */}
                     </Flex>
                 </Theme>
 

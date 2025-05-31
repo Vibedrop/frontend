@@ -1,8 +1,6 @@
 import { BACKEND_URL } from "@/utilities/config";
 
 export const handleUploadImage = async (audioFile: File, projectId: string) => {
-    // ? const project = useParams<{ projectId: string }>()
-
     const formData = new FormData();
     formData.append("file", audioFile);
 

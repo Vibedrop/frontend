@@ -166,7 +166,6 @@ export default function Sidebar() {
                         {!isFetching &&
                             collaborations?.map(
                                 (project: Project) => (
-                                    console.log("project", project),
                                     (
                                         <Link
                                             key={project.id}

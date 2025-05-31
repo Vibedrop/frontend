@@ -6,7 +6,6 @@ interface User {
     id: string;
     email: string;
     username: string;
-    // Add more from profile (name, username, etc)
 }
 
 interface AuthState {
