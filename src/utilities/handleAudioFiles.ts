@@ -1,9 +1,6 @@
 import { BACKEND_URL } from "@/utilities/config";
-// ? import { useParams } from "next/navigation"
 
 export const handleUpload = async (audioFile: File, projectId: string) => {
-    // ? const project = useParams<{ projectId: string }>()
-
     const formData = new FormData();
     formData.append("file", audioFile);
 

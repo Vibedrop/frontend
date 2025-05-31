@@ -11,8 +11,10 @@ interface ProjectStore {
     collaborations?: Project[] | null;
     audioFiles: AudioFile[] | null;
     sortedAudioFiles: AudioFile[] | null;
+    commentUpdates: number;
     fetchUsersProjects: () => void;
     fetchCurrentProject: (projectId: string) => void;
+    increaseCommentUpdates: () => void;
 }
 
 export const useProjectStore = create<ProjectStore>(set => ({
@@ -24,8 +26,9 @@ export const useProjectStore = create<ProjectStore>(set => ({
     collaborations: null,
     audioFiles: null,
     sortedAudioFiles: null,
-    setCurrentProjectForPlayer: (project: Project | null) =>
-        set({ currentProjectForPlayer: project }),
+    commentUpdates: 0,
+    increaseCommentUpdates: () => set(state => ({ commentUpdates: state.commentUpdates + 1 })),
+    setCurrentProjectForPlayer: (project: Project | null) => set({ currentProjectForPlayer: project }),
     fetchUsersProjects: async () => {
         try {
             const response = await fetch(`${BACKEND_URL}/users/me`, {
@@ -37,14 +40,6 @@ export const useProjectStore = create<ProjectStore>(set => ({
             });
             if (response.ok) {
                 const data: User = await response.json();
-                console.log(
-                    "fetchUserProjects data.ownedProjects:",
-                    data.ownedProjects,
-                );
-                console.log(
-                    "fetchUserProjects data.collaborations:",
-                    data.collaborations,
-                );
                 set({
                     ownedProjects: data.ownedProjects,
                     collaborations: data.collaborations

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BACKEND_URL } from "@/utilities/config";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { useParams } from "next/navigation";
 import { FolderOpen } from "lucide-react";
 import {
@@ -15,6 +15,10 @@ import {
 import { useProjectStore } from "@/stores/useProjectStore";
 
 function AudioDropzone() {
+    const ALLOWED_MIME_TYPES = ["audio/mpeg"];
+    const ALLOWED_EXTENSIONS = [".mp3"];
+    const MAX_FILESIZE = 20 * 1024 * 1024; // 20MB in bytes
+
     const { projectId } = useParams<{ projectId: string }>();
     const [songTitle, setSongTitle] = useState<string>("");
     const [songDescription, setSongDescription] = useState<string>("");
@@ -87,23 +91,53 @@ function AudioDropzone() {
         }
     };
 
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (
+            ALLOWED_MIME_TYPES.includes(file.type) ||
+            ALLOWED_EXTENSIONS.some(extension =>
+                file.name.toLowerCase().endsWith(extension),
+            )
+        ) {
+            if (file.size > MAX_FILESIZE) {
+                setUploadError("File size must be less than 20MB");
+                setAudioFile(null);
+                return;
+            }
+            setAudioFile(file);
+            setUploadError(null);
+        } else {
+            setUploadError("Only MP3 files are allowed");
+            setAudioFile(null);
+        }
+    };
+
     const onDropAccepted = async (acceptedFiles: File[]) => {
         setDropError(null);
+        setUploadError(null);
+
         const file = acceptedFiles[0];
         if (!file) {
             console.error("No file selected");
             return;
         }
 
-        // ? Put in try/catch?
         setAudioFile(file);
         setIsDialogOpen(true);
     };
 
-    const onDropRejected = () => {
-        setDropError(
-            "Unsupported file type. Only .mp3 files are allowed.",
-        );
+    const onDropRejected = (rejectedFiles: FileRejection[]) => {
+        const rejectedFile = rejectedFiles[0].file;
+
+        !ALLOWED_MIME_TYPES.includes(rejectedFile.type)
+            ? setDropError(
+                  "Unsupported file type. Only .mp3 files are allowed.",
+              )
+            : rejectedFile.size > MAX_FILESIZE
+              ? setDropError("File is too large. Maximum size allowed is 20MB.")
+              : setDropError("An unknown error occurred");
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -112,11 +146,11 @@ function AudioDropzone() {
         noClick: true,
         noKeyboard: true,
         maxFiles: 1,
-        maxSize: 20 * 1024 * 1024, // 20 MB
+        maxSize: MAX_FILESIZE,
         accept: {
-            "audio/mpeg": [".mp3"],
-    },
-});
+            [ALLOWED_MIME_TYPES[0]]: ALLOWED_EXTENSIONS,
+        },
+    });
 
     return (
         <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -214,10 +248,11 @@ function AudioDropzone() {
                             <input
                                 id="audio-upload"
                                 type="file"
-                                accept="audio/*"
-                                onChange={e =>
-                                    setAudioFile(e.target.files?.[0] || null)
-                                }
+                                accept={[
+                                    ...ALLOWED_MIME_TYPES,
+                                    ...ALLOWED_EXTENSIONS,
+                                ].join(",")}
+                                onChange={handleFileInputChange}
                                 style={{ display: "none" }}
                             />
 
