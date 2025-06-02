@@ -4,6 +4,15 @@
 
 Vibedrop är en modern webbapplikation för samarbete kring musikprojekt. Den här guiden hjälper dig att komma igång, utveckla, bygga och förstå de viktigaste funktionerna i frontend-projektet.
 
+## Techstack
+- Next.js (React)
+- TypeScript
+- Zustand (state management)
+- Tailwind CSS
+- Radix Themes
+- ESLint
+- Lucide Icons
+
 ## Innehåll
 - [Förutsättningar](#förutsättningar)
 - [Installation](#installation)
