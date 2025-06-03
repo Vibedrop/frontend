@@ -8,7 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import VideoPlayer from "./VideoPlayer";
-import heroImage from "@/assets/images/startpage/vibedrop-hero.png";
+import heroImage from "@/assets/images/startpage/vibedrop-hero.webp";
 import shareAudioImage from "@/assets/images/startpage/share-audio.webp";
 import getFeedbackImage from "@/assets/images/startpage/get-feedback.webp";
 import stayOrganinzedImage from "@/assets/images/startpage/stay-organized.webp";
