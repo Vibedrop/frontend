@@ -1,4 +1,4 @@
-const PROD_BACKEND_URL = "https://vibedrop-backend.cc25.chasacademy.dev";
+const PROD_BACKEND_URL = "https://vibedrop-backend.onrender.com";
 const DEV_BACKEND_URL = "http://localhost:3000";
 
 export const BACKEND_URL =
